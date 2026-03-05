@@ -34,6 +34,37 @@
                 <h1>Designing the Future<br>with <span class="highlight">Logic & Space</span></h1>
                 <p>Hi, I'm <strong>박지훈 (Jihun Park)</strong>. I explore the intersection of architectural spaces and
                     computational design to build innovative environments and digital tools.</p>
+                <div class="tools-marquee-container">
+                    <div class="tools-marquee-track">
+                        <span>Rhino</span> <span class="dot">•</span>
+                        <span>Grasshopper</span> <span class="dot">•</span>
+                        <span>Sketchup</span> <span class="dot">•</span>
+                        <span>Blender</span> <span class="dot">•</span>
+                        <span>AutoCad</span> <span class="dot">•</span>
+                        <span>Revit</span> <span class="dot">•</span>
+                        <span>Vray</span> <span class="dot">•</span>
+                        <span>Enscape</span> <span class="dot">•</span>
+                        <span>D5</span> <span class="dot">•</span>
+                        <span>Twinmotion</span> <span class="dot">•</span>
+                        <span>Lumion</span> <span class="dot">•</span>
+                        <span>Adobes</span> <span class="dot">•</span>
+                        <span>Figma</span> <span class="dot">•</span>
+                        <!-- Duplicate for infinite scroll -->
+                        <span>Rhino</span> <span class="dot">•</span>
+                        <span>Grasshopper</span> <span class="dot">•</span>
+                        <span>Sketchup</span> <span class="dot">•</span>
+                        <span>Blender</span> <span class="dot">•</span>
+                        <span>AutoCad</span> <span class="dot">•</span>
+                        <span>Revit</span> <span class="dot">•</span>
+                        <span>Vray</span> <span class="dot">•</span>
+                        <span>Enscape</span> <span class="dot">•</span>
+                        <span>D5</span> <span class="dot">•</span>
+                        <span>Twinmotion</span> <span class="dot">•</span>
+                        <span>Lumion</span> <span class="dot">•</span>
+                        <span>Adobes</span> <span class="dot">•</span>
+                        <span>Figma</span> <span class="dot">•</span>
+                    </div>
+                </div>
                 <div class="hero-buttons">
                     <a href="#school-works" class="btn-primary">View Projects</a>
                     <a href="#other-works" class="btn-secondary">View Code</a>
@@ -58,29 +89,8 @@
                 <h2>School Works</h2>
                 <p class="mono-text">architectural_studios.rar</p>
             </div>
-            <div class="project-grid">
-                <div class="project-card fade-in-scroll">
-                    <div class="card-image placeholder-img" data-text="Studio Project 1"></div>
-                    <div class="card-content">
-                        <h3>Urban Ecosystems</h3>
-                        <p>A sustainable residential complex integrating natural topologies with modular housing units.
-                        </p>
-                        <div class="tags">
-                            <span class="tag">Rhino</span> <span class="tag">Grasshopper</span> <span
-                                class="tag">V-Ray</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="project-card fade-in-scroll">
-                    <div class="card-image placeholder-img" data-text="Studio Project 2"></div>
-                    <div class="card-content">
-                        <h3>Parametric Pavilion</h3>
-                        <p>Exploring algorithmic form-finding for a temporary exhibition space.</p>
-                        <div class="tags">
-                            <span class="tag">Grasshopper</span> <span class="tag">Kangaroo</span>
-                        </div>
-                    </div>
-                </div>
+            <div class="project-grid" id="school-works-grid">
+                <!-- Cards will be dynamically inserted here -->
             </div>
         </section>
 
@@ -89,18 +99,8 @@
                 <h2>Competitions</h2>
                 <p class="mono-text">contest_entries.zip</p>
             </div>
-            <div class="project-grid">
-                <div class="project-card fade-in-scroll">
-                    <div class="card-image placeholder-img" data-text="Competition 1"></div>
-                    <div class="card-content">
-                        <h3>Next-Gen Library</h3>
-                        <p>Awarded 2nd Prize. A vision for the future of public libraries using computational layouts.
-                        </p>
-                        <div class="tags">
-                            <span class="tag">Revit</span> <span class="tag">Enscape</span>
-                        </div>
-                    </div>
-                </div>
+            <div class="project-grid" id="competitions-grid">
+                <!-- Cards will be dynamically inserted here -->
             </div>
         </section>
 
@@ -109,47 +109,8 @@
                 <h2>Other Works</h2>
                 <p class="mono-text">const isCoding = true;</p>
             </div>
-            <div class="project-grid">
-                <!-- Project: Deary -->
-                <a href="projects/deary.html" class="project-card fade-in-scroll code-card clickable-card">
-                    <div class="card-image code-visual"
-                        style="background: white; padding: 1rem; display: flex; align-items: center; justify-content: center;">
-                        <img src="assets/deary_logo.png?v=3" alt="Deary Logo"
-                            style="max-width: 80%; max-height: 80%; object-fit: contain;">
-                        <div class="view-hint">View Case Study →</div>
-                    </div>
-                    <div class="card-content">
-                        <h3>Deary</h3>
-                        <p>An AI-powered personal diary application. Answer a few questions and AI generates a
-                            comprehensive diary entry for you.</p>
-                        <div class="tags">
-                            <span class="tag">TypeScript</span> <span class="tag">OpenAI</span> <span
-                                class="tag">Vite</span>
-                        </div>
-                        <div class="project-links">
-                            <span class="link-btn">Case Study</span>
-                            <span class="link-btn secondary">GitHub</span>
-                        </div>
-                    </div>
-                </a>
-                <!-- Project: Emotion Sphere -->
-                <div class="project-card fade-in-scroll code-card">
-                    <div class="card-image code-visual placeholder-img" data-text="Emotion Sphere"></div>
-                    <div class="card-content">
-                        <h3>Emotion Sphere</h3>
-                        <p>A computational experiment creating interactive 3D spheres that react to and represent facial
-                            emotion expressions.</p>
-                        <div class="tags">
-                            <span class="tag">HTML</span> <span class="tag">JavaScript</span> <span class="tag">Emotion
-                                API</span>
-                        </div>
-                        <div class="project-links">
-                            <a href="https://emotion-sphere.vercel.app/" target="_blank" class="link-btn">Live Site</a>
-                            <a href="https://github.com/baechubaechu/emotion_sphere" target="_blank"
-                                class="link-btn secondary">GitHub</a>
-                        </div>
-                    </div>
-                </div>
+            <div class="project-grid" id="other-works-grid">
+                <!-- Cards will be dynamically inserted here -->
             </div>
         </section>
 
@@ -183,7 +144,8 @@
         </div>
     </footer>
 
-    <script src="js/script.js?v=2.3"></script>
+    <script src="js/projects.js?v=3.0"></script>
+    <script src="js/script.js?v=3.0"></script>
 </body>
 
 </html>

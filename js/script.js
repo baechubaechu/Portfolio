@@ -1,25 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Scroll Animation using IntersectionObserver
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: "0px 0px -50px 0px"
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-            }
-        });
-    }, observerOptions);
-
-    document.querySelectorAll('.fade-in-scroll').forEach(element => {
-        observer.observe(element);
-    });
+    // Render projects dynamically FIRST
+    renderProjects();
 
     // Initialize Computational Background Canvas
     initComputationalCanvas();
 });
+
 
 function initComputationalCanvas() {
     const canvas = document.getElementById('computational-canvas');
@@ -149,3 +135,137 @@ function initComputationalCanvas() {
 
     animate();
 }
+
+function renderProjects() {
+    function createCard(project, category) {
+        const isOtherWorks = category === 'otherWorks';
+        const isCaseStudy = project.isCaseStudy;
+
+        let cardHTML = '';
+
+        // Handle thumbnail or placeholder
+        const hasThumbnail = project.thumbnail && project.thumbnail.trim() !== '';
+
+        let imageContent = '';
+        if (hasThumbnail) {
+            if (isOtherWorks && isCaseStudy) {
+                imageContent = `<div class="card-image code-visual" style="background: white; padding: 1rem; display: flex; align-items: center; justify-content: center;">
+                                   <img src="${project.thumbnail}" alt="${project.title} Logo" style="max-width: 80%; max-height: 80%; object-fit: contain;" loading="lazy">
+                                   <div class="view-hint">View Case Study →</div>
+                                </div>`;
+            } else {
+                imageContent = `<div class="card-image">
+                                   <img src="${project.thumbnail}" alt="${project.title}" loading="lazy">
+                                </div>`;
+            }
+        } else {
+            const defaultText = project.title;
+            imageContent = `<div class="card-image placeholder-img" data-text="${defaultText}"></div>`;
+        }
+
+        // Tags
+        const tagsHTML = project.tags.map(tag => `<span class="tag">${tag}</span>`).join(' ');
+
+        // Links for Other Works
+        let linksHTML = '';
+        if (isOtherWorks) {
+            let primaryLink = '';
+            if (isCaseStudy) {
+                primaryLink = `<span class="link-btn">Case Study</span>`;
+            } else if (project.visitLink) {
+                primaryLink = `<a href="${project.visitLink}" target="_blank" class="link-btn">Live Site</a>`;
+            }
+
+            let githubLink = '';
+            if (project.githubLink) {
+                githubLink = `<a href="${project.githubLink}" target="_blank" class="link-btn secondary">GitHub</a>`;
+            } else if (isCaseStudy) {
+                githubLink = `<span class="link-btn secondary">GitHub</span>`;
+            }
+
+            linksHTML = `
+                <div class="project-links">
+                    ${primaryLink}
+                    ${githubLink}
+                </div>
+            `;
+        }
+
+        // Use a standard <a> tag overlay to make the whole card clickable properly 
+        // without JS, while allowing inner buttons to remain clickable by using z-index
+        const detailUrl = `project-detail.html?id=${project.id}`;
+        // Note: For Vercel/serve clean URLs, project-detail?id=... also works, but .html is safer locally
+
+        cardHTML = `
+            <div class="project-card fade-in-scroll ${isOtherWorks ? 'code-card' : ''}" style="position: relative;">
+                <!-- Full card clickable link with localStorage fallback -->
+                <a href="${detailUrl}" onclick="localStorage.setItem('currentProjectId', '${project.id}');" style="position: absolute; inset: 0; z-index: 1; text-decoration: none;"></a>
+                
+                <div style="position: relative; z-index: 0; pointer-events: none;">
+                    ${imageContent}
+                </div>
+                
+                <div class="card-content" style="position: relative; z-index: 0; pointer-events: none;">
+                    <h3>${project.title}</h3>
+                    <p>${project.description}</p>
+                    <div class="tags">
+                        ${tagsHTML}
+                    </div>
+                </div>
+                
+                ${linksHTML ? `
+                <div class="card-content" style="position: relative; z-index: 2; padding-top: 0;">
+                    ${linksHTML}
+                </div>
+                ` : ''}
+            </div>
+        `;
+
+        return cardHTML;
+    }
+
+    const schoolWorksGrid = document.getElementById('school-works-grid');
+    if (schoolWorksGrid && projectsData.schoolWorks) {
+        let html = '';
+        projectsData.schoolWorks.forEach(p => html += createCard(p, 'schoolWorks'));
+        schoolWorksGrid.innerHTML = html;
+    }
+
+    const competitionsGrid = document.getElementById('competitions-grid');
+    if (competitionsGrid && projectsData.competitions) {
+        let html = '';
+        projectsData.competitions.forEach(p => html += createCard(p, 'competitions'));
+        competitionsGrid.innerHTML = html;
+    }
+
+    const otherWorksGrid = document.getElementById('other-works-grid');
+    if (otherWorksGrid && projectsData.otherWorks) {
+        let html = '';
+        projectsData.otherWorks.forEach(p => html += createCard(p, 'otherWorks'));
+        otherWorksGrid.innerHTML = html;
+    }
+
+    // After rendering, set up observer for animations
+    setupObserver();
+}
+
+function setupObserver() {
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: "0px 0px -50px 0px"
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.fade-in-scroll').forEach(element => {
+        observer.observe(element);
+    });
+}
+
+
