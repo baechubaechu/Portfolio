@@ -304,14 +304,6 @@ return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? "";`
                     label: "VIDEO",
                     url: "https://www.youtube.com/watch?v=GRwoxY0-ZwM",
                     caption: "Promo video for Deary"
-                },
-                {
-                    type: "dev-exhibition",
-                    label: "EXHIBITION",
-                    photos: [
-                        { url: "assets/deary_logo.png", caption: "Exhibited at XYZ Show, 2024" }
-                    ],
-                    booklets: []
                 }
             ]
         }
