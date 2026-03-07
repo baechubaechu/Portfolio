@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initComputationalCanvas();
 });
 
+let fadeInObserver = null;
 
 function initComputationalCanvas() {
     const canvas = document.getElementById('computational-canvas');
@@ -14,12 +15,18 @@ function initComputationalCanvas() {
     const ctx = canvas.getContext('2d');
     let width, height;
     let nodes = [];
+    let animationFrameId = null;
+    let isAnimationPaused = false;
 
     function resize() {
         width = window.innerWidth;
         height = window.innerHeight;
-        canvas.width = width;
-        canvas.height = height;
+        const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.floor(width * pixelRatio);
+        canvas.height = Math.floor(height * pixelRatio);
+        canvas.style.width = `${width}px`;
+        canvas.style.height = `${height}px`;
+        ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
     }
 
     window.addEventListener('resize', resize);
@@ -71,17 +78,29 @@ function initComputationalCanvas() {
     }
 
     let mouse = { x: null, y: null };
+    let latestMouseMove = null;
+
     window.addEventListener('mousemove', (e) => {
-        mouse.x = e.x;
-        mouse.y = e.y;
-    });
+        latestMouseMove = e;
+    }, { passive: true });
 
     window.addEventListener('mouseout', () => {
         mouse.x = null;
         mouse.y = null;
     });
 
+    const maxDistance = 120;
+    const maxDistanceSquared = maxDistance * maxDistance;
+
     function animate() {
+        if (isAnimationPaused) return;
+
+        if (latestMouseMove) {
+            mouse.x = latestMouseMove.x;
+            mouse.y = latestMouseMove.y;
+            latestMouseMove = null;
+        }
+
         ctx.clearRect(0, 0, width, height);
 
         for (let i = 0; i < nodes.length; i++) {
@@ -92,12 +111,12 @@ function initComputationalCanvas() {
             for (let j = i + 1; j < nodes.length; j++) {
                 const dx = nodes[i].x - nodes[j].x;
                 const dy = nodes[i].y - nodes[j].y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
+                const distanceSquared = dx * dx + dy * dy;
 
-                if (distance < 120) {
+                if (distanceSquared < maxDistanceSquared) {
+                    const distance = Math.sqrt(distanceSquared);
                     ctx.beginPath();
-                    // Original V1 base line opacity, matching V2 distance 120
-                    const opacity = (1 - distance / 120) * 0.2;
+                    const opacity = (1 - distance / maxDistance) * 0.2;
                     ctx.strokeStyle = `rgba(55, 65, 81, ${opacity})`;
                     ctx.lineWidth = 0.5;
                     ctx.moveTo(nodes[i].x, nodes[i].y);
@@ -107,33 +126,46 @@ function initComputationalCanvas() {
             }
 
             // Connection and interaction from mouse
-            if (mouse.x && mouse.y) {
+            if (mouse.x !== null && mouse.y !== null) {
                 const dx = nodes[i].x - mouse.x;
                 const dy = nodes[i].y - mouse.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
+                const distanceSquared = dx * dx + dy * dy;
 
-                // Match V2 exactly: distance 120
-                if (distance < 120) {
+                if (distanceSquared < maxDistanceSquared) {
+                    const distance = Math.sqrt(distanceSquared);
                     ctx.beginPath();
-                    // Blue tint for V1, but V2 opacity logic
-                    const mouseOpacity = 1 - distance / 120;
+                    const mouseOpacity = 1 - distance / maxDistance;
                     ctx.strokeStyle = `rgba(37, 99, 235, ${mouseOpacity})`;
-                    ctx.lineWidth = 0.5; // Match V2 line width
+                    ctx.lineWidth = 0.5;
                     ctx.moveTo(nodes[i].x, nodes[i].y);
                     ctx.lineTo(mouse.x, mouse.y);
                     ctx.stroke();
 
-                    // Match V2 tiny gravitational pull exactly (0.005)
                     nodes[i].x -= dx * 0.005;
                     nodes[i].y -= dy * 0.005;
                 }
             }
         }
 
-        requestAnimationFrame(animate);
+        animationFrameId = requestAnimationFrame(animate);
     }
 
-    animate();
+    document.addEventListener('visibilitychange', () => {
+        const shouldPause = document.hidden || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        if (shouldPause) {
+            isAnimationPaused = true;
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+        } else if (!animationFrameId) {
+            isAnimationPaused = false;
+            animationFrameId = requestAnimationFrame(animate);
+        }
+    });
+
+    animationFrameId = requestAnimationFrame(animate);
 }
 
 function renderProjects() {
@@ -173,12 +205,12 @@ function renderProjects() {
             if (isCaseStudy) {
                 primaryLink = `<span class="link-btn">Case Study</span>`;
             } else if (project.visitLink) {
-                primaryLink = `<a href="${project.visitLink}" target="_blank" class="link-btn">Live Site</a>`;
+                primaryLink = `<a href="${project.visitLink}" target="_blank" rel="noopener noreferrer" class="link-btn">Live Site</a>`;
             }
 
             let githubLink = '';
             if (project.githubLink) {
-                githubLink = `<a href="${project.githubLink}" target="_blank" class="link-btn secondary">GitHub</a>`;
+                githubLink = `<a href="${project.githubLink}" target="_blank" rel="noopener noreferrer" class="link-btn secondary">GitHub</a>`;
             } else if (isCaseStudy) {
                 githubLink = `<span class="link-btn secondary">GitHub</span>`;
             }
@@ -250,12 +282,16 @@ function renderProjects() {
 }
 
 function setupObserver() {
+    if (fadeInObserver) {
+        fadeInObserver.disconnect();
+    }
+
     const observerOptions = {
         threshold: 0.1,
         rootMargin: "0px 0px -50px 0px"
     };
 
-    const observer = new IntersectionObserver((entries) => {
+    fadeInObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('visible');
@@ -264,7 +300,7 @@ function setupObserver() {
     }, observerOptions);
 
     document.querySelectorAll('.fade-in-scroll').forEach(element => {
-        observer.observe(element);
+        fadeInObserver.observe(element);
     });
 }
 
