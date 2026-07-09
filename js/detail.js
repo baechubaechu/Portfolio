@@ -1,3 +1,42 @@
+/* ── Blueprint Title Block ──────────────────────────────── */
+function createBlueprintTitleBlock(project) {
+    if (!document.body.classList.contains('bp-theme')) return;
+
+    // Remove any existing block
+    const existing = document.querySelector('.bp-title-block');
+    if (existing) existing.remove();
+
+    // Extract metadata from hero-meta section
+    const meta = (project.sections || []).find(s => s.type === 'hero-meta') || {};
+    const category = (meta.category || 'Architecture').split('/')[0].trim();
+    const timeline = meta.timeline || '2026';
+    const sheetNum = 'A-01';
+
+    const block = document.createElement('div');
+    block.className = 'bp-title-block';
+    block.innerHTML = `
+        <div class="bp-title-block-project">${project.title}</div>
+        <div class="bp-title-block-meta">
+            <div class="bp-title-block-item">
+                <span class="bp-title-block-key">Category</span>
+                <span class="bp-title-block-val">${category}</span>
+            </div>
+            <div class="bp-title-block-item">
+                <span class="bp-title-block-key">Date</span>
+                <span class="bp-title-block-val">${timeline}</span>
+            </div>
+            <div class="bp-title-block-item">
+                <span class="bp-title-block-key">Sheet</span>
+                <span class="bp-title-block-val">${sheetNum}</span>
+            </div>
+            <div class="bp-title-block-item">
+                <span class="bp-title-block-key">Scale</span>
+                <span class="bp-title-block-val">1:NTS</span>
+            </div>
+        </div>`;
+    document.body.appendChild(block);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
     let projectId = urlParams.get('id');
@@ -25,6 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     renderModularProject(project);
+    createBlueprintTitleBlock(project);
 });
 
 function renderModularProject(project) {

@@ -1,0 +1,930 @@
+/* =============================================================
+   GRASSHOPPER CANVAS THEME — index.html
+   Inspired by Grasshopper for Rhino visual programming IDE
+   ============================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap');
+
+/* ─── 1. Token Overrides ──────────────────────────────────── */
+.gh-theme {
+    --bg-color: #1e1e1e;
+    --text-primary: #d4d4d4;
+    --text-secondary: #888888;
+    --accent: #ff8c00;
+    --accent-hover: #e67e00;
+    --border-color: #484848;
+    --card-bg: #2d2d2d;
+    --font-sans: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+    --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+
+    /* GH-specific tokens */
+    --gh-ribbon-bg: #252526;
+    --gh-ribbon-border: #3c3c3c;
+    --gh-node-bg: #2d2d2d;
+    --gh-node-header: #3a3a3a;
+    --gh-node-border: #555555;
+    --gh-node-border-hover: #ff8c00;
+    --gh-wire-school: rgba(255, 140, 0, 0.6);
+    --gh-wire-comp: rgba(167, 130, 200, 0.6);
+    --gh-wire-code: rgba(80, 185, 170, 0.6);
+    --gh-wire-default: rgba(111, 168, 200, 0.5);
+    --gh-port-in: #a8cc8c;
+    --gh-port-out: #e88388;
+}
+
+/* ─── 2. Body & Background ────────────────────────────────── */
+.gh-theme {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+}
+
+/* GH dot-grid pattern */
+.gh-theme::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+    background-size: 24px 24px;
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Disable old overlays */
+.gh-theme .grid-background,
+.gh-theme #computational-canvas {
+    display: none;
+}
+
+/* ─── 3. GH Ribbon Toolbar ────────────────────────────────── */
+.gh-theme .navbar {
+    background: var(--gh-ribbon-bg);
+    border-bottom: 1px solid var(--gh-ribbon-border);
+    backdrop-filter: none;
+    padding: 0 0 0 0;
+    height: 48px;
+    display: flex;
+    align-items: stretch;
+}
+
+.gh-theme .logo {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 0.06em;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0 1.25rem;
+    border-right: 1px solid var(--gh-ribbon-border);
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+.gh-theme .logo::before {
+    content: '⬡';
+    color: var(--accent);
+    font-size: 1.1rem;
+    animation: gh-logo-pulse 4s ease infinite;
+}
+
+.gh-theme .logo span {
+    color: var(--accent);
+}
+
+@keyframes gh-logo-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.45; }
+}
+
+/* Nav as ribbon tabs */
+.gh-theme nav {
+    display: flex;
+    align-items: stretch;
+    flex: 1;
+}
+
+.gh-theme .nav-links {
+    display: flex;
+    gap: 0;
+    align-items: stretch;
+    height: 100%;
+}
+
+.gh-theme .nav-links li {
+    display: flex;
+}
+
+.gh-theme .nav-links a {
+    display: flex;
+    align-items: center;
+    padding: 0 1.1rem;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    border-bottom: 2px solid transparent;
+    border-right: 1px solid var(--gh-ribbon-border);
+    transition: color 0.15s, background 0.15s, border-bottom-color 0.15s;
+}
+
+.gh-theme .nav-links a:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.035);
+    border-bottom-color: var(--accent);
+}
+
+/* Contact button → zoom indicator */
+.gh-theme .btn-contact {
+    margin-left: auto;
+    align-self: center;
+    margin-right: 1rem;
+    font-size: 0.65rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 2px;
+    border: 1px solid var(--gh-ribbon-border);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    letter-spacing: 0.06em;
+    background: transparent;
+    transition: all 0.15s;
+}
+
+.gh-theme .btn-contact:hover {
+    background: rgba(255, 140, 0, 0.08);
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+/* ─── 4. Main Layout ──────────────────────────────────────── */
+.gh-theme main {
+    padding-top: 48px;
+    position: relative;
+}
+
+/* ─── 5. Hero → GH Component Node ────────────────────────── */
+.gh-theme .hero {
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 5%;
+    position: relative;
+}
+
+/* Outer node wrapper */
+.gh-hero-node {
+    width: 100%;
+    max-width: 920px;
+    background: var(--gh-node-bg);
+    border: 1px solid var(--gh-node-border);
+    border-radius: 4px;
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.025),
+        0 24px 80px rgba(0, 0, 0, 0.65),
+        0 0 120px rgba(255, 140, 0, 0.04);
+    transition: border-color 0.3s, box-shadow 0.3s;
+    position: relative;
+}
+
+.gh-hero-node:hover {
+    border-color: rgba(255, 140, 0, 0.35);
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.03),
+        0 24px 80px rgba(0, 0, 0, 0.7),
+        0 0 140px rgba(255, 140, 0, 0.07);
+}
+
+/* Node header bar */
+.gh-node-header {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.55rem 1rem;
+    background: var(--gh-node-header);
+    border-bottom: 1px solid var(--gh-node-border);
+    border-radius: 4px 4px 0 0;
+}
+
+.gh-node-dots {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.gh-node-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.gh-node-dot--active {
+    background: var(--accent);
+    box-shadow: 0 0 6px rgba(255, 140, 0, 0.5);
+}
+
+.gh-node-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 0.1em;
+    flex: 1;
+}
+
+.gh-node-type {
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.06em;
+}
+
+/* Node body: 3 columns */
+.gh-node-body {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    min-height: 340px;
+}
+
+/* ── Port columns ── */
+.gh-ports-left,
+.gh-ports-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1.25rem;
+    padding: 2rem 0;
+}
+
+.gh-ports-left {
+    padding-right: 1.25rem;
+    padding-left: 0.25rem;
+    border-right: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.gh-ports-right {
+    padding-left: 1.25rem;
+    padding-right: 0.25rem;
+    border-left: 1px solid rgba(255, 255, 255, 0.03);
+    align-items: flex-end;
+}
+
+.gh-port-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.gh-port-row--right {
+    flex-direction: row-reverse;
+}
+
+/* Port dot */
+.gh-port {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1.5px solid;
+    flex-shrink: 0;
+    transition: background 0.2s, box-shadow 0.2s;
+    position: relative;
+    z-index: 2;
+}
+
+.gh-port--in {
+    border-color: var(--gh-port-in);
+    background: transparent;
+    margin-left: -5px;
+}
+
+.gh-port--out {
+    border-color: var(--gh-port-out);
+    background: transparent;
+    margin-right: -5px;
+}
+
+.gh-port--in:hover {
+    background: var(--gh-port-in);
+    box-shadow: 0 0 8px rgba(168, 204, 140, 0.5);
+}
+
+.gh-port--out:hover {
+    background: var(--gh-port-out);
+    box-shadow: 0 0 8px rgba(232, 131, 136, 0.5);
+}
+
+.gh-port-label {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+
+.gh-port-label a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.15s;
+}
+
+.gh-port-label a:hover {
+    color: var(--text-primary);
+}
+
+/* ── Center content ── */
+.gh-node-center {
+    padding: 2rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+    text-align: center;
+    border-left: none;
+    border-right: none;
+}
+
+/* 3D cube preview inside node */
+.gh-node-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--gh-node-border);
+    border-radius: 3px;
+    padding: 1.25rem 1.5rem 0.75rem;
+}
+
+.gh-preview-label {
+    font-size: 0.6rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.08em;
+    opacity: 0.6;
+}
+
+.gh-theme .cube-wrapper {
+    width: 100px;
+    height: 100px;
+    animation: rotate 24s infinite linear;
+    transform-style: preserve-3d;
+}
+
+.gh-theme .face {
+    width: 100px;
+    height: 100px;
+    border-color: rgba(255, 140, 0, 0.45);
+    background: rgba(255, 140, 0, 0.02);
+}
+
+.gh-theme .front  { transform: translateZ(50px); }
+.gh-theme .back   { transform: rotateY(180deg) translateZ(50px); }
+.gh-theme .right  { transform: rotateY(90deg) translateZ(50px); }
+.gh-theme .left   { transform: rotateY(-90deg) translateZ(50px); }
+.gh-theme .top    { transform: rotateX(90deg) translateZ(50px); }
+.gh-theme .bottom { transform: rotateX(-90deg) translateZ(50px); }
+
+/* Hero title */
+.gh-node-center h1 {
+    font-family: var(--font-mono);
+    font-size: clamp(1.4rem, 2.5vw, 2rem);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.gh-name-ko {
+    display: block;
+    font-size: 0.7em;
+    color: var(--text-secondary);
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.2rem;
+}
+
+.gh-node-center > p {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    max-width: 320px;
+}
+
+/* Tools marquee inside hero node */
+.gh-theme .tools-marquee-container {
+    max-width: 340px;
+    margin-bottom: 0;
+}
+
+.gh-theme .tools-marquee-track {
+    font-size: 0.65rem;
+    color: var(--accent);
+    opacity: 0.75;
+}
+
+.gh-theme .hero-buttons {
+    display: flex;
+    gap: 0.65rem;
+    justify-content: center;
+}
+
+/* Node footer bar */
+.gh-node-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.45rem 1rem;
+    background: rgba(0, 0, 0, 0.25);
+    border-top: 1px solid var(--gh-node-border);
+    border-radius: 0 0 4px 4px;
+}
+
+.gh-node-footer span {
+    font-size: 0.62rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.06em;
+    opacity: 0.65;
+}
+
+/* ─── 6. GH Group Section Wrappers ────────────────────────── */
+.gh-group {
+    margin: 0.5rem 4% 3rem;
+    padding: 1.75rem 1.5rem;
+    border-radius: 6px;
+    border: 1px dashed;
+    position: relative;
+}
+
+.gh-group--school {
+    border-color: rgba(255, 140, 0, 0.22);
+    background: rgba(255, 140, 0, 0.015);
+}
+
+.gh-group--comp {
+    border-color: rgba(167, 130, 200, 0.22);
+    background: rgba(167, 130, 200, 0.015);
+}
+
+.gh-group--code {
+    border-color: rgba(80, 185, 170, 0.22);
+    background: rgba(80, 185, 170, 0.015);
+}
+
+/* Group label badge */
+.gh-group-label {
+    position: absolute;
+    top: -0.85rem;
+    left: 1.25rem;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.65rem;
+    border-radius: 2px;
+    background: var(--bg-color);
+    border: 1px dashed;
+}
+
+.gh-group--school .gh-group-label { color: #ff8c00; border-color: rgba(255,140,0,0.3); }
+.gh-group--comp  .gh-group-label { color: #a782c8; border-color: rgba(167,130,200,0.3); }
+.gh-group--code  .gh-group-label { color: #50b9aa; border-color: rgba(80,185,170,0.3); }
+
+/* Input port on group left edge */
+.gh-group::before {
+    content: '';
+    position: absolute;
+    left: -5px;
+    top: 2.5rem;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    border: 1.5px solid;
+    background: var(--bg-color);
+    z-index: 2;
+}
+
+.gh-group--school::before { border-color: #ff8c00; }
+.gh-group--comp::before   { border-color: #a782c8; }
+.gh-group--code::before   { border-color: #50b9aa; }
+
+/* Override section padding inside groups */
+.gh-theme .portfolio-section {
+    padding: 1.5rem 0;
+    background: transparent !important;
+}
+
+/* Section header */
+.gh-theme .section-header {
+    margin-bottom: 2rem;
+}
+
+.gh-theme .section-header h2 {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.3);
+    margin-bottom: 0.2rem;
+}
+
+.gh-theme .section-header .mono-text {
+    font-size: 0.6rem;
+    color: rgba(255, 255, 255, 0.15);
+}
+
+/* ─── 7. Project Cards → GH Node Panels ───────────────────── */
+.gh-theme .project-grid {
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+.gh-theme .project-card {
+    background: var(--gh-node-bg);
+    border: 1px solid var(--gh-node-border);
+    border-radius: 4px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+    overflow: visible !important;
+}
+
+.gh-theme .project-card:hover {
+    border-color: rgba(255, 140, 0, 0.5);
+    transform: translateY(-4px);
+    box-shadow:
+        0 12px 40px rgba(0, 0, 0, 0.55),
+        0 0 0 1px rgba(255, 140, 0, 0.12),
+        0 0 24px rgba(255, 140, 0, 0.04);
+}
+
+/* GH node card header strip */
+.gh-node-card-header {
+    background: var(--gh-node-header);
+    padding: 0.35rem 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    border-bottom: 1px solid var(--gh-node-border);
+    border-radius: 4px 4px 0 0;
+    flex-shrink: 0;
+}
+
+.gh-node-card-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.gh-node-card-dot--active {
+    background: var(--accent);
+}
+
+.gh-node-card-name {
+    font-size: 0.6rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.06em;
+    font-family: var(--font-mono);
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Card image */
+.gh-theme .card-image {
+    height: 190px;
+    border-bottom: 1px solid var(--gh-node-border);
+}
+
+.gh-theme .card-image::after {
+    color: var(--text-secondary);
+    font-size: 0.7rem;
+}
+
+/* Image overlay */
+.gh-theme .card-image img {
+    filter: brightness(0.92);
+    transition: filter 0.3s, transform 0.5s;
+}
+
+.gh-theme .project-card:hover .card-image img {
+    filter: brightness(1);
+    transform: scale(1.04);
+}
+
+/* Port dots on card edges */
+.gh-card-port-in {
+    position: absolute;
+    left: -5px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    border: 1.5px solid var(--gh-port-in);
+    background: var(--gh-node-bg);
+    z-index: 10;
+    pointer-events: none;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+
+.gh-card-port-out {
+    position: absolute;
+    right: -5px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    border: 1.5px solid var(--gh-port-out);
+    background: var(--gh-node-bg);
+    z-index: 10;
+    pointer-events: none;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+
+.gh-theme .project-card:hover .gh-card-port-in {
+    background: var(--gh-port-in);
+    box-shadow: 0 0 6px rgba(168, 204, 140, 0.45);
+}
+
+.gh-theme .project-card:hover .gh-card-port-out {
+    background: var(--gh-port-out);
+    box-shadow: 0 0 6px rgba(232, 131, 136, 0.45);
+}
+
+/* Card content */
+.gh-theme .card-content h3 {
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--text-primary);
+    margin-bottom: 0.4rem;
+}
+
+.gh-theme .card-content p {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+}
+
+/* Tags → port badges */
+.gh-theme .tag {
+    font-size: 0.6rem;
+    padding: 0.18rem 0.45rem;
+    background: transparent;
+    border: 1px solid var(--gh-node-border);
+    border-radius: 2px;
+    color: var(--text-secondary);
+    letter-spacing: 0.04em;
+}
+
+/* View hint */
+.gh-theme .view-hint {
+    background: rgba(30, 30, 30, 0.95);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-size: 0.6rem;
+    border-radius: 2px;
+}
+
+/* ─── 8. Buttons ──────────────────────────────────────────── */
+.gh-theme .btn-primary {
+    background: var(--accent);
+    border: 1px solid var(--accent);
+    color: #1a1a1a;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-radius: 2px;
+    padding: 0.55rem 1.1rem;
+}
+
+.gh-theme .btn-primary:hover {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+    box-shadow: 0 0 18px rgba(255, 140, 0, 0.3);
+    transform: translateY(-1px);
+}
+
+.gh-theme .btn-secondary {
+    background: transparent;
+    border: 1px solid var(--gh-node-border);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-radius: 2px;
+    padding: 0.55rem 1.1rem;
+}
+
+.gh-theme .btn-secondary:hover {
+    border-color: var(--text-primary);
+    color: var(--text-primary);
+    transform: translateY(-1px);
+}
+
+.gh-theme .link-btn {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    border-radius: 2px;
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #1a1a1a;
+}
+
+.gh-theme .link-btn.secondary {
+    background: transparent;
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+/* ─── 9. Contact → Terminal Node ─────────────────────────── */
+.gh-theme .contact-section {
+    padding: 5rem 5%;
+    display: flex;
+    justify-content: center;
+}
+
+.gh-theme .contact-card {
+    background: var(--gh-node-bg);
+    border: 1px solid var(--gh-node-border);
+    border-radius: 4px;
+    position: relative;
+    padding: 2.5rem 3rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+}
+
+/* Terminal node label */
+.gh-theme .contact-card::before {
+    content: 'CONTACT.GH';
+    position: absolute;
+    top: -0.8rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    background: var(--bg-color);
+    padding: 0.2rem 0.75rem;
+    border-radius: 2px;
+    border: 1px dashed rgba(255, 140, 0, 0.35);
+}
+
+/* Input port on left edge */
+.gh-theme .contact-card::after {
+    content: '';
+    position: absolute;
+    left: -5px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    border: 1.5px solid var(--gh-port-in);
+    background: var(--gh-node-bg);
+}
+
+.gh-theme .contact-card h2 {
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
+    color: var(--text-primary);
+    margin-bottom: 0.6rem;
+}
+
+.gh-theme .contact-card p {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.gh-theme .contact-item span {
+    color: var(--text-secondary);
+    font-weight: 400;
+}
+
+.gh-theme .contact-item a {
+    color: var(--accent);
+}
+
+.gh-theme .contact-item {
+    font-size: 0.8rem;
+}
+
+/* ─── 10. Footer ─────────────────────────────────────────── */
+.gh-theme footer {
+    background: var(--gh-ribbon-bg);
+    border-top: 1px solid var(--gh-ribbon-border);
+    padding: 1rem 5%;
+}
+
+.gh-theme footer .footer-content {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    border-radius: 0;
+    flex-direction: row;
+}
+
+.gh-theme footer .logo {
+    font-size: 0.75rem;
+    border-right: none;
+    padding: 0;
+}
+
+.gh-theme footer .logo::before {
+    display: none;
+}
+
+.gh-theme .footer-links a {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+}
+
+.gh-theme .footer-links a:hover {
+    color: var(--accent);
+}
+
+.gh-theme footer .footer-content > p {
+    font-size: 0.6rem;
+    color: rgba(255, 255, 255, 0.18);
+}
+
+/* ─── 11. Mono-tag override ───────────────────────────────── */
+.gh-theme .mono-tag {
+    color: var(--accent);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+}
+
+/* ─── 12. Wire SVG overlay ────────────────────────────────── */
+#gh-wire-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: visible;
+}
+
+@keyframes gh-wire-draw {
+    to { stroke-dashoffset: 0; }
+}
+
+@keyframes gh-dot-appear {
+    to { opacity: 0.9; }
+}
+
+/* ─── 13. Custom Scrollbar ────────────────────────────────── */
+.gh-theme ::-webkit-scrollbar {
+    width: 5px;
+}
+
+.gh-theme ::-webkit-scrollbar-track {
+    background: #1a1a1a;
+}
+
+.gh-theme ::-webkit-scrollbar-thumb {
+    background: #3a3a3a;
+    border-radius: 2px;
+}
+
+.gh-theme ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* ─── 14. Responsive ──────────────────────────────────────── */
+@media (max-width: 900px) {
+    .gh-node-body {
+        grid-template-columns: auto 1fr;
+    }
+
+    .gh-ports-right {
+        display: none;
+    }
+
+    .gh-node-center {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .gh-group {
+        margin: 0.5rem 2% 2rem;
+        padding: 1.25rem 1rem;
+    }
+
+    .gh-theme .nav-links {
+        display: none;
+    }
+
+    .gh-node-center h1 {
+        font-size: 1.2rem;
+    }
+}

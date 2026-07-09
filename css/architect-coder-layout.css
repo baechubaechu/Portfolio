@@ -1,0 +1,349 @@
+:root {
+    --bg-dark: #0a0a0a;
+    --accent-color: #00ff9d;
+    --text-main: #e0e0e0;
+    --text-dim: #a0a0a0;
+    --panel-bg: rgba(255, 255, 255, 0.05);
+    --border-color: rgba(255, 255, 255, 0.1);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+.bg-grid {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(var(--border-color) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+    background-size: 40px 40px;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.3;
+}
+
+header.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 5%;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10, 10, 10, 0.8);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.brand {
+    font-weight: 800;
+    font-size: 1.25rem;
+    color: #fff;
+    text-decoration: none;
+}
+
+.brand span {
+    color: var(--accent-color);
+}
+
+nav a {
+    margin: 0 1.5rem;
+    text-decoration: none;
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+nav a:hover {
+    color: var(--accent-color);
+}
+
+.ghost-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--accent-color);
+    color: var(--accent-color);
+    text-decoration: none;
+    font-size: 0.85rem;
+    border-radius: 4px;
+}
+
+/* Hero */
+.hero {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    align-items: center;
+    padding: 10vw 5%;
+    gap: 4rem;
+}
+
+.mono-tag {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent-color);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+h1 {
+    font-size: 4rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 2rem;
+}
+
+h1 span {
+    color: var(--accent-color);
+}
+
+.desc {
+    font-size: 1.25rem;
+    color: var(--text-dim);
+    max-width: 600px;
+    margin-bottom: 3rem;
+}
+
+.hero-metrics {
+    display: flex;
+    gap: 3rem;
+}
+
+.hero-metrics article p.num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--accent-color);
+}
+
+/* Code Window */
+.code-window {
+    background: #1a1a1a;
+    border-radius: 8px;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.dots {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.dots span {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #333;
+}
+
+code {
+    font-family: 'JetBrains Mono', monospace;
+    color: #c9d1d9;
+    font-size: 0.95rem;
+}
+
+/* Sections */
+section {
+    padding: 100px 5%;
+}
+
+.section-title h2 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.section-title p {
+    color: var(--text-dim);
+    margin-bottom: 4rem;
+}
+
+/* Workflow */
+.workflow-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.track {
+    background: var(--panel-bg);
+    padding: 3rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+.track h3 {
+    margin-bottom: 2rem;
+    font-size: 1.5rem;
+    border-left: 4px solid var(--accent-color);
+    padding-left: 1rem;
+}
+
+.track ol li {
+    margin-bottom: 2rem;
+    list-style: none;
+}
+
+.track ol li strong {
+    display: block;
+    font-size: 1.1rem;
+    color: #fff;
+}
+
+.track ol li span {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+}
+
+/* Lab */
+.lab-grid {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 2rem;
+}
+
+.lab-panel {
+    background: var(--panel-bg);
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+.control-row {
+    margin-bottom: 2rem;
+}
+
+.control-row label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+input[type="range"] {
+    width: 100%;
+    accent-color: var(--accent-color);
+}
+
+select {
+    width: 100%;
+    padding: 0.75rem;
+    background: #222;
+    border: 1px solid var(--border-color);
+    color: #fff;
+    border-radius: 4px;
+}
+
+.synth-output {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.synth-output h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.viz-panel canvas {
+    width: 100%;
+    height: auto;
+    background: #000;
+    border-radius: 8px;
+}
+
+/* Proof */
+.proof-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+.proof-card {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    height: 300px;
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.proof-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s;
+}
+
+.proof-card:hover img {
+    transform: scale(1.05);
+}
+
+.overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 2rem;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+}
+
+.proof-card.large {
+    grid-column: span 2;
+    grid-row: span 2;
+    height: 615px;
+}
+
+.proof-card.bridge {
+    grid-column: span 3;
+    height: auto;
+    padding: 4rem;
+    background: var(--accent-color);
+    color: var(--bg-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.proof-card.bridge .mono-tag {
+    color: var(--bg-dark);
+    opacity: 0.6;
+}
+
+.cta {
+    text-align: center;
+    background: #fff;
+    color: #000;
+    padding: 10vw 5%;
+}
+
+.cta h2 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.cta p {
+    font-size: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.primary-btn {
+    display: inline-block;
+    padding: 1rem 3rem;
+    background: #000;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700;
+    border-radius: 100px;
+}

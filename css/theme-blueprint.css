@@ -1,0 +1,731 @@
+/* =============================================================
+   BLUEPRINT ANNOTATED THEME — project-detail.html
+   Inspired by architectural blueprint drawings & CAD aesthetics
+   ============================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,300&display=swap');
+
+/* ─── 1. Token Overrides ──────────────────────────────────── */
+.bp-theme {
+    --bg-color: #0a1628;
+    --text-primary: #c8e6f0;
+    --text-secondary: #5a8fa8;
+    --accent: #7ec8e3;
+    --accent-hover: #9dd9f0;
+    --border-color: rgba(126, 200, 227, 0.2);
+    --card-bg: rgba(10, 30, 55, 0.8);
+    --font-sans: 'Roboto Mono', 'Inter', monospace;
+    --font-mono: 'Roboto Mono', monospace;
+
+    /* BP-specific tokens */
+    --bp-line: #7ec8e3;
+    --bp-line-dim: rgba(126, 200, 227, 0.2);
+    --bp-line-mid: rgba(126, 200, 227, 0.4);
+    --bp-pencil: #f7c948;
+    --bp-annotation: rgba(126, 200, 227, 0.65);
+    --bp-title-block-bg: rgba(4, 12, 26, 0.96);
+    --bp-heading: 'Inter', sans-serif;
+}
+
+/* ─── 2. Body & Blueprint Grid ────────────────────────────── */
+.bp-theme {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    cursor: crosshair;
+}
+
+/* Blueprint crosshatch grid overlay */
+.bp-theme::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(126, 200, 227, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(126, 200, 227, 0.05) 1px, transparent 1px),
+        linear-gradient(rgba(126, 200, 227, 0.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(126, 200, 227, 0.018) 1px, transparent 1px);
+    background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Disable old overlays */
+.bp-theme .grid-background,
+.bp-theme #computational-canvas {
+    display: none;
+}
+
+/* ─── 3. Navbar ───────────────────────────────────────────── */
+.bp-theme .navbar {
+    background: rgba(4, 12, 26, 0.92);
+    border-bottom: 1px solid var(--bp-line-dim);
+    backdrop-filter: blur(10px);
+    padding: 0 5%;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.bp-theme .logo {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-primary);
+    letter-spacing: 0.1em;
+    text-decoration: none;
+}
+
+.bp-theme .logo span {
+    color: var(--accent);
+}
+
+/* "Back" link */
+.bp-theme .btn-back {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.bp-theme .btn-back:hover {
+    color: var(--accent);
+}
+
+/* Layer label in navbar (via pseudo-element) */
+.bp-theme .navbar::after {
+    content: '// LAYER: PROJECT_ARCHIVE';
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--bp-annotation);
+    letter-spacing: 0.12em;
+    opacity: 0.55;
+}
+
+/* ─── 4. Main Padding ─────────────────────────────────────── */
+.bp-theme.detail-page main {
+    padding-top: 52px;
+}
+
+/* ─── 5. Project Detail Container ─────────────────────────── */
+.bp-theme .project-detail-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2.5rem 5% 9rem;
+    position: relative;
+}
+
+/* ─── 6. Project Header ───────────────────────────────────── */
+.bp-theme .project-header {
+    border-bottom: 1px solid var(--bp-line-dim);
+    padding-bottom: 3rem;
+    margin-bottom: 3.5rem;
+    position: relative;
+}
+
+/* Section cut line across top of header */
+.bp-theme .project-header::before {
+    content: '── SECTION A-A\' ────────────────────────────────────────── ▶';
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--bp-annotation);
+    letter-spacing: 0.06em;
+    opacity: 0.45;
+    margin-bottom: 2.5rem;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.bp-theme .mono-tag {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    color: var(--bp-annotation);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+}
+
+.bp-theme h1 {
+    font-family: var(--bp-heading);
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    line-height: 1.08;
+    margin-bottom: 1rem;
+}
+
+.bp-theme .project-subtitle {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    font-family: var(--bp-heading);
+    line-height: 1.5;
+}
+
+.bp-theme .project-meta-grid {
+    margin-top: 2.5rem;
+}
+
+.bp-theme .meta-item h4 {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    color: var(--bp-annotation);
+    text-transform: uppercase;
+}
+
+.bp-theme .meta-item p {
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+}
+
+.bp-theme .meta-links a {
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    text-decoration: none;
+}
+
+.bp-theme .live-link-pill {
+    background: var(--accent);
+    color: var(--bg-color) !important;
+    border-radius: 2px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    padding: 0.3rem 0.75rem;
+}
+
+/* ─── 7. Section Labels → Blueprint Symbols ─────────────────  */
+.bp-theme .arch-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    color: var(--bp-annotation);
+    margin-bottom: 1.75rem;
+    text-transform: uppercase;
+}
+
+/* Section marker symbol ⊙ */
+.bp-theme .arch-label::before {
+    content: '⊙';
+    font-size: 1.1rem;
+    color: var(--accent);
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+/* Trailing rule extending to right */
+.bp-theme .arch-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, var(--bp-line-mid), transparent);
+}
+
+/* ─── 8. Detail Section Headings ──────────────────────────── */
+.bp-theme h2 {
+    font-family: var(--bp-heading);
+    color: var(--text-primary);
+    font-size: clamp(1.4rem, 2.5vw, 2rem);
+    letter-spacing: -0.02em;
+    position: relative;
+    padding-left: 1.25rem;
+}
+
+.bp-theme .detail-section h2::before {
+    background: var(--accent);
+    width: 2px;
+}
+
+/* Section divider line */
+.bp-theme .detail-section {
+    margin-bottom: 5rem;
+}
+
+.bp-theme .detail-section + .detail-section::before {
+    content: '';
+    display: block;
+    height: 1px;
+    background: linear-gradient(to right, var(--bp-line-dim), transparent 60%);
+    margin-bottom: 5rem;
+    margin-top: -4rem;
+}
+
+/* ─── 9. Images → Blueprint Framed ───────────────────────── */
+.bp-theme .arch-gallery-grid img,
+.bp-theme .arch-plan-item img,
+.bp-theme .arch-panel-view img,
+.bp-theme .arch-visual img {
+    border: 1px solid var(--bp-line-dim);
+    border-radius: 0;
+    transition: border-color 0.3s, transform 0.35s;
+}
+
+.bp-theme .arch-gallery-grid img:hover,
+.bp-theme .arch-plan-item img:hover {
+    border-color: rgba(126, 200, 227, 0.5);
+}
+
+/* Corner tick marks on gallery items */
+.bp-theme .arch-gallery-item,
+.bp-theme .arch-plan-item {
+    position: relative;
+}
+
+.bp-theme .arch-gallery-item::before,
+.bp-theme .arch-gallery-item::after,
+.bp-theme .arch-plan-item::before,
+.bp-theme .arch-plan-item::after {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-color: var(--accent);
+    border-style: solid;
+    z-index: 2;
+    opacity: 0.4;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+
+.bp-theme .arch-gallery-item::before,
+.bp-theme .arch-plan-item::before {
+    top: 0;
+    left: 0;
+    border-width: 1px 0 0 1px;
+}
+
+.bp-theme .arch-gallery-item::after,
+.bp-theme .arch-plan-item::after {
+    bottom: 0;
+    right: 0;
+    border-width: 0 1px 1px 0;
+}
+
+.bp-theme .arch-gallery-item:hover::before,
+.bp-theme .arch-gallery-item:hover::after,
+.bp-theme .arch-plan-item:hover::before,
+.bp-theme .arch-plan-item:hover::after {
+    opacity: 1;
+}
+
+/* Panel view */
+.bp-theme .arch-panel-view {
+    background: var(--bg-color);
+    border-radius: 0;
+    box-shadow:
+        0 0 0 1px var(--bp-line-dim),
+        0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+/* ─── 10. Arch Concept Grid ───────────────────────────────── */
+.bp-theme .arch-concept-grid {
+    gap: 3rem;
+}
+
+.bp-theme .arch-label.arch-label--concept {
+    color: var(--accent);
+}
+
+.bp-theme .lead-text {
+    font-family: var(--bp-heading);
+    color: var(--text-primary);
+    font-size: 1.15rem;
+    line-height: 1.35;
+}
+
+.bp-theme .arch-concept-grid p {
+    color: var(--text-secondary);
+    font-family: var(--bp-heading);
+    font-size: 0.95rem;
+    line-height: 1.75;
+}
+
+/* ─── 11. Competition Info Grid ───────────────────────────── */
+.bp-theme .competition-info-grid {
+    background: rgba(126, 200, 227, 0.025);
+    border: 1px solid var(--bp-line-dim);
+    border-radius: 0;
+}
+
+.bp-theme .info-label {
+    font-family: var(--font-mono);
+    color: var(--bp-annotation);
+    font-size: 0.58rem;
+    letter-spacing: 0.12em;
+}
+
+.bp-theme .info-value {
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+}
+
+/* ─── 12. Text Narrative ──────────────────────────────────── */
+.bp-theme .text-full-width h2 {
+    color: var(--text-primary);
+    font-family: var(--bp-heading);
+}
+
+.bp-theme .narrative-body {
+    color: var(--text-secondary);
+    font-family: var(--bp-heading);
+    font-size: 0.92rem;
+    line-height: 1.85;
+}
+
+.bp-theme .narrative-container.collapsed::after {
+    background: linear-gradient(transparent, var(--bg-color));
+}
+
+.bp-theme .narrative-toggle {
+    border-color: var(--bp-line-dim);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+}
+
+.bp-theme .narrative-toggle:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(126, 200, 227, 0.04);
+}
+
+/* ─── 13. Technical Specs ─────────────────────────────────── */
+.bp-theme .technical-specs-grid {
+    background: rgba(126, 200, 227, 0.025);
+    border: 1px solid var(--bp-line-dim);
+    border-radius: 0;
+    backdrop-filter: none;
+}
+
+.bp-theme .spec-label {
+    color: var(--accent);
+    font-family: var(--font-mono);
+}
+
+.bp-theme .spec-row {
+    border-bottom-color: var(--bp-line-dim);
+}
+
+.bp-theme .spec-value {
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+}
+
+/* ─── 14. Code Block ──────────────────────────────────────── */
+.bp-theme .code-block-container {
+    border: 1px solid var(--bp-line-dim);
+    border-radius: 0;
+    box-shadow: 0 12px 50px rgba(0, 0, 0, 0.4);
+}
+
+.bp-theme .code-caption {
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+}
+
+/* ─── 15. Tech Badges ─────────────────────────────────────── */
+.bp-theme .tech-badge {
+    background: rgba(126, 200, 227, 0.04);
+    border: 1px solid var(--bp-line-dim);
+    border-radius: 0;
+}
+
+.bp-theme .tech-badge:hover {
+    border-color: var(--accent);
+    background: rgba(126, 200, 227, 0.07);
+    box-shadow: 0 0 12px rgba(126, 200, 227, 0.06);
+}
+
+.bp-theme .tech-name {
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+}
+
+.bp-theme .tech-note {
+    color: var(--text-secondary);
+    font-size: 0.68rem;
+}
+
+/* ─── 16. Detail split grid ───────────────────────────────── */
+.bp-theme .detail-text p {
+    color: var(--text-secondary);
+    font-family: var(--bp-heading);
+    line-height: 1.8;
+}
+
+/* ─── 17. Dev sections ────────────────────────────────────── */
+.bp-theme .dev-section {
+    border-top-color: var(--bp-line-dim);
+}
+
+.bp-theme .dev-video-title {
+    color: var(--text-primary);
+    font-family: var(--bp-heading);
+}
+
+.bp-theme .screenshot-caption,
+.bp-theme .exhibition-caption {
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+}
+
+.bp-theme .dev-screenshot-item img {
+    border: 1px solid var(--bp-line-dim);
+    border-radius: 0;
+}
+
+.bp-theme .exhibition-photo-item img {
+    border-radius: 0;
+    border: 1px solid var(--bp-line-dim);
+}
+
+.bp-theme .dev-visit-gallery-btn {
+    background: var(--accent);
+    color: var(--bg-color);
+    border-radius: 0;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+}
+
+.bp-theme .dev-visit-gallery-btn:hover {
+    background: var(--accent-hover);
+    box-shadow: 0 4px 20px rgba(126, 200, 227, 0.2);
+}
+
+/* ─── 18. Booklet Cards ───────────────────────────────────── */
+.bp-theme .booklet-card {
+    background: rgba(126, 200, 227, 0.03);
+    border: 1px solid var(--bp-line-dim);
+    border-radius: 0;
+}
+
+.bp-theme .booklet-card:hover {
+    border-color: var(--accent);
+    background: rgba(126, 200, 227, 0.055);
+    box-shadow: 0 4px 16px rgba(126, 200, 227, 0.06);
+}
+
+.bp-theme .booklet-title {
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+}
+
+.bp-theme .booklet-cta {
+    color: var(--accent);
+    font-family: var(--font-mono);
+}
+
+/* ─── 19. Buttons ─────────────────────────────────────────── */
+.bp-theme .btn-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg-color);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    border-radius: 0;
+}
+
+.bp-theme .btn-primary:hover {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+    box-shadow: 0 0 20px rgba(126, 200, 227, 0.2);
+}
+
+.bp-theme .btn-secondary {
+    border-color: var(--bp-line-dim);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    border-radius: 0;
+}
+
+.bp-theme .btn-secondary:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.bp-theme .link-btn {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    border-radius: 0;
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg-color);
+}
+
+.bp-theme .link-btn.secondary {
+    background: transparent;
+    color: var(--accent);
+    border-color: var(--bp-line-dim);
+}
+
+/* ─── 20. Project Footer ──────────────────────────────────── */
+.bp-theme .project-footer {
+    padding: 2rem 0 9rem;
+}
+
+.bp-theme .project-footer .footer-content {
+    background: rgba(126, 200, 227, 0.025);
+    border: 1px solid var(--bp-line-dim);
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.bp-theme .project-footer h3 {
+    font-family: var(--bp-heading);
+    color: var(--text-primary);
+}
+
+/* ─── 21. Blueprint Title Block (fixed bottom-right) ─────── */
+.bp-title-block {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    background: var(--bp-title-block-bg);
+    border: 1px solid var(--bp-line-dim);
+    padding: 0.8rem 1rem;
+    z-index: 50;
+    min-width: 200px;
+    max-width: 230px;
+    font-family: var(--font-mono);
+    backdrop-filter: blur(10px);
+    box-shadow:
+        0 0 0 1px rgba(126, 200, 227, 0.06),
+        0 12px 50px rgba(0, 0, 0, 0.5);
+    animation: bp-block-slide-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+}
+
+@keyframes bp-block-slide-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Corner tick marks */
+.bp-title-block::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    width: 10px;
+    height: 10px;
+    border-top: 1px solid var(--accent);
+    border-left: 1px solid var(--accent);
+}
+
+.bp-title-block::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    right: -4px;
+    width: 10px;
+    height: 10px;
+    border-bottom: 1px solid var(--accent);
+    border-right: 1px solid var(--accent);
+}
+
+.bp-title-block-project {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    line-height: 1.35;
+    border-bottom: 1px solid var(--bp-line-dim);
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
+    word-break: break-word;
+}
+
+.bp-title-block-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem 0.5rem;
+}
+
+.bp-title-block-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.bp-title-block-key {
+    font-size: 0.52rem;
+    color: var(--bp-annotation);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.65;
+}
+
+.bp-title-block-val {
+    font-size: 0.62rem;
+    color: var(--text-primary);
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+}
+
+/* ─── 22. Plan / gallery scrollers ───────────────────────── */
+.bp-theme .plan-title {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.bp-theme .gallery-item-title {
+    font-family: var(--font-mono);
+    color: var(--text-secondary);
+    font-size: 0.65rem;
+    letter-spacing: 0.06em;
+}
+
+/* ─── 23. Custom Scrollbar ────────────────────────────────── */
+.bp-theme ::-webkit-scrollbar {
+    width: 4px;
+}
+
+.bp-theme ::-webkit-scrollbar-track {
+    background: var(--bg-color);
+}
+
+.bp-theme ::-webkit-scrollbar-thumb {
+    background: var(--bp-line-dim);
+    border-radius: 2px;
+}
+
+.bp-theme ::-webkit-scrollbar-thumb:hover {
+    background: var(--accent);
+}
+
+/* ─── 24. Responsive ──────────────────────────────────────── */
+@media (max-width: 768px) {
+    .bp-title-block {
+        bottom: 0.75rem;
+        right: 0.75rem;
+        min-width: 160px;
+        padding: 0.55rem 0.75rem;
+    }
+
+    .bp-theme {
+        cursor: default;
+    }
+
+    .bp-theme .navbar::after {
+        display: none;
+    }
+}

@@ -137,6 +137,8 @@ function initComputationalCanvas() {
 }
 
 function renderProjects() {
+    const isGHTheme = document.body.classList.contains('gh-theme');
+
     function createCard(project, category) {
         const isOtherWorks = category === 'otherWorks';
         const isCaseStudy = project.isCaseStudy;
@@ -196,12 +198,26 @@ function renderProjects() {
         const detailUrl = `project-detail.html?id=${project.id}`;
         // Note: For Vercel/serve clean URLs, project-detail?id=... also works, but .html is safer locally
 
+        // GH node card header strip (only in GH theme)
+        const ghCardHeader = isGHTheme ? `
+            <div class="gh-node-card-header" style="pointer-events:none;">
+                <span class="gh-node-card-dot"></span>
+                <span class="gh-node-card-dot gh-node-card-dot--active"></span>
+                <span class="gh-node-card-name">${project.id.toLowerCase().replace(/\s+/g, '_')}.gh</span>
+            </div>` : '';
+
+        // GH port dots
+        const ghPorts = isGHTheme ? `
+            <div class="gh-card-port-in"></div>
+            <div class="gh-card-port-out"></div>` : '';
+
         cardHTML = `
             <div class="project-card fade-in-scroll ${isOtherWorks ? 'code-card' : ''}" style="position: relative;">
                 <!-- Full card clickable link with localStorage fallback -->
                 <a href="${detailUrl}" onclick="localStorage.setItem('currentProjectId', '${project.id}');" style="position: absolute; inset: 0; z-index: 1; text-decoration: none;"></a>
-                
+                ${ghPorts}
                 <div style="position: relative; z-index: 0; pointer-events: none;">
+                    ${ghCardHeader}
                     ${imageContent}
                 </div>
                 

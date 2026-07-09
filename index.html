@@ -1,151 +1,98 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jihun Park | Architecture & Computational Design</title>
-    <meta name="description" content="Portfolio of Jihun Park, Architecture and Computational Design student.">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Jihun_Park.gh | Node Workspace</title>
+    <meta name="description" content="Interactive Node-Based Portfolio">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Retain GH Theme colors/styles -->
+    <link rel="stylesheet" href="css/theme-grasshopper.css?v=4">
+    <!-- Workspace specific styles -->
+    <link rel="stylesheet" href="css/node-workspace.css?v=4">
 </head>
 
-<body>
-    <div class="grid-background"></div>
-    <canvas id="computational-canvas"></canvas>
+<body class="gh-theme">
 
-    <header class="navbar">
-        <a href="index.html" class="logo">Jihun_Park<span>()</span></a>
-        <nav>
-            <ul class="nav-links">
-                <li><a href="#hero">Home</a></li>
-                <li><a href="#school-works">School Works</a></li>
-                <li><a href="#competitions">Competitions</a></li>
-                <li><a href="#other-works">Other Works</a></li>
-            </ul>
-        </nav>
-        <a href="#contact" class="btn-contact">Contact</a>
-    </header>
+    <!-- Infinite canvas container -->
+    <div id="workspace-container">
 
-    <main>
-        <section id="hero" class="hero">
-            <div class="hero-content fade-in">
-                <span class="mono-tag">// Architecture Student</span>
-                <h1>Designing the Future<br>with <span class="highlight">Logic & Space</span></h1>
-                <p>Hi, I'm <strong>박지훈 (Jihun Park)</strong>. I explore the intersection of architectural spaces and
-                    computational design to build innovative environments and digital tools.</p>
-                <div class="tools-marquee-container">
-                    <div class="tools-marquee-track">
-                        <span>Rhino</span> <span class="dot">•</span>
-                        <span>Grasshopper</span> <span class="dot">•</span>
-                        <span>Sketchup</span> <span class="dot">•</span>
-                        <span>Blender</span> <span class="dot">•</span>
-                        <span>AutoCad</span> <span class="dot">•</span>
-                        <span>Revit</span> <span class="dot">•</span>
-                        <span>Vray</span> <span class="dot">•</span>
-                        <span>Enscape</span> <span class="dot">•</span>
-                        <span>D5</span> <span class="dot">•</span>
-                        <span>Twinmotion</span> <span class="dot">•</span>
-                        <span>Lumion</span> <span class="dot">•</span>
-                        <span>Adobes</span> <span class="dot">•</span>
-                        <span>Figma</span> <span class="dot">•</span>
-                        <!-- Duplicate for infinite scroll -->
-                        <span>Rhino</span> <span class="dot">•</span>
-                        <span>Grasshopper</span> <span class="dot">•</span>
-                        <span>Sketchup</span> <span class="dot">•</span>
-                        <span>Blender</span> <span class="dot">•</span>
-                        <span>AutoCad</span> <span class="dot">•</span>
-                        <span>Revit</span> <span class="dot">•</span>
-                        <span>Vray</span> <span class="dot">•</span>
-                        <span>Enscape</span> <span class="dot">•</span>
-                        <span>D5</span> <span class="dot">•</span>
-                        <span>Twinmotion</span> <span class="dot">•</span>
-                        <span>Lumion</span> <span class="dot">•</span>
-                        <span>Adobes</span> <span class="dot">•</span>
-                        <span>Figma</span> <span class="dot">•</span>
-                    </div>
-                </div>
-                <div class="hero-buttons">
-                    <a href="#school-works" class="btn-primary">View Projects</a>
-                    <a href="#other-works" class="btn-secondary">View Code</a>
-                </div>
-            </div>
-            <div class="hero-visual fade-in delay-1">
-                <div class="cube-wrapper">
-                    <div class="cube">
-                        <div class="face front"></div>
-                        <div class="face back"></div>
-                        <div class="face right"></div>
-                        <div class="face left"></div>
-                        <div class="face top"></div>
-                        <div class="face bottom"></div>
-                    </div>
-                </div>
-            </div>
-        </section>
+        <!-- Scaled / Translated interactive layer -->
+        <div id="workspace-transform">
+            <!-- Background grid pattern -->
+            <div id="grid-bg"></div>
 
-        <section id="school-works" class="portfolio-section">
-            <div class="section-header fade-in-scroll">
-                <h2>School Works</h2>
-                <p class="mono-text">architectural_studios.rar</p>
-            </div>
-            <div class="project-grid" id="school-works-grid">
-                <!-- Cards will be dynamically inserted here -->
-            </div>
-        </section>
+            <!-- SVG layer for drawing bezier curves/wires -->
+            <svg id="wire-canvas"></svg>
 
-        <section id="competitions" class="portfolio-section">
-            <div class="section-header fade-in-scroll">
-                <h2>Competitions</h2>
-                <p class="mono-text">contest_entries.zip</p>
+            <!-- DOM layer for the actual nodes -->
+            <div id="node-canvas">
+                <!-- Nodes generated via JS -->
             </div>
-            <div class="project-grid" id="competitions-grid">
-                <!-- Cards will be dynamically inserted here -->
-            </div>
-        </section>
-
-        <section id="other-works" class="portfolio-section alt-bg">
-            <div class="section-header fade-in-scroll">
-                <h2>Other Works</h2>
-                <p class="mono-text">const isCoding = true;</p>
-            </div>
-            <div class="project-grid" id="other-works-grid">
-                <!-- Cards will be dynamically inserted here -->
-            </div>
-        </section>
-
-        <section id="contact" class="contact-section">
-            <div class="contact-card fade-in-scroll">
-                <h2>Let's build something together.</h2>
-                <p>Available for internships and collaborations in Architecture and Software.</p>
-                <div class="contact-methods">
-                    <div class="contact-item">
-                        <span>Email:</span>
-                        <a href="mailto:jhp503@gmail.com">jhp503@gmail.com</a>
-                    </div>
-                    <div class="contact-item">
-                        <span>Phone:</span>
-                        <a href="tel:+821040965031">+82 10-4096-5031</a>
-                    </div>
-                </div>
-                <a href="mailto:jhp503@gmail.com" class="btn-primary mt-2">Get in Touch</a>
-            </div>
-        </section>
-    </main>
-
-    <footer>
-        <div class="footer-content">
-            <div class="logo">Jihun_Park<span>()</span></div>
-            <div class="footer-links">
-                <a href="https://github.com/baechubaechu" target="_blank">GitHub</a>
-                <a href="mailto:jhp503@gmail.com">Contact</a>
-            </div>
-            <p>&copy; 2026 Jihun Park. Built with Logic & Design.</p>
         </div>
-    </footer>
 
-    <script src="js/projects.js?v=3.0"></script>
-    <script src="js/script.js?v=3.0"></script>
+    </div>
+
+    <!-- UI Overlay Layer (Fixed to screen) -->
+    <div id="ui-layer">
+        <!-- Top bar -->
+        <header class="navbar">
+            <div class="logo">Jihun_Park<span>.gh</span> <span class="version-tag">v2.0</span></div>
+            <div class="top-controls">
+                <button id="btn-reset-view" class="icon-btn" title="Reset Camera">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                    </svg>
+                </button>
+            </div>
+            <div class="status-bar" id="gh-status">Loaded 12 Projects · System Ready</div>
+        </header>
+
+        <!-- Node Add Palette -->
+        <div id="node-palette" class="floating-panel">
+            <div class="panel-header">Components</div>
+            <div class="palette-list">
+                <div class="palette-item" draggable="true" data-type="Skill">
+                    <span class="dot tool-dot"></span> Skill / Tool
+                </div>
+                <div class="palette-item" draggable="true" data-type="Category">
+                    <span class="dot cat-dot"></span> Category
+                </div>
+                <div class="palette-item" draggable="true" data-type="Output">
+                    <span class="dot out-dot"></span> Project Output
+                </div>
+            </div>
+            <div class="palette-footer">Drag to canvas</div>
+        </div>
+
+        <!-- Sidebar for displaying output matching projects -->
+        <aside id="projects-panel">
+            <div class="panel-header">
+                <h3>Projects Out <span id="project-count" class="badge">0</span></h3>
+                <button id="close-panel" title="Close Panel">&times;</button>
+            </div>
+            <div id="projects-list">
+                <!-- Target for filtered project cards -->
+                <div class="empty-state">
+                    Connect logic nodes to the Output port to reveal projects.
+                </div>
+            </div>
+        </aside>
+
+        <!-- Context Menu / Tooltip -->
+        <div id="tooltip" class="hidden"></div>
+    </div>
+
+    <!-- Data source -->
+    <script src="js/projects.js?v=4"></script>
+    <!-- Node Application -->
+    <script type="module" src="js/node-system/main.js?v=4"></script>
 </body>
 
 </html>

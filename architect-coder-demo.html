@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Architect + Coder Layout Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=JetBrains+Mono:wght@400;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/architect-coder-layout.css" />
+</head>
+
+<body>
+    <div class="bg-grid"></div>
+
+    <header class="topbar">
+        <a class="brand" href="#">Jihun_Park<span>()</span></a>
+        <nav>
+            <a href="#identity">Identity</a>
+            <a href="#workflow">Workflow</a>
+            <a href="#lab">Interactive Lab</a>
+            <a href="#proof">Proof</a>
+            <a href="#cta">Contact</a>
+        </nav>
+        <a class="ghost-btn" href="index.html">기존 포폴로 이동</a>
+    </header>
+
+    <main>
+        <section class="hero" id="identity">
+            <div class="hero-left">
+                <p class="mono-tag">// ARCHITECTURE x CODE</p>
+                <h1>
+                    공간을 <span>설계</span>하고<br />
+                    로직으로 <span>구현</span>합니다.
+                </h1>
+                <p class="desc">
+                    건축 스튜디오의 문제를 코드로 해석하고, 코드 실험을 다시 공간 전략으로 연결하는
+                    하이브리드 디자이너 포지셔닝을 한 눈에 보여주는 데모 레이아웃입니다.
+                </p>
+
+                <div class="hero-metrics">
+                    <article>
+                        <p class="num">01</p>
+                        <p>Concept to Form</p>
+                    </article>
+                    <article>
+                        <p class="num">02</p>
+                        <p>Form to Logic</p>
+                    </article>
+                    <article>
+                        <p class="num">03</p>
+                        <p>Logic to Experience</p>
+                    </article>
+                </div>
+            </div>
+
+            <aside class="hero-right">
+                <div class="code-window">
+                    <div class="dots"><span></span><span></span><span></span></div>
+                    <pre><code>const designIntent = {
+  site: "urban void",
+  strategy: ["porosity", "light", "flow"],
+  tools: ["Rhino", "Grasshopper", "JS"]
+};
+
+function generateSpace(intent) {
+  return intent.strategy.map((rule) => ({
+    rule,
+    geometry: "adaptive"
+  }));
+}
+
+// Architecture that runs like software.</code></pre>
+                </div>
+            </aside>
+        </section>
+
+        <section class="workflow" id="workflow">
+            <div class="section-title">
+                <h2>Dual Workflow</h2>
+                <p>건축 프로세스와 개발 프로세스를 하나의 타임라인에서 병렬로 보여주기</p>
+            </div>
+
+            <div class="workflow-grid">
+                <article class="track arch-track">
+                    <h3>Architecture Track</h3>
+                    <ol>
+                        <li><strong>Site Reading</strong><span>맥락 분석 / 프로그램 리서치</span></li>
+                        <li><strong>Massing Logic</strong><span>형태/동선 전략 모델링</span></li>
+                        <li><strong>Spatial Narrative</strong><span>사용자 경험 시퀀스 설계</span></li>
+                    </ol>
+                </article>
+
+                <article class="track code-track">
+                    <h3>Code Track</h3>
+                    <ol>
+                        <li><strong>Problem Framing</strong><span>요구사항/시나리오 정의</span></li>
+                        <li><strong>Algorithm Build</strong><span>파라메트릭 규칙/프로토타입 구현</span></li>
+                        <li><strong>Iteration & Deploy</strong><span>테스트/개선/공유</span></li>
+                    </ol>
+                </article>
+            </div>
+        </section>
+
+        <section class="lab" id="lab">
+            <div class="section-title">
+                <h2>Interactive Positioning Lab</h2>
+                <p>슬라이더를 움직여 네 포지셔닝을 실시간으로 조합하고, 프로젝트 강조 포인트를 바꿔보는 인터랙션</p>
+            </div>
+            <div class="lab-grid">
+                <article class="lab-panel controls-panel">
+                    <div class="control-row">
+                        <label for="spatialRange">Spatial Impact</label>
+                        <input id="spatialRange" type="range" min="0" max="100" value="72" />
+                        <p class="value" id="spatialValue">72</p>
+                    </div>
+                    <div class="control-row">
+                        <label for="logicRange">Computational Rigor</label>
+                        <input id="logicRange" type="range" min="0" max="100" value="68" />
+                        <p class="value" id="logicValue">68</p>
+                    </div>
+                    <div class="control-row">
+                        <label for="storyMode">Narrative Mode</label>
+                        <select id="storyMode">
+                            <option value="studio">Studio Crit</option>
+                            <option value="startup">Startup/Product</option>
+                            <option value="research">Research Lab</option>
+                        </select>
+                    </div>
+
+                    <div class="synth-output">
+                        <p class="mono-tag">SYNTHESIZED POSITION</p>
+                        <h3 id="positionTitle">Spatial Systems Architect</h3>
+                        <p id="positionDesc">설계 의도를 데이터/규칙으로 변환해 형태와 경험을 동시에 최적화합니다.</p>
+                        <div class="chips" id="positionChips"></div>
+                    </div>
+                </article>
+
+                <article class="lab-panel viz-panel">
+                    <div class="viz-head">
+                        <p class="mono-tag">REAL-TIME BLUEPRINT</p>
+                        <p id="vizHint">Spatial weight 72 / Logic weight 68</p>
+                    </div>
+                    <canvas id="blendCanvas" width="740" height="340"
+                        aria-label="architecture-code blend visualization"></canvas>
+                </article>
+            </div>
+        </section>
+
+        <section class="proof" id="proof">
+            <div class="section-title">
+                <h2>Proof by Projects</h2>
+                <p>기존 에셋을 활용한 더미 카드: 인터랙티브 랩 값에 따라 강조 카드가 달라집니다</p>
+            </div>
+
+            <div class="proof-grid">
+                <article class="proof-card large" data-kind="spatial">
+                    <img src="assets/4-1render1.png" alt="Studio Render" loading="lazy" />
+                    <div class="overlay">
+                        <p class="label">Architecture Studio</p>
+                        <h3>Spatial Atmosphere Exploration</h3>
+                    </div>
+                </article>
+
+                <article class="proof-card" data-kind="logic">
+                    <img src="assets/deary_logo.png" alt="Deary" loading="lazy" />
+                    <div class="overlay">
+                        <p class="label">Code Product</p>
+                        <h3>UX + Front-end System</h3>
+                    </div>
+                </article>
+
+                <article class="proof-card" data-kind="hybrid">
+                    <img src="assets/EAconcept.png" alt="Concept" loading="lazy" />
+                    <div class="overlay">
+                        <p class="label">Competition</p>
+                        <h3>Narrative + Visual Engine</h3>
+                    </div>
+                </article>
+
+                <article class="proof-card bridge">
+                    <div>
+                        <p class="mono-tag">Bridge Statement</p>
+                        <h3>“I don’t just visualize ideas.<br />I operationalize them.”</h3>
+                        <p>도면/렌더 수준에서 끝내지 않고, 인터랙션과 규칙 시스템까지 설계한다는 메시지를 중앙에 배치.</p>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="cta" id="cta">
+            <h2>포지셔닝 한 줄 요약</h2>
+            <p>
+                <strong>Architectural Designer who prototypes with code</strong><br />
+                공간 전략을 알고리즘으로 번역해 빠르게 검증하고, 설계 의도를 디지털 경험으로 확장합니다.
+            </p>
+            <a href="mailto:jhp503@gmail.com" class="primary-btn">콜라보 제안하기</a>
+        </section>
+    </main>
+
+    <script src="js/architect-coder-layout.js" defer></script>
+</body>
+
+</html>
