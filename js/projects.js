@@ -4,7 +4,7 @@ const projectsData = {
             id: "Student Driven Village",
             title: "Student Driven Village",
             description: "A Multi-layered Residential Complex Mediated by Student Initiatives.",
-            thumbnail: "assets/4-1 thumbnail.png",
+            thumbnail: "assets/4-1 thumbnail.jpg",
             tags: ["Rhino", "D5 Render"],
             sections: [
                 {
@@ -18,7 +18,7 @@ const projectsData = {
                     type: "arch-concept",
                     leadText: "Student as a Social Medium for Intergenerational Harmony",
                     description: "This project addresses the social isolation inherent in Gated Communities of reconstructed apartment complexes in Gwacheon. We propose a new Open Community platform that utilizes the city’s high density of students as a primary social medium.",
-                    image: "assets/4-1concept.png"
+                    image: "assets/4-1concept.jpg"
                 },
                 {
                     type: "arch-plans",
@@ -29,19 +29,19 @@ const projectsData = {
                         { url: "assets/4-1fourthfloorplan.png", title: "4th Floor Plan" },
                         { url: "assets/4-1basementfloorplan.png", title: "Basement Floor Plan" },
                         { url: "assets/4-1typicalfloorplan.png", title: "Typical Floor Plan" },
-                        { url: "assets/4-1sectionperspective1.png", title: "Detail Section" },
-                        { url: "assets/4-1sectionperspective2.png", title: "Detail Section" },
-                        { url: "assets/4-1sectionperspective3.png", title: "Detail Section" },
+                        { url: "assets/4-1sectionperspective1.jpg", title: "Detail Section" },
+                        { url: "assets/4-1sectionperspective2.jpg", title: "Detail Section" },
+                        { url: "assets/4-1sectionperspective3.jpg", title: "Detail Section" },
                     ]
                 },
                 {
                     type: "arch-renders",
                     columns: 2,
                     images: [
-                        { url: "assets/4-1render1.png", title: "OVERALL VIEW" },
-                        { url: "assets/4-1render2.png", title: "ENTRANCE PERSPECTIVE" },
-                        { url: "assets/4-1render3.png", title: "INTERIOR ATRIUM" },
-                        { url: "assets/4-1render4.png", title: "NIGHT VISUALIZATION" }
+                        { url: "assets/4-1render1.jpg", title: "OVERALL VIEW" },
+                        { url: "assets/4-1render2.jpg", title: "ENTRANCE PERSPECTIVE" },
+                        { url: "assets/4-1render3.jpg", title: "INTERIOR ATRIUM" },
+                        { url: "assets/4-1render4.jpg", title: "NIGHT VISUALIZATION" }
                     ]
                 },
                 {
@@ -125,7 +125,7 @@ const projectsData = {
                     type: "arch-concept",
                     leadText: "ABRAXAS: The Anti-Museum",
                     description: "Inspired by Demian, this project reinterprets the museum as a restrictive shell to be broken rather than a space to be inhabited. By juxtaposing trauma and order through a unified medium of brick, it reveals that both contrasting worlds are parts of a single confined reality.",
-                    image: "assets/EMconcept.png"
+                    image: "assets/EMconcept.jpg"
                 },
                 {
                     type: "text-full",
@@ -152,12 +152,12 @@ Consequently, ABRAXAS is an "Anti-Museum." It is a space that succeeds only when
                     type: "arch-plans",
                     label: "DETAILS",
                     plans: [
-                        { url: "assets/EMpositivemain.png", title: "" },
-                        { url: "assets/EMnegativemain.png", title: "" },
-                        { url: "assets/EMpositive2.png", title: "" },
-                        { url: "assets/EMnegative2.png", title: "" },
-                        { url: "assets/EMpositive3.png", title: "" },
-                        { url: "assets/EMnegative3.png", title: "" }
+                        { url: "assets/EMpositivemain.jpg", title: "" },
+                        { url: "assets/EMnegativemain.jpg", title: "" },
+                        { url: "assets/EMpositive2.jpg", title: "" },
+                        { url: "assets/EMnegative2.jpg", title: "" },
+                        { url: "assets/EMpositive3.jpg", title: "" },
+                        { url: "assets/EMnegative3.jpg", title: "" }
                     ]
                 }
 

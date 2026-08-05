@@ -22,7 +22,12 @@ function initComputationalCanvas() {
         canvas.height = height;
     }
 
-    window.addEventListener('resize', resize);
+    // Debounce resize to avoid repeated canvas reallocation while dragging the window
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(resize, 150);
+    });
     resize();
 
     // Node object representing logical points
@@ -88,13 +93,14 @@ function initComputationalCanvas() {
             nodes[i].update();
             nodes[i].draw();
 
-            // Inter-node connections
+            // Inter-node connections (squared-distance check avoids sqrt for far pairs)
             for (let j = i + 1; j < nodes.length; j++) {
                 const dx = nodes[i].x - nodes[j].x;
                 const dy = nodes[i].y - nodes[j].y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
+                const distSq = dx * dx + dy * dy;
 
-                if (distance < 120) {
+                if (distSq < 14400) { // 120 * 120
+                    const distance = Math.sqrt(distSq);
                     ctx.beginPath();
                     // Original V1 base line opacity, matching V2 distance 120
                     const opacity = (1 - distance / 120) * 0.2;
@@ -110,10 +116,11 @@ function initComputationalCanvas() {
             if (mouse.x && mouse.y) {
                 const dx = nodes[i].x - mouse.x;
                 const dy = nodes[i].y - mouse.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
+                const distSq = dx * dx + dy * dy;
 
                 // Match V2 exactly: distance 120
-                if (distance < 120) {
+                if (distSq < 14400) {
+                    const distance = Math.sqrt(distSq);
                     ctx.beginPath();
                     // Blue tint for V1, but V2 opacity logic
                     const mouseOpacity = 1 - distance / 120;

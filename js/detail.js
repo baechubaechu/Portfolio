@@ -192,7 +192,7 @@ function createSectionHTML(section, project, index) {
                 if (section.media.type === 'video') {
                     mediaHTML = `<div class="video-mockup"><div class="video-container"><iframe src="${section.media.url}" frameborder="0" allowfullscreen></iframe></div></div>`;
                 } else {
-                    mediaHTML = `<div class="image-mockup"><img src="${section.media.url}" alt="${section.title}"></div>`;
+                    mediaHTML = `<div class="image-mockup"><img src="${section.media.url}" alt="${section.title}" loading="lazy" decoding="async"></div>`;
                 }
             }
             const splitBooklets = (section.booklets || []).map(book => `
@@ -240,7 +240,7 @@ function createSectionHTML(section, project, index) {
             `;
 
         case 'image-grid':
-            const gridImages = section.images.map(img => `<div class="grid-img-item"><img src="${img}" alt="Gallery image"></div>`).join('');
+            const gridImages = section.images.map(img => `<div class="grid-img-item"><img src="${img}" alt="Gallery image" loading="lazy" decoding="async"></div>`).join('');
             return `
                 <section class="detail-section ${animationClass}">
                     ${section.title ? `<h2>${section.title}</h2>` : ''}
@@ -285,7 +285,7 @@ function createSectionHTML(section, project, index) {
                             <p>${section.description || ''}</p>
                         </div>
                         <div class="arch-visual">
-                            <img src="${section.image}" alt="Concept Visual" class="zoom-image">
+                            <img src="${section.image}" alt="Concept Visual" class="zoom-image" decoding="async">
                         </div>
                     </div>
                 </section>
@@ -298,7 +298,7 @@ function createSectionHTML(section, project, index) {
                     return `
                         <div class="arch-plan-item arch-pdf-grid-item">
                             <div class="pdf-container">
-                                <iframe src="${plan.url}" width="100%" height="500px" style="border:none; background: white;"></iframe>
+                                <iframe src="${plan.url}" width="100%" height="500px" style="border:none; background: white;" loading="lazy"></iframe>
                             </div>
                             <div class="plan-info">
                                 ${plan.title ? `<h4 class="plan-title">${plan.title}</h4>` : ''}
@@ -310,7 +310,7 @@ function createSectionHTML(section, project, index) {
                 return `
                     <div class="arch-plan-item">
                         <a href="${plan.url}" target="_blank" class="plan-image-link" title="Click to view full image">
-                            <img src="${plan.url}" alt="${plan.title || 'Architectural Plan'}" class="zoom-image">
+                            <img src="${plan.url}" alt="${plan.title || 'Architectural Plan'}" class="zoom-image" loading="lazy" decoding="async">
                         </a>
                         ${plan.title ? `<div class="plan-info"><h4 class="plan-title">${plan.title}</h4></div>` : ''}
                     </div>
@@ -335,7 +335,7 @@ function createSectionHTML(section, project, index) {
                 const url = typeof img === 'string' ? img : img.url;
                 return `
                     <div class="arch-gallery-item">
-                        <img src="${url}" alt="Visualization" class="gallery-image">
+                        <img src="${url}" alt="Visualization" class="gallery-image" loading="lazy" decoding="async">
                     </div>
                 `;
             }).join('');
@@ -354,7 +354,7 @@ function createSectionHTML(section, project, index) {
                 const url = typeof img === 'string' ? img : img.url;
                 return `
                     <div class="arch-gallery-item">
-                        <img src="${url}" alt="Physical Model" class="gallery-image">
+                        <img src="${url}" alt="Physical Model" class="gallery-image" loading="lazy" decoding="async">
                     </div>
                 `;
             }).join('');
@@ -372,7 +372,7 @@ function createSectionHTML(section, project, index) {
                 <section class="detail-section arch-section ${animationClass}">
                     <span class="arch-label">DOCUMENTATION</span>
                     <div class="arch-pdf-view">
-                        <iframe src="${section.url}" width="100%" height="800px" style="border: none; border-radius: 8px;"></iframe>
+                        <iframe src="${section.url}" width="100%" height="800px" style="border: none; border-radius: 8px;" loading="lazy"></iframe>
                         <div class="pdf-fallback-link">
                             <p>Can't see the PDF? <a href="${section.url}" target="_blank">View Original Document</a></p>
                         </div>
@@ -385,7 +385,7 @@ function createSectionHTML(section, project, index) {
                 <section class="detail-section arch-section ${animationClass}">
                     <span class="arch-label">FINAL PANEL</span>
                     <div class="arch-panel-view">
-                        <img src="${section.image}" alt="Final Panel" class="zoom-image full-width">
+                        <img src="${section.image}" alt="Final Panel" class="zoom-image full-width" loading="lazy" decoding="async">
                         <div class="view-hint-overlay">Zoom to View Details</div>
                     </div>
                 </section>
@@ -438,6 +438,7 @@ function createSectionHTML(section, project, index) {
                         <iframe
                             src="${embedUrl}?rel=0&modestbranding=1"
                             title="${section.title || 'Project Video'}"
+                            loading="lazy"
                             frameborder="0"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                             allowfullscreen>
@@ -502,7 +503,7 @@ function createSectionHTML(section, project, index) {
                 const caption = typeof shot === 'object' ? shot.caption : '';
                 return `
                     <div class="dev-screenshot-item">
-                        <img src="${url}" alt="${caption || 'UI Screenshot'}">
+                        <img src="${url}" alt="${caption || 'UI Screenshot'}" loading="lazy" decoding="async">
                         ${caption ? `<p class="screenshot-caption">${caption}</p>` : ''}
                     </div>
                 `;
@@ -525,7 +526,7 @@ function createSectionHTML(section, project, index) {
                 const caption = typeof photo === 'object' ? photo.caption : '';
                 return `
                     <div class="exhibition-photo-item">
-                        <img src="${url}" alt="${caption || 'Exhibition photo'}">
+                        <img src="${url}" alt="${caption || 'Exhibition photo'}" loading="lazy" decoding="async">
                         ${caption ? `<p class="exhibition-caption">${caption}</p>` : ''}
                     </div>
                 `;
