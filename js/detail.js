@@ -2,9 +2,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
     let projectId = urlParams.get('id');
 
+    // Hash fallback (some static servers strip query strings on clean URLs)
+    if (!projectId && window.location.hash) {
+        const raw = window.location.hash.replace(/^#/, '');
+        if (raw.startsWith('id=')) {
+            projectId = decodeURIComponent(raw.slice(3));
+        } else {
+            projectId = decodeURIComponent(raw);
+        }
+    }
+
     // Fallback to localStorage if the URL parameter was stripped by a server redirect
     if (!projectId) {
-        projectId = localStorage.getItem('currentProjectId');
+        try {
+            projectId = localStorage.getItem('currentProjectId');
+        } catch (_) { /* ignore */ }
     }
 
     if (!projectId) {
@@ -24,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
+    document.title = `${project.title} | Jihun Park`;
     renderModularProject(project);
 });
 

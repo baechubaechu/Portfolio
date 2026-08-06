@@ -6,32 +6,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project Details | Jihun Park</title>
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/viewfinder.css?v=1.5">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
-<body class="detail-page">
+<body class="detail-page viewfinder-detail">
+    <div class="vf-bokeh-field" aria-hidden="true"></div>
     <div class="grid-background"></div>
     <canvas id="computational-canvas"></canvas>
 
-    <nav class="navbar">
-        <a href="index.html" class="logo">Jihun_Park<span>()</span></a>
-        <div class="nav-links">
-            <a href="index.html" class="btn-back">← Back to Portfolio</a>
-        </div>
-    </nav>
+    <div class="vf-detail-shell">
+        <header class="vf-detail-topbar">
+            <a href="index.html" class="logo">Jihun_Park<span>()</span></a>
+            <div class="vf-lens-labels" aria-hidden="true">
+                <span class="is-active">SPATIAL</span>
+                <span>SYSTEM</span>
+            </div>
+            <a href="index.html" class="vf-detail-back">← Close viewfinder</a>
+        </header>
 
-    <main class="project-detail-container" id="detail-card-container">
-        <!-- Content will be dynamically inserted here by detail.js -->
-        <div style="padding: 10rem 0; text-align: center;" id="loading-state">
-            <p class="mono-text">Fetching project data...</p>
+        <div class="vf-detail-body">
+            <main class="project-detail-container" id="detail-card-container">
+                <div style="padding: 6rem 0; text-align: center;" id="loading-state">
+                    <p class="mono-text">Focusing…</p>
+                </div>
+            </main>
         </div>
-    </main>
+    </div>
 
-    <script src="js/projects.js?v=3.1"></script>
-    <script src="js/detail.js?v=3.1"></script>
-    <script src="js/script.js?v=3.1"></script> <!-- For the background canvas and scroll effects -->
+    <script src="js/projects.js?v=3.2"></script>
+    <script src="js/detail.js?v=4.1"></script>
+    <script src="js/script.js?v=4.2"></script>
 </body>
 
 </html>

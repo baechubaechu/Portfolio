@@ -405,6 +405,29 @@ function deformSphere(emotionScore) {
                     booklets: []
                 }
             ]
+        },
+        {
+            id: "layout-dummy",
+            title: "Untitled Study",
+            description: "Dummy card to complete the hexagonal field layout.",
+            thumbnail: "",
+            tags: ["WIP", "Placeholder"],
+            sections: [
+                {
+                    type: "hero-meta",
+                    subtitle: "Placeholder",
+                    category: "Other / Draft",
+                    role: "—",
+                    timeline: "—"
+                },
+                {
+                    type: "split-content",
+                    title: "Draft",
+                    leadText: "Content coming soon.",
+                    description: "This is a temporary placeholder project used to fill the 2-3-2 field layout.",
+                    media: { type: "image", url: "" }
+                }
+            ]
         }
     ]
 };
