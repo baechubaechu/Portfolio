@@ -99,7 +99,7 @@ export const CONFIG = {
             strength: 0.55,
         },
         obstacles: {
-            padding: 14,  // keep-out margin around UI blocks (title, panel, legend)
+            padding: 14,  // keep-out margin around optional UI rects inside the stage
             strength: 0.7,
         },
         boundary: {
@@ -122,7 +122,7 @@ export const CONFIG = {
     },
 
     stage: {
-        padding: { top: 64, right: 80, bottom: 56, left: 80 },
+        padding: { top: 48, right: 52, bottom: 48, left: 52 },
     },
 
     /* ── Overrides for narrow stages ── */

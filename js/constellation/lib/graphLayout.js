@@ -12,7 +12,8 @@
  *   spread     on non-square stages the cloud is eased along the long axis
  *   collide    node discs never overlap
  *   labels     label boxes are pushed apart (and away from other discs)
- *   obstacles  nodes stay out of UI keep-out rectangles (title, panel, legend)
+ *   obstacles  optional keep-out rectangles inside the stage (unused while
+ *              chrome lives outside the figure)
  *   boundary   nodes + their labels stay inside the padded stage
  *   center     the whole cloud is gently pulled to the stage centre
  *

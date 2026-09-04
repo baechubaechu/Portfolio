@@ -35,6 +35,12 @@
     --c-preview-opacity: 0.55;
 
     position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas:
+        "title title"
+        "stage rail";
     height: calc(100svh - 80px);
     min-height: 620px;
     background: var(--c-bg);
@@ -44,44 +50,49 @@
     -webkit-font-smoothing: antialiased;
 }
 
-.c-hero.has-custom-cursor,
-.c-hero.has-custom-cursor * {
+.c-hero__stage.has-custom-cursor,
+.c-hero__stage.has-custom-cursor * {
     cursor: none !important;
 }
 
-/* ── Stage ─────────────────────────────────────────────────────────────── */
+/* ── Stage — exclusive figure; no chrome overlays it ───────────────────── */
 
 .c-hero__stage {
-    position: absolute;
-    inset: 0;
+    grid-area: stage;
+    position: relative;
+    min-height: 0;
+    isolation: isolate;
     transition: opacity 260ms var(--c-ease);
+    /* four crop marks, drawn on the figure itself */
+    --c-mark: var(--c-hair-strong);
+    background-image:
+        linear-gradient(var(--c-mark), var(--c-mark)),
+        linear-gradient(var(--c-mark), var(--c-mark)),
+        linear-gradient(var(--c-mark), var(--c-mark)),
+        linear-gradient(var(--c-mark), var(--c-mark)),
+        linear-gradient(var(--c-mark), var(--c-mark)),
+        linear-gradient(var(--c-mark), var(--c-mark)),
+        linear-gradient(var(--c-mark), var(--c-mark)),
+        linear-gradient(var(--c-mark), var(--c-mark));
+    background-size:
+        12px 1px, 1px 12px,
+        12px 1px, 1px 12px,
+        12px 1px, 1px 12px,
+        12px 1px, 1px 12px;
+    background-position:
+        left 18px top 18px, left 18px top 18px,
+        right 18px top 18px, right 18px top 18px,
+        left 18px bottom 18px, left 18px bottom 18px,
+        right 18px bottom 18px, right 18px bottom 18px;
+    background-repeat: no-repeat;
 }
 
 .c-svg {
     display: block;
     width: 100%;
     height: 100%;
-    overflow: visible;
+    overflow: hidden;
 }
-
-/* corner crop marks — the map is a figure */
-.c-hero__stage::before,
-.c-hero__stage::after,
-.c-hero::before,
-.c-hero::after {
-    content: '';
-    position: absolute;
-    width: 12px;
-    height: 12px;
-    border: 0 solid var(--c-hair-strong);
-    pointer-events: none;
-    z-index: 2;
-}
-
-.c-hero__stage::before { top: 18px; left: 18px; border-top-width: 1px; border-left-width: 1px; }
-.c-hero__stage::after  { bottom: 18px; right: 18px; border-bottom-width: 1px; border-right-width: 1px; }
-.c-hero::before        { top: 18px; right: 18px; border-top-width: 1px; border-right-width: 1px; }
-.c-hero::after         { bottom: 18px; left: 18px; border-bottom-width: 1px; border-left-width: 1px; }
 
 /* ── Edges ─────────────────────────────────────────────────────────────── */
 
@@ -270,14 +281,12 @@
     opacity: 0.85;
 }
 
-/* ── Title block (top-left) ────────────────────────────────────────────── */
+/* ── Title block (above the figure) ────────────────────────────────────── */
 
 .c-hero__title {
-    position: absolute;
-    top: 40px;
-    left: 5%;
-    z-index: 3;
-    pointer-events: none;
+    grid-area: title;
+    padding: 20px 28px 16px;
+    border-bottom: 1px solid var(--c-hair);
 }
 
 .c-hero__name {
@@ -308,18 +317,25 @@
     color: var(--c-ink-2);
 }
 
-/* ── Info panel (bottom-left) ──────────────────────────────────────────── */
+/* ── Rail (panel + legend, beside the figure) ──────────────────────────── */
 
-.c-hero__panel {
-    position: absolute;
-    left: 5%;
-    bottom: 40px;
-    z-index: 3;
-    width: 340px;
-    min-height: 260px;
+.c-hero__rail {
+    grid-area: rail;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
+    min-height: 0;
+    border-left: 1px solid var(--c-hair);
+}
+
+.c-hero__panel {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: auto;
+    padding: 28px 24px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow: auto;
     transition: opacity 260ms var(--c-ease);
 }
 
@@ -475,21 +491,18 @@
     border-bottom-color: var(--c-hair);
 }
 
-/* ── Meta (bottom-right) ───────────────────────────────────────────────── */
+/* ── Meta (bottom of the rail) ─────────────────────────────────────────── */
 
 .c-hero__meta {
-    position: absolute;
-    right: 5%;
-    bottom: 40px;
-    z-index: 3;
+    flex: 0 0 auto;
     /* neutralise the global <footer> styles from styles.css */
-    padding: 0;
+    padding: 0 24px 24px;
     border: 0;
     background: none;
     width: auto;
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
+    align-items: flex-start;
     gap: 12px;
     font-family: var(--c-font-mono);
     font-size: 10px;
@@ -497,7 +510,7 @@
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--c-ink-3);
-    text-align: right;
+    text-align: left;
 }
 
 .c-legend {
@@ -616,8 +629,7 @@
 /* ── Leaving (→ detail page) ───────────────────────────────────────────── */
 
 .c-hero.is-leaving .c-hero__stage,
-.c-hero.is-leaving .c-hero__panel,
-.c-hero.is-leaving .c-hero__meta,
+.c-hero.is-leaving .c-hero__rail,
 .c-hero.is-leaving .c-hero__title {
     opacity: 0;
 }
@@ -637,11 +649,16 @@
     .c-hero {
         height: calc(100svh - 72px);
         min-height: 560px;
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: auto minmax(0, 1fr) auto;
+        grid-template-areas:
+            "title"
+            "stage"
+            "rail";
     }
 
     .c-hero__title {
-        top: 22px;
-        left: 20px;
+        padding: 16px 20px 12px;
     }
 
     .c-hero__tagline {
@@ -649,14 +666,15 @@
         margin-top: 8px;
     }
 
+    .c-hero__rail {
+        border-left: 0;
+        border-top: 1px solid var(--c-hair);
+    }
+
     .c-hero__panel {
-        left: 0;
-        right: 0;
-        bottom: 0;
-        width: auto;
-        min-height: 168px;
-        padding: 28px 20px 20px;
-        background: linear-gradient(to top, var(--c-bg) 72%, rgba(247, 246, 242, 0));
+        flex: 0 0 auto;
+        padding: 16px 20px 18px;
+        overflow: visible;
     }
 
     .c-panel__lead { font-size: 18px; }

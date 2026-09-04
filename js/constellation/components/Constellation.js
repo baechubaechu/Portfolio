@@ -137,8 +137,8 @@ export async function mountConstellation(root, portfolio) {
         })
         : null;
 
-    const cursor = hasFinePointer() ? createCursor(root) : null;
-    root.classList.toggle("has-custom-cursor", !!cursor);
+    const cursor = hasFinePointer() ? createCursor(stageEl) : null;
+    stageEl.classList.toggle("has-custom-cursor", !!cursor);
 
     function describe(n) {
         const sel = n.id === selectedId;
