@@ -6,14 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jihun Park | Architecture & Computational Design</title>
     <meta name="description" content="Portfolio of Jihun Park, Architecture and Computational Design student.">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/constellation.css">
 </head>
 
 <body>
-    <div class="grid-background"></div>
-    <canvas id="computational-canvas"></canvas>
-
     <header class="navbar">
         <a href="index.html" class="logo">Jihun_Park<span>()</span></a>
         <nav>
@@ -28,60 +28,33 @@
     </header>
 
     <main>
-        <section id="hero" class="hero">
-            <div class="hero-content fade-in">
-                <span class="mono-tag">// Architecture Student</span>
-                <h1>Designing the Future<br>with <span class="highlight">Logic & Space</span></h1>
-                <p>Hi, I'm <strong>박지훈 (Jihun Park)</strong>. I explore the intersection of architectural spaces and
-                    computational design to build innovative environments and digital tools.</p>
-                <div class="tools-marquee-container">
-                    <div class="tools-marquee-track">
-                        <span>Rhino</span> <span class="dot">•</span>
-                        <span>Grasshopper</span> <span class="dot">•</span>
-                        <span>Sketchup</span> <span class="dot">•</span>
-                        <span>Blender</span> <span class="dot">•</span>
-                        <span>AutoCad</span> <span class="dot">•</span>
-                        <span>Revit</span> <span class="dot">•</span>
-                        <span>Vray</span> <span class="dot">•</span>
-                        <span>Enscape</span> <span class="dot">•</span>
-                        <span>D5</span> <span class="dot">•</span>
-                        <span>Twinmotion</span> <span class="dot">•</span>
-                        <span>Lumion</span> <span class="dot">•</span>
-                        <span>Adobes</span> <span class="dot">•</span>
-                        <span>Figma</span> <span class="dot">•</span>
-                        <!-- Duplicate for infinite scroll -->
-                        <span>Rhino</span> <span class="dot">•</span>
-                        <span>Grasshopper</span> <span class="dot">•</span>
-                        <span>Sketchup</span> <span class="dot">•</span>
-                        <span>Blender</span> <span class="dot">•</span>
-                        <span>AutoCad</span> <span class="dot">•</span>
-                        <span>Revit</span> <span class="dot">•</span>
-                        <span>Vray</span> <span class="dot">•</span>
-                        <span>Enscape</span> <span class="dot">•</span>
-                        <span>D5</span> <span class="dot">•</span>
-                        <span>Twinmotion</span> <span class="dot">•</span>
-                        <span>Lumion</span> <span class="dot">•</span>
-                        <span>Adobes</span> <span class="dot">•</span>
-                        <span>Figma</span> <span class="dot">•</span>
-                    </div>
-                </div>
-                <div class="hero-buttons">
-                    <a href="#school-works" class="btn-primary">View Projects</a>
-                    <a href="#other-works" class="btn-secondary">View Code</a>
-                </div>
+        <!--
+            Constellation hero.
+            Nodes / relations come from js/constellation/data/portfolio.js;
+            positions are computed by a force-directed layout at runtime.
+            Elements marked data-c-obstacle are keep-out zones for the layout.
+        -->
+        <section id="hero" class="c-hero" data-constellation aria-label="Relational map of projects and attributes">
+            <div class="c-hero__stage" data-c-stage>
+                <svg class="c-svg" data-c-svg xmlns="http://www.w3.org/2000/svg" role="group"
+                    aria-label="Projects and attributes. Use Tab to move between nodes, Enter to select."></svg>
             </div>
-            <div class="hero-visual fade-in delay-1">
-                <div class="cube-wrapper">
-                    <div class="cube">
-                        <div class="face front"></div>
-                        <div class="face back"></div>
-                        <div class="face right"></div>
-                        <div class="face left"></div>
-                        <div class="face top"></div>
-                        <div class="face bottom"></div>
-                    </div>
-                </div>
-            </div>
+
+            <header class="c-hero__title" data-c-obstacle>
+                <p class="c-hero__name">Jihun Park <span>박지훈</span></p>
+                <h1 class="c-hero__tagline">Architecture &amp; Computational Design</h1>
+            </header>
+
+            <aside class="c-hero__panel" data-c-panel data-c-obstacle></aside>
+
+            <footer class="c-hero__meta" data-c-obstacle>
+                <span class="c-legend">
+                    <span><i class="c-legend__dot c-legend__dot--project"></i>Project</span>
+                    <span><i class="c-legend__dot c-legend__dot--attribute"></i>Attribute</span>
+                </span>
+                <span class="c-fig" data-c-fig>Fig. 01 — Relational map</span>
+                <a class="c-hero__scroll" href="#school-works" data-cursor-label="Scroll">Index ↓</a>
+            </footer>
         </section>
 
         <section id="school-works" class="portfolio-section">
@@ -146,6 +119,7 @@
 
     <script src="js/projects.js?v=3.0"></script>
     <script src="js/script.js?v=3.0"></script>
+    <script type="module" src="js/constellation/index.js?v=1.0"></script>
 </body>
 
 </html>
