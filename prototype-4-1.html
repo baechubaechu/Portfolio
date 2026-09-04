@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4-1 Project Prototype | Core & Scaffolding</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;500&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f111a;
+            --blueprint-line: rgba(74, 144, 226, 0.2);
+            --core-bg: #1a1d27;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+        }
+
+        /* The System Scaffolding (Canvas) */
+        #scaffold-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* The Human Core (Design) */
+        .core-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            width: 800px;
+            max-width: 90vw;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .core-image-wrapper {
+            position: relative;
+            width: 100%;
+            height: 450px;
+            background: var(--core-bg);
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            /* This border represents the absolute boundary of human design */
+            border: 1px solid rgba(255,255,255,0.1); 
+            cursor: pointer;
+        }
+
+        .core-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .core-image-wrapper:hover .core-image {
+            transform: scale(1.02);
+        }
+
+        .core-text {
+            text-align: center;
+        }
+
+        .core-title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin: 0 0 10px 0;
+            letter-spacing: -0.5px;
+        }
+
+        .core-desc {
+            font-size: 1rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* UI Overlay for interaction hint */
+        .hint-text {
+            position: absolute;
+            bottom: 40px;
+            width: 100%;
+            text-align: center;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--accent);
+            opacity: 0.7;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        /* System Nodes (HTML overlay) */
+        .system-node {
+            position: absolute;
+            background: rgba(15, 17, 26, 0.9);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 6px 12px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.75rem;
+            border-radius: 2px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            z-index: 20;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="scaffold-canvas"></canvas>
+
+    <div class="core-container" id="core-element">
+        <div class="core-image-wrapper" id="core-trigger">
+            <!-- Loading 4-1 render image -->
+            <img src="assets/4-1render1.png" alt="Student Driven Village" class="core-image" onerror="this.src='https://via.placeholder.com/800x450/1a1d27/e2e8f0?text=4-1+Project+Render'">
+        </div>
+        <div class="core-text">
+            <h1 class="core-title">Student Driven Village</h1>
+            <p class="core-desc">A Multi-layered Residential Complex Mediated by Student Initiatives.<br>This central image represents the immutable Human Core.</p>
+        </div>
+    </div>
+
+    <div class="hint-text">[ HOVER OVER THE IMAGE TO ACTIVATE SYSTEM SCAFFOLDING ]</div>
+
+    <!-- Floating System Nodes -->
+    <div class="system-node" id="node-1" style="top: 20%; left: 15%;">[SYS] Density: Optimal</div>
+    <div class="system-node" id="node-2" style="top: 60%; left: 10%;">[SYS] Sunlight Exp: 78%</div>
+    <div class="system-node" id="node-3" style="top: 30%; right: 15%;">[SYS] Structural Load: Safe</div>
+    <div class="system-node" id="node-4" style="top: 70%; right: 12%;">[SYS] Parametric Grid: Active</div>
+
+    <script>
+        const canvas = document.getElementById('scaffold-canvas');
+        const ctx = canvas.getContext('2d');
+        const coreTrigger = document.getElementById('core-trigger');
+        const nodes = document.querySelectorAll('.system-node');
+
+        let width, height;
+        let particles = [];
+        let isHovered = false;
+        let coreRect = {};
+
+        // Configuration
+        const NUM_PARTICLES = 150;
+        const ATTRACTION_SPEED = 0.1;
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            updateCoreRect();
+        }
+
+        function updateCoreRect() {
+            const rect = coreTrigger.getBoundingClientRect();
+            coreRect = {
+                x: rect.left,
+                y: rect.top,
+                w: rect.width,
+                h: rect.height,
+                centerX: rect.left + rect.width / 2,
+                centerY: rect.top + rect.height / 2
+            };
+        }
+
+        class Particle {
+            constructor() {
+                this.reset();
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+            }
+
+            reset() {
+                this.baseX = Math.random() * width;
+                this.baseY = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 1;
+                this.vy = (Math.random() - 0.5) * 1;
+                
+                // Assign a target position on the perimeter of the Core
+                // 0: top, 1: right, 2: bottom, 3: left
+                const edge = Math.floor(Math.random() * 4);
+                let targetX, targetY;
+                const offset = 20; // Distance from the image
+
+                if (edge === 0) {
+                    targetX = Math.random() * coreRect.w + coreRect.x;
+                    targetY = coreRect.y - offset;
+                } else if (edge === 1) {
+                    targetX = coreRect.x + coreRect.w + offset;
+                    targetY = Math.random() * coreRect.h + coreRect.y;
+                } else if (edge === 2) {
+                    targetX = Math.random() * coreRect.w + coreRect.x;
+                    targetY = coreRect.y + coreRect.h + offset;
+                } else {
+                    targetX = coreRect.x - offset;
+                    targetY = Math.random() * coreRect.h + coreRect.y;
+                }
+                
+                this.targetX = targetX;
+                this.targetY = targetY;
+                // Save original target for snapping
+                this.origTargetX = targetX;
+                this.origTargetY = targetY;
+            }
+
+            update() {
+                if (isHovered) {
+                    // Move towards target (Scaffolding / Structure)
+                    this.x += (this.targetX - this.x) * ATTRACTION_SPEED;
+                    this.y += (this.targetY - this.y) * ATTRACTION_SPEED;
+                } else {
+                    // Brownian motion / Uncertainty
+                    this.x += this.vx;
+                    this.y += this.vy;
+
+                    // Bounce off walls
+                    if (this.x < 0 || this.x > width) this.vx *= -1;
+                    if (this.y < 0 || this.y > height) this.vy *= -1;
+                }
+            }
+
+            draw() {
+                ctx.fillStyle = isHovered ? '#38bdf8' : '#94a3b8';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, isHovered ? 2 : 1.5, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function init() {
+            window.addEventListener('resize', resize);
+            resize();
+
+            for (let i = 0; i < NUM_PARTICLES; i++) {
+                particles.push(new Particle());
+            }
+
+            coreTrigger.addEventListener('mouseenter', () => {
+                isHovered = true;
+                updateCoreRect();
+                particles.forEach(p => p.reset()); 
+                nodes.forEach(node => node.style.opacity = '1');
+            });
+
+            coreTrigger.addEventListener('mouseleave', () => {
+                isHovered = false;
+                // Give them a little push outwards when breaking structure
+                particles.forEach(p => {
+                    p.vx = (Math.random() - 0.5) * 4;
+                    p.vy = (Math.random() - 0.5) * 4;
+                });
+                nodes.forEach(node => node.style.opacity = '0');
+            });
+
+            animate();
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+
+            // Draw blueprint grid background if hovered
+            if (isHovered) {
+                ctx.strokeStyle = 'rgba(56, 189, 248, 0.1)';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                // Draw some structural lines originating from the core
+                for (let i = 0; i < 5; i++) {
+                    ctx.moveTo(coreRect.x, coreRect.y + (coreRect.h / 5) * i);
+                    ctx.lineTo(0, coreRect.y + (coreRect.h / 5) * i);
+                    
+                    ctx.moveTo(coreRect.x + coreRect.w, coreRect.y + (coreRect.h / 5) * i);
+                    ctx.lineTo(width, coreRect.y + (coreRect.h / 5) * i);
+                }
+                for (let i = 0; i < 5; i++) {
+                    ctx.moveTo(coreRect.x + (coreRect.w / 5) * i, coreRect.y);
+                    ctx.lineTo(coreRect.x + (coreRect.w / 5) * i, 0);
+
+                    ctx.moveTo(coreRect.x + (coreRect.w / 5) * i, coreRect.y + coreRect.h);
+                    ctx.lineTo(coreRect.x + (coreRect.w / 5) * i, height);
+                }
+                ctx.stroke();
+            }
+
+            // Draw particles and lines between them
+            particles.forEach(p => p.update());
+
+            if (isHovered) {
+                // Connect particles to form scaffolding
+                ctx.strokeStyle = 'rgba(56, 189, 248, 0.3)';
+                ctx.lineWidth = 0.5;
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const dist = Math.sqrt(dx*dx + dy*dy);
+                        
+                        if (dist < 40) {
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+            }
+
+            particles.forEach(p => p.draw());
+
+            requestAnimationFrame(animate);
+        }
+
+        // Delay init slightly to ensure fonts/images render for accurate bounding box
+        window.onload = () => {
+            setTimeout(init, 100);
+        };
+    </script>
+</body>
+</html>
