@@ -194,12 +194,17 @@ function renderProjects() {
         // Use a standard <a> tag overlay to make the whole card clickable properly 
         // without JS, while allowing inner buttons to remain clickable by using z-index
         const detailUrl = `project-detail.html?id=${project.id}`;
+        const cardLabel = `${project.title} — View project details`
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
         // Note: For Vercel/serve clean URLs, project-detail?id=... also works, but .html is safer locally
 
         cardHTML = `
             <div class="project-card fade-in-scroll ${isOtherWorks ? 'code-card' : ''}" style="position: relative;">
                 <!-- Full card clickable link with localStorage fallback -->
-                <a href="${detailUrl}" onclick="localStorage.setItem('currentProjectId', '${project.id}');" style="position: absolute; inset: 0; z-index: 1; text-decoration: none;"></a>
+                <a href="${detailUrl}" aria-label="${cardLabel}" onclick="localStorage.setItem('currentProjectId', '${project.id}');" style="position: absolute; inset: 0; z-index: 1; text-decoration: none;"></a>
                 
                 <div style="position: relative; z-index: 0; pointer-events: none;">
                     ${imageContent}

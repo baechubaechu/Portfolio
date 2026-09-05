@@ -615,10 +615,11 @@ function showError(message) {
         container.innerHTML = `
             <div style="padding: 10rem 0; text-align: center;">
                 <h2 style="color: var(--accent);">Oops!</h2>
-                <p class="mono-text">${message}</p>
+                <p class="mono-text" data-error-message></p>
                 <a href="index.html" class="btn-primary" style="margin-top: 2rem;">Return Home</a>
             </div>
         `;
+        container.querySelector('[data-error-message]').textContent = message;
     }
 }
 
