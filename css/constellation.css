@@ -1,19 +1,20 @@
 /* =========================================================================
    CONSTELLATION — relational map of the portfolio
    -------------------------------------------------------------------------
-   Diagrammatic, architectural. Warm paper, ink hairlines, restrained type.
+   Diagrammatic, architectural. Shared site palette, restrained type.
    All colour / opacity / timing tokens live on .c-hero so the whole
    system can be re-tuned from one place.
    ========================================================================= */
 
 .c-hero {
     /* palette */
-    --c-bg: #f7f6f2;
-    --c-ink: #161615;
-    --c-ink-2: #6b6b66;
-    --c-ink-3: #a3a39d;
-    --c-hair: rgba(22, 22, 21, 0.16);
-    --c-hair-strong: rgba(22, 22, 21, 0.38);
+    --c-bg: var(--bg-color);
+    --c-ink: var(--text-primary);
+    --c-ink-2: var(--text-secondary);
+    --c-ink-3: #9ca3af;
+    --c-hair: var(--border-color);
+    --c-hair-strong: #9ca3af;
+    --c-accent: var(--accent);
 
     /* type */
     --c-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -37,9 +38,8 @@
     position: relative;
     display: grid;
     grid-template-columns: minmax(0, 1fr) 300px;
-    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
     grid-template-areas:
-        "title title"
         "stage rail";
     height: calc(100svh - 80px);
     min-height: 620px;
@@ -98,7 +98,7 @@
 
 .c-edge line {
     fill: none;
-    stroke: var(--c-ink);
+    stroke: var(--c-accent);
     stroke-width: 1;
     stroke-linecap: butt;
     pointer-events: none;
@@ -128,6 +128,40 @@
     transition: stroke-dashoffset var(--c-draw-duration) var(--c-ease) var(--c-delay, 0ms);
 }
 
+/* A short, low-opacity signal travels outward during idle hints. */
+.c-edge__pulse {
+    opacity: 0;
+    stroke-dasharray: 0.16 1;
+    stroke-dashoffset: 0.16;
+}
+
+.c-edge.is-idle-pulse .c-edge__pulse {
+    animation: c-signal-travel var(--c-pulse-travel) linear var(--c-pulse-delay, 0ms) both;
+}
+
+@keyframes c-signal-travel {
+    0% { stroke-dashoffset: 0.16; opacity: 0; }
+    18% { opacity: 0.38; }
+    72% { opacity: 0.32; }
+    100% { stroke-dashoffset: -1; opacity: 0; }
+}
+
+.c-node.is-idle-pulse .c-node__dot {
+    animation: c-signal-dot var(--c-pulse-glow) ease-in-out var(--c-pulse-delay, 0ms) both;
+}
+
+.c-node--attribute.is-idle-pulse .c-node__label {
+    animation: c-signal-label var(--c-pulse-glow) ease-in-out var(--c-pulse-delay, 0ms) both;
+}
+
+@keyframes c-signal-dot {
+    45% { fill: var(--c-accent); transform: scale(1.15); }
+}
+
+@keyframes c-signal-label {
+    45% { opacity: 0.75; }
+}
+
 /* ── Nodes ─────────────────────────────────────────────────────────────── */
 
 .c-node {
@@ -153,7 +187,7 @@
 }
 
 .c-node:focus-visible .c-node__hit {
-    stroke: var(--c-ink);
+    stroke: var(--c-accent);
     stroke-width: 1;
     stroke-dasharray: 2 3;
 }
@@ -180,17 +214,24 @@
 /* activated attributes fill in */
 .c-node--attribute.is-linked .c-node__dot,
 .c-node--attribute.is-focus .c-node__dot {
-    fill: var(--c-ink);
+    fill: var(--c-accent);
+    stroke: var(--c-accent);
     transition-delay: var(--c-delay, 0ms);
 }
 
 .c-node.is-hover-focus .c-node__dot { transform: scale(1.35); }
 .c-node.is-focus .c-node__dot       { transform: scale(1.5); }
 
+.c-node--project.is-focus .c-node__dot,
+.c-node--project.is-linked .c-node__dot,
+.c-node--project.is-hover-focus .c-node__dot {
+    fill: var(--c-accent);
+}
+
 /* hairline ring drawn around the selected node */
 .c-node__ring {
     fill: none;
-    stroke: var(--c-ink);
+    stroke: var(--c-accent);
     stroke-width: 1;
     stroke-dasharray: 1;
     stroke-dashoffset: 1;
@@ -256,6 +297,7 @@
 }
 
 .c-node.is-focus .c-node__label {
+    fill: var(--c-accent);
     opacity: 1;
 }
 
@@ -279,42 +321,6 @@
 .c-hero__stage.has-selection .c-node.is-hover-focus,
 .c-hero__stage.has-selection .c-node.is-hover-linked {
     opacity: 0.85;
-}
-
-/* ── Title block (above the figure) ────────────────────────────────────── */
-
-.c-hero__title {
-    grid-area: title;
-    padding: 20px 28px 16px;
-    border-bottom: 1px solid var(--c-hair);
-}
-
-.c-hero__name {
-    margin: 0;
-    font-family: var(--c-font-sans);
-    font-size: 11px;
-    font-weight: 500;
-    line-height: 1;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--c-ink);
-}
-
-.c-hero__name span {
-    margin-left: 10px;
-    font-weight: 400;
-    letter-spacing: 0.04em;
-    color: var(--c-ink-3);
-}
-
-.c-hero__tagline {
-    margin: 10px 0 0;
-    font-family: var(--c-font-sans);
-    font-size: 15px;
-    font-weight: 300;
-    line-height: 1.3;
-    letter-spacing: -0.005em;
-    color: var(--c-ink-2);
 }
 
 /* ── Rail (panel + legend, beside the figure) ──────────────────────────── */
@@ -420,7 +426,7 @@
 }
 
 .c-panel__rowbtn:focus-visible {
-    outline: 1px dashed var(--c-ink);
+    outline: 1px dashed var(--c-accent);
     outline-offset: 2px;
 }
 
@@ -429,6 +435,7 @@
 }
 
 .c-panel__rowbtn:hover .c-panel__name {
+    color: var(--c-accent);
     transform: translateX(4px);
 }
 
@@ -449,7 +456,7 @@
     position: absolute;
     inset: 0 auto 0 0;
     width: calc(var(--w, 0) * 100%);
-    background: var(--c-ink);
+    background: var(--c-accent);
     transform-origin: left;
 }
 
@@ -471,9 +478,9 @@
     font-size: 12px;
     font-weight: 500;
     letter-spacing: 0.02em;
-    color: var(--c-ink);
+    color: var(--c-accent);
     text-decoration: none;
-    border-bottom: 1px solid var(--c-ink);
+    border-bottom: 1px solid currentColor;
     align-self: flex-start;
 }
 
@@ -484,6 +491,10 @@
 
 .c-panel__cta:hover span {
     transform: translateX(4px);
+}
+
+.c-panel__cta:not(.c-panel__cta--muted):hover {
+    color: var(--accent-hover);
 }
 
 .c-panel__cta--muted {
@@ -532,7 +543,7 @@
 .c-legend__dot--attribute { width: 6px; height: 6px; border: 1px solid var(--c-ink); }
 
 .c-hero__scroll {
-    color: var(--c-ink);
+    color: var(--c-accent);
     text-decoration: none;
     padding-bottom: 2px;
     border-bottom: 1px solid var(--c-hair);
@@ -540,7 +551,8 @@
 }
 
 .c-hero__scroll:hover {
-    border-bottom-color: var(--c-ink);
+    color: var(--accent-hover);
+    border-bottom-color: currentColor;
 }
 
 /* ── Custom cursor ─────────────────────────────────────────────────────── */
@@ -555,12 +567,15 @@
     pointer-events: none;
     opacity: 0;
     transition: opacity 200ms var(--c-ease, ease);
-    --c-ink: #161615;
+    --c-ink: var(--text-primary);
     --c-font-mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, Menlo, monospace;
     --c-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 .c-cursor.is-visible { opacity: 1; }
+
+.c-cursor.is-node,
+.c-cursor.is-action { --c-ink: var(--accent); }
 
 .c-cursor::before,
 .c-cursor::after {
@@ -629,8 +644,7 @@
 /* ── Leaving (→ detail page) ───────────────────────────────────────────── */
 
 .c-hero.is-leaving .c-hero__stage,
-.c-hero.is-leaving .c-hero__rail,
-.c-hero.is-leaving .c-hero__title {
+.c-hero.is-leaving .c-hero__rail {
     opacity: 0;
 }
 
@@ -650,20 +664,10 @@
         height: calc(100svh - 72px);
         min-height: 560px;
         grid-template-columns: minmax(0, 1fr);
-        grid-template-rows: auto minmax(0, 1fr) auto;
+        grid-template-rows: minmax(0, 1fr) auto;
         grid-template-areas:
-            "title"
             "stage"
             "rail";
-    }
-
-    .c-hero__title {
-        padding: 16px 20px 12px;
-    }
-
-    .c-hero__tagline {
-        font-size: 13.5px;
-        margin-top: 8px;
     }
 
     .c-hero__rail {

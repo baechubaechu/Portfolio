@@ -17,7 +17,8 @@ export function createEdgeView(edge) {
 
     const preview = svgEl("line", { class: "c-edge__preview" });
     const line = svgEl("line", { class: "c-edge__line", pathLength: 1 });
-    el.append(preview, line);
+    const pulse = svgEl("line", { class: "c-edge__pulse", pathLength: 1, "aria-hidden": "true" });
+    el.append(preview, line, pulse);
 
     let fromId = edge.source;
 
@@ -32,7 +33,7 @@ export function createEdgeView(edge) {
             const b = a === sourceNode ? targetNode : sourceNode;
             const x1 = a.rx.toFixed(2), y1 = a.ry.toFixed(2);
             const x2 = b.rx.toFixed(2), y2 = b.ry.toFixed(2);
-            for (const l of [preview, line]) {
+            for (const l of [preview, line, pulse]) {
                 l.setAttribute("x1", x1); l.setAttribute("y1", y1);
                 l.setAttribute("x2", x2); l.setAttribute("y2", y2);
             }

@@ -27,6 +27,7 @@ import { createNodeView } from "./Node.js";
 import { createEdgeView } from "./Edge.js";
 import { createProjectInfo } from "./ProjectInfo.js";
 import { createCursor } from "./Cursor.js";
+import { createIdlePulse } from "./IdlePulse.js";
 
 export async function mountConstellation(root, portfolio) {
     const stageEl = root.querySelector("[data-c-stage]");
@@ -128,6 +129,7 @@ export async function mountConstellation(root, portfolio) {
     let selectedId = null;
     let hoveredId = null;
     let switching = false;
+    const idlePulse = createIdlePulse({ root, graph, nodeViews, edgeViews, kick });
 
     const panel = panelEl
         ? createProjectInfo(panelEl, {
@@ -152,6 +154,7 @@ export async function mountConstellation(root, portfolio) {
     }
 
     function applyState() {
+        idlePulse.setBusy(!!selectedId || !!hoveredId);
         const sel = selectedId ? graph.byId.get(selectedId) : null;
         const hov = hoveredId ? graph.byId.get(hoveredId) : null;
         const selAdj = sel ? graph.adjacency.get(sel.id) : null;
@@ -340,7 +343,10 @@ export async function mountConstellation(root, portfolio) {
         void root.offsetWidth;
         setTimeout(() => root.classList.add("is-ready"), 30);
         const revealMs = reduceMotion ? 0 : graph.nodes.length * cfg.motion.appearStagger + 1300;
-        setTimeout(() => root.classList.add("is-settled"), revealMs);
+        setTimeout(() => {
+            root.classList.add("is-settled");
+            idlePulse.start();
+        }, revealMs);
     }
     if (document.hidden) {
         document.addEventListener("visibilitychange", function onShow() {
@@ -355,6 +361,7 @@ export async function mountConstellation(root, portfolio) {
     return {
         graph, layout, select, get selectedId() { return selectedId; },
         destroy() {
+            idlePulse.destroy();
             cancelAnimationFrame(raf);
             window.removeEventListener("resize", onResize);
             document.removeEventListener("keydown", onDocKey);
