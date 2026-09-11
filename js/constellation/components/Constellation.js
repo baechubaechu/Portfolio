@@ -25,7 +25,7 @@ import {
 } from "../lib/utils.js";
 import { createNodeView } from "./Node.js";
 import { createEdgeView } from "./Edge.js";
-import { createProjectInfo } from "./ProjectInfo.js";
+import { createProjectInfo } from "./ProjectInfo.js?v=1.7";
 import { createCursor } from "./Cursor.js";
 import { createIdlePulse } from "./IdlePulse.js";
 
@@ -134,8 +134,29 @@ export async function mountConstellation(root, portfolio) {
     const panel = panelEl
         ? createProjectInfo(panelEl, {
             graph,
+            getStage: () => size,
+            getAnchor: (id) => {
+                const el = nodeViews.get(id)?.el;
+                if (!el) return null;
+                const s = stageEl.getBoundingClientRect();
+                const r = el.getBoundingClientRect();
+                return {
+                    x0: r.left - s.left,
+                    y0: r.top - s.top,
+                    x1: r.right - s.left,
+                    y1: r.bottom - s.top,
+                    width: size.width,
+                    height: size.height,
+                };
+            },
             onSelect: (id) => select(id),
-            onOpen: (id, e) => { e.preventDefault(); openProject(graph.byId.get(id)); },
+            onOpen: (id, e) => {
+                const node = graph.byId.get(id);
+                if (node?.data?.detailId) {
+                    try { localStorage.setItem("currentProjectId", node.data.detailId); } catch { /* private mode */ }
+                }
+                // Let the <a href> navigate natively. Do not preventDefault.
+            },
         })
         : null;
 
@@ -218,8 +239,7 @@ export async function mountConstellation(root, portfolio) {
         if (p.detailId) {
             try { localStorage.setItem("currentProjectId", p.detailId); } catch { /* private mode */ }
         }
-        root.classList.add("is-leaving");
-        setTimeout(() => { window.location.href = p.href; }, reduceMotion ? 0 : 260);
+        window.location.href = p.href;
     }
 
     function activate(id) {
@@ -298,6 +318,8 @@ export async function mountConstellation(root, portfolio) {
             nodeViews.get(n.id).update(n.rx, n.ry);
         }
         for (const e of layout.edges) edgeViews.get(e.id).update(e.sourceNode, e.targetNode);
+
+        if (selectedId) panel?.place(graph.byId.get(selectedId));
 
         if (active || driftOn) raf = requestAnimationFrame(frame);
     }

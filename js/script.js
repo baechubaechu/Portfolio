@@ -1,10 +1,24 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Render projects dynamically FIRST
+    initRevealNav();
     renderProjects();
-
-    // Initialize Computational Background Canvas
     initComputationalCanvas();
 });
+
+function initRevealNav() {
+    const nav = document.querySelector('.navbar');
+    if (!nav || nav.parentElement?.classList.contains('nav-shell')) return;
+
+    const shell = document.createElement('div');
+    shell.className = 'nav-shell';
+    const zone = document.createElement('div');
+    zone.className = 'nav-hotzone';
+    zone.setAttribute('aria-hidden', 'true');
+
+    nav.parentNode.insertBefore(shell, nav);
+    shell.append(zone, nav);
+
+    zone.addEventListener('click', () => nav.classList.toggle('is-open'));
+}
 
 
 function initComputationalCanvas() {
@@ -49,14 +63,13 @@ function initComputationalCanvas() {
             ctx.beginPath();
             ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
             // Lighter, less saturated gray
-            ctx.fillStyle = 'rgba(156, 163, 175, 0.7)';
+            ctx.fillStyle = 'rgba(210, 210, 210, 0.35)';
             ctx.fill();
 
-            // Subtle glow for active nodes
             if (this.radius > 1.8) {
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.radius + 3, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(37, 99, 235, 0.08)';
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
                 ctx.fill();
             }
         }
@@ -98,7 +111,7 @@ function initComputationalCanvas() {
                     ctx.beginPath();
                     // Original V1 base line opacity, matching V2 distance 120
                     const opacity = (1 - distance / 120) * 0.2;
-                    ctx.strokeStyle = `rgba(55, 65, 81, ${opacity})`;
+                    ctx.strokeStyle = `rgba(255, 255, 255, ${opacity})`;
                     ctx.lineWidth = 0.5;
                     ctx.moveTo(nodes[i].x, nodes[i].y);
                     ctx.lineTo(nodes[j].x, nodes[j].y);
@@ -117,7 +130,7 @@ function initComputationalCanvas() {
                     ctx.beginPath();
                     // Blue tint for V1, but V2 opacity logic
                     const mouseOpacity = 1 - distance / 120;
-                    ctx.strokeStyle = `rgba(37, 99, 235, ${mouseOpacity})`;
+                    ctx.strokeStyle = `rgba(255, 255, 255, ${mouseOpacity * 0.35})`;
                     ctx.lineWidth = 0.5; // Match V2 line width
                     ctx.moveTo(nodes[i].x, nodes[i].y);
                     ctx.lineTo(mouse.x, mouse.y);
