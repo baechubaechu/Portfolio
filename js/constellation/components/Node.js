@@ -24,12 +24,18 @@ export function createNodeView(node, cfg) {
         ? svgEl("circle", { class: "c-node__ring", r: cfg.visual.ringR, pathLength: 1 })
         : svgEl("circle", { class: "c-node__ring", r: cfg.visual.ringR - 2, pathLength: 1 });
 
+    const dwell = isProject
+        ? svgEl("circle", { class: "c-node__dwell", r: cfg.visual.ringR, pathLength: 1 })
+        : null;
+
     const dot = svgEl("circle", { class: "c-node__dot", r: v.r });
 
     const label = svgEl("text", { class: "c-node__label" });
     label.textContent = node.labelText;
 
-    el.append(hitbox, hit, ring, dot, label);
+    el.append(hitbox, hit, ring);
+    if (dwell) el.append(dwell);
+    el.append(dot, label);
 
     let side = null;
 
@@ -84,6 +90,7 @@ export function createNodeView(node, cfg) {
             v = isProject ? next.visual.project : next.visual.attribute;
             dot.setAttribute("r", v.r);
             ring.setAttribute("r", isProject ? next.visual.ringR : next.visual.ringR - 2);
+            dwell?.setAttribute("r", next.visual.ringR);
             side = null; // force label offsets to be recomputed
         },
         /** Move the whole group. `scale` is perspective; `fade` is limb falloff. */
@@ -101,6 +108,14 @@ export function createNodeView(node, cfg) {
         setAria(label, pressed) {
             el.setAttribute("aria-label", label);
             el.setAttribute("aria-pressed", pressed ? "true" : "false");
+        },
+        /** 0–1 progress of the red cover over the star's ring. */
+        setDwell(t) {
+            if (!dwell) return;
+            const p = Math.max(0, Math.min(1, t));
+            el.style.setProperty("--c-dwell", (1 - p).toFixed(4));
+            dwell.setAttribute("stroke-dashoffset", (1 - p).toFixed(4));
+            el.classList.toggle("is-dwelling", p > 0.001);
         },
     };
 }

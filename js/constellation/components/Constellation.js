@@ -11,21 +11,22 @@
  *   look        the pointer turns the head on a celestial vault
  *   gaze        looking at a project draws its asterism in place
  *               and opens the detail card — nodes never rearrange
- *   open        View project on the card → detail page
+ *   dwell       hold gaze on a project ~4s → detail page
+ *               (red arc covers the ring around the star)
  */
 
 import { buildGraph } from "../lib/graph.js";
 import { createLayout } from "../lib/graphLayout.js?v=2.3";
 import { buildAsterisms } from "../lib/asterism.js?v=1.8";
-import { resolveConfig } from "../config.js?v=2.6";
-import { toSphere, project as projectSky, resolveCamera, createSkyDust } from "../lib/sky.js?v=2.4";
+import { resolveConfig } from "../config.js?v=2.9";
+import { toSphere, project as projectSky, resolveCamera, createSkyDust } from "../lib/sky.js?v=2.6";
 import {
     createTextMeasurer, debounce, hasFinePointer, mulberry32, hashString,
     prefersReducedMotion, svgEl, waitForFonts,
 } from "../lib/utils.js?v=2.0";
-import { createNodeView } from "./Node.js?v=2.8";
+import { createNodeView } from "./Node.js?v=3.0";
 import { createEdgeView } from "./Edge.js?v=2.4";
-import { createProjectInfo } from "./ProjectInfo.js?v=2.9";
+import { createProjectInfo } from "./ProjectInfo.js?v=3.0";
 import { createCursor } from "./Cursor.js?v=2.3";
 import { createIdlePulse } from "./IdlePulse.js?v=1.8";
 
@@ -230,7 +231,9 @@ export async function mountConstellation(root, portfolio) {
             const p = n.data;
             const base = `${p.title}, project, ${p.year ?? ""}`.trim();
             if (!sel) return `${base}. Look to see its constellation.`;
-            return `${base}. Looking at this project.`;
+            return p.href
+                ? `${base}. Hold to open the project.`
+                : `${base}. Looking at this project. In progress.`;
         }
         return `${n.label}, attribute, shared by ${n.degree} project${n.degree === 1 ? "" : "s"}.${sel ? " Selected." : ""}`;
     }
@@ -335,13 +338,45 @@ export async function mountConstellation(root, portfolio) {
         kick();
     }
 
+    let dwellId = null;
+    let dwellStart = 0;
+    let opening = false;
+
+    function resetDwell() {
+        if (dwellId) nodeViews.get(dwellId)?.setDwell(0);
+        dwellId = null;
+        dwellStart = 0;
+    }
+
     function openProject(node) {
         const p = node?.data;
-        if (!p?.href) return;
+        if (!p?.href || opening) return;
+        opening = true;
         if (p.detailId) {
-            try { localStorage.setItem("currentProjectId", node.data.detailId); } catch { /* private mode */ }
+            try { localStorage.setItem("currentProjectId", p.detailId); } catch { /* private mode */ }
         }
+        root.classList.add("is-leaving");
         window.location.href = p.href;
+    }
+
+    function tickDwell(now) {
+        const n = selectedId ? graph.byId.get(selectedId) : null;
+        const holding = !overPanel && !opening
+            && n?.type === "project" && n.data?.href
+            && hoveredId === selectedId;
+        if (!holding) {
+            resetDwell();
+            return;
+        }
+        if (dwellId !== n.id) {
+            resetDwell();
+            dwellId = n.id;
+            dwellStart = now;
+        }
+        const dur = cfg.motion.dwellMs ?? 4000;
+        const t = Math.min(1, (now - dwellStart) / dur);
+        nodeViews.get(n.id)?.setDwell(t);
+        if (t >= 1) openProject(n);
     }
 
     function activate(id, { openIfSelected = false } = {}) {
@@ -556,13 +591,16 @@ export async function mountConstellation(root, portfolio) {
             el.setAttribute("cx", p.x.toFixed(1));
             el.setAttribute("cy", p.y.toFixed(1));
             el.setAttribute("r", (star.r * p.scale).toFixed(2));
-            el.setAttribute("opacity", (star.o * p.fade).toFixed(3));
+            const tw = 0.78 + 0.22 * Math.sin(now * 0.0012 * star.tws + star.tw);
+            el.setAttribute("opacity", (star.o * p.fade * tw).toFixed(3));
         }
 
         if (panelId) panel?.place(graph.byId.get(panelId));
 
+        tickDwell(now);
+
         const looking = Math.abs(yawT - yaw) > 0.0004 || Math.abs(pitchT - pitch) > 0.0004;
-        if (active || driftOn || looking || pointerOn) raf = requestAnimationFrame(frame);
+        if (active || driftOn || looking || pointerOn || dwellId) raf = requestAnimationFrame(frame);
     }
 
     function kick() { if (!raf) raf = requestAnimationFrame(frame); }

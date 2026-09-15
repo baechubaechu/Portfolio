@@ -49,8 +49,9 @@ export const CONFIG = {
             amplitude: 1.4,   // px — resting nodes breathe this much
             period: [11000, 17000],
         },
-        appearStagger: 38,  // initial reveal, per node
-        camera: {
+            appearStagger: 38,  // initial reveal, per node
+            dwellMs: 4000,      // hold gaze on a project to open its page
+            camera: {
             ease: 0.05,          // lerp per frame toward the look target
             gazeRadius: 88,      // px: looking at a project within this distance
             clickRadius: 36,     // px: click near a star still selects it
@@ -63,7 +64,7 @@ export const CONFIG = {
             rProject: 1,
             rAttribute: 1.14,
             near: 0.32,
-            dust: 120,
+            dust: 480,
         },
     },
 
@@ -161,7 +162,7 @@ export const CONFIG = {
             padding: { top: 20, right: 18, bottom: 16, left: 18 },
         },
         motion: {
-            camera: { maxYaw: 0.32, maxPitch: 0.24, gazeRadius: 64, attributeRadius: 24, dust: 40 },
+            camera: { maxYaw: 0.32, maxPitch: 0.24, gazeRadius: 64, attributeRadius: 24, dust: 160 },
         },
     },
 };

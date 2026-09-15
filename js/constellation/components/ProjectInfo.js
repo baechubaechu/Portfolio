@@ -2,7 +2,7 @@
  * Info panel: a small floating card for the current selection.
  *
  *   idle       → hidden
- *   project    → title, year, attributes, "View project →"
+ *   project    → title, year, attributes
  *   attribute  → name, list of projects that share it
  *
  * Positioned next to the selected node; flips side if it would overflow.
@@ -46,19 +46,14 @@ export function createProjectInfo(container, { graph, onSelect, onOpen, getAncho
     function renderProject(node) {
         const p = node.data;
         const rels = graph.neighborsOf(node.id);
-        const href = p.href ?? null;
-        const kicker = ["Project", p.year, p.category].filter(Boolean).join(" · ");
+        const kicker = ["Project", p.year, p.category, p.href ? null : "In progress"]
+            .filter(Boolean).join(" · ");
         return `
             <p class="c-panel__kicker">${esc(kicker)}</p>
-            <h2 class="c-panel__title">${href
-                ? `<a href="${esc(href)}" data-open="${esc(node.id)}">${esc(p.title)}</a>`
-                : esc(p.title)}</h2>
+            <h2 class="c-panel__title">${esc(p.title)}</h2>
             <ul class="c-panel__list" aria-label="Attributes">
                 ${rels.map(({ node: a, edge }) => weightRow(a.id, a.label, null, edge.weight)).join("")}
-            </ul>
-            ${href
-                ? `<a class="c-panel__cta" href="${esc(href)}" data-open="${esc(node.id)}">View project <span aria-hidden="true">→</span></a>`
-                : `<span class="c-panel__cta c-panel__cta--muted">In progress</span>`}`;
+            </ul>`;
     }
 
     function renderAttribute(node) {

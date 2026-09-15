@@ -64,16 +64,22 @@ export function resolveCamera(cfg, stage) {
 export function createSkyDust(count, rand) {
     const stars = [];
     for (let i = 0; i < count; i++) {
-        const lon = (rand() - 0.5) * 2.4;
-        const lat = (rand() - 0.5) * 1.5;
-        const R = 1.22 + rand() * 0.42;
+        // Keep most specks in the planetarium window; a few sit wider for look-around.
+        const wide = rand() < 0.22;
+        const span = wide ? 1.35 : 0.72;
+        const lon = (rand() - 0.5) * 2 * span;
+        const lat = (rand() - 0.5) * 2 * span * 0.7;
+        const R = 1.12 + rand() * 0.5;
         const cl = Math.cos(lat);
+        const mag = rand() ** 2.2;
         stars.push({
             wx: Math.sin(lon) * cl * R,
             wy: Math.sin(lat) * R,
             wz: -Math.cos(lon) * cl * R,
-            r: 0.28 + rand() * 0.7,
-            o: 0.05 + rand() * 0.11,
+            r: 0.42 + mag * 1.05,
+            o: 0.16 + mag * 0.42,
+            tw: rand() * Math.PI * 2,
+            tws: 0.35 + rand() * 1.1,
         });
     }
     return stars;
