@@ -77,7 +77,7 @@ export function createTextMeasurer() {
     const ctx = canvas.getContext("2d");
     return (text, font, letterSpacingEm = 0) => {
         ctx.font = font;
-        const fontSize = parseFloat(font) || 10;
+        const fontSize = Number((font.match(/(\d+(?:\.\d+)?)px/) || [])[1]) || 10;
         const base = ctx.measureText(text).width;
         const extra = Math.max(0, text.length - 1) * letterSpacingEm * fontSize;
         return base + extra;

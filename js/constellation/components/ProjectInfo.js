@@ -77,40 +77,69 @@ export function createProjectInfo(container, { graph, onSelect, onOpen, getAncho
         const box = getAnchor?.(node.id);
         if (!box) return;
 
-        const pad = 16;
-        const gap = 14;
+        const pad = 56;
+        const padTop = 72;
+        const gap = 20;
         const w = container.offsetWidth;
         const h = container.offsetHeight;
         if (!w || !h) return;
 
         const { x0, y0, x1, y1, width: sw, height: sh } = box;
-        const cx = (x0 + x1) / 2;
-        const cy = (y0 + y1) / 2;
+        const ox = box.ox ?? (x0 + x1) / 2;
+        const oy = box.oy ?? (y0 + y1) / 2;
 
-        const candidates = [
-            { x: x1 + gap, y: cy - h * 0.28 },
-            { x: x0 - gap - w, y: cy - h * 0.28 },
-            { x: cx - w * 0.45, y: y1 + gap },
-            { x: cx - w * 0.45, y: y0 - gap - h },
-        ];
+        const clamp = (x, y) => ({
+            x: Math.min(Math.max(x, pad), Math.max(pad, sw - pad - w)),
+            y: Math.min(Math.max(y, padTop), Math.max(padTop, sh - pad - h)),
+        });
 
-        let best = candidates[0], bestScore = Infinity;
-        for (const c of candidates) {
-            const overflow =
-                Math.max(0, pad - c.x) +
-                Math.max(0, c.x + w - (sw - pad)) +
-                Math.max(0, pad - c.y) +
-                Math.max(0, c.y + h - (sh - pad));
-            if (overflow < bestScore) {
-                bestScore = overflow;
+        const slot = node.data?.panelSlot;
+        if (slot === "top-left" || slot === "top-right" || slot === "bottom-left" || slot === "bottom-right") {
+            const pinned = clamp(
+                slot.endsWith("left") ? pad : sw - pad - w,
+                slot.startsWith("top") ? padTop : sh - pad - h,
+            );
+            container.style.left = `${pinned.x.toFixed(1)}px`;
+            container.style.top = `${pinned.y.toFixed(1)}px`;
+            return;
+        }
+
+        const raw = [
+            { x: x1 + gap, y: oy - h * 0.35 },
+            { x: x1 + gap, y: y0 },
+            { x: x1 + gap, y: y1 - h },
+            { x: x0 - gap - w, y: oy - h * 0.35 },
+            { x: x0 - gap - w, y: y0 },
+            { x: x0 - gap - w, y: y1 - h },
+            { x: ox - w * 0.5, y: y1 + gap },
+            { x: ox - w * 0.5, y: y0 - gap - h },
+            { x: pad, y: padTop },
+            { x: sw - pad - w, y: padTop },
+            { x: pad, y: sh - pad - h },
+            { x: sw - pad - w, y: sh - pad - h },
+            { x: pad, y: (sh - h) / 2 },
+            { x: sw - pad - w, y: (sh - h) / 2 },
+        ].map((c) => clamp(c.x, c.y));
+
+        const overlapArea = (x, y) => {
+            const oxv = Math.max(0, Math.min(x + w, x1) - Math.max(x, x0));
+            const oyv = Math.max(0, Math.min(y + h, y1) - Math.max(y, y0));
+            return oxv * oyv;
+        };
+
+        let best = raw[0], bestScore = Infinity;
+        for (const c of raw) {
+            const overlap = overlapArea(c.x, c.y);
+            const d = Math.hypot(c.x + w * 0.5 - ox, c.y + h * 0.5 - oy);
+            const score = overlap * 8 + d * 0.12;
+            if (score < bestScore) {
+                bestScore = score;
                 best = c;
             }
         }
 
-        const px = Math.min(Math.max(best.x, pad), Math.max(pad, sw - pad - w));
-        const py = Math.min(Math.max(best.y, pad), Math.max(pad, sh - pad - h));
-        container.style.left = `${px.toFixed(1)}px`;
-        container.style.top = `${py.toFixed(1)}px`;
+        container.style.left = `${best.x.toFixed(1)}px`;
+        container.style.top = `${best.y.toFixed(1)}px`;
     }
 
     let token = 0;

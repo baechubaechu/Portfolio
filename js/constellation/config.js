@@ -50,6 +50,21 @@ export const CONFIG = {
             period: [11000, 17000],
         },
         appearStagger: 38,  // initial reveal, per node
+        camera: {
+            ease: 0.05,          // lerp per frame toward the look target
+            gazeRadius: 88,      // px: looking at a project within this distance
+            clickRadius: 36,     // px: click near a star still selects it
+            attributeRadius: 28,
+            fov: 1.08,           // radians — wide like a planetarium window
+            maxYaw: 0.4,
+            maxPitch: 0.3,
+            spanX: 0.78,
+            spanY: 0.57,
+            rProject: 1,
+            rAttribute: 1.14,
+            near: 0.32,
+            dust: 120,
+        },
     },
 
     /* ── Simulation schedule (d3-force semantics) ── */
@@ -58,7 +73,7 @@ export const CONFIG = {
         alphaDecay: 0.0228,   // ≈ 300 ticks to cool from 1 → alphaMin
         velocityDecay: 0.55,  // higher = more damping = calmer
         prewarmTicks: 360,    // run synchronously before the first paint
-        focusAlpha: 0.09,     // reheat when the selection changes
+        focusAlpha: 0.09,     // unused while the map stays still on gaze
         resizeAlpha: 0.45,
     },
 
@@ -76,7 +91,7 @@ export const CONFIG = {
             max: 2.6,
         },
         link: {
-            distance: 230,            // base rest length (px) at reference size
+            distance: 345,            // base rest length (px) at reference size
             weightDistanceScale: 0.6, // rest = distance * (1.3 - scale * weight)
             strength: 0.9,            // multiplied by 1 / min(degree)
             weightStrengthScale: 0.9, // strength *= 0.55 + scale * weight
@@ -84,18 +99,18 @@ export const CONFIG = {
             focusStrengthScale: 1.7,
         },
         charge: {
-            project: -1300,
-            attribute: -720,
+            project: -1950,
+            attribute: -1080,
             distanceMin: 12,
-            distanceMax: 560,
+            distanceMax: 840,
         },
         collide: {
-            padding: 16,  // added to node radius
+            padding: 24,  // added to node radius
             strength: 0.8,
             iterations: 2,
         },
         labels: {
-            padding: 5,   // px around each label box
+            padding: 8,   // px around each label box
             strength: 0.55,
         },
         obstacles: {
@@ -134,16 +149,19 @@ export const CONFIG = {
         },
         forces: {
             scale: { reference: [390, 700], min: 0.6, max: 1.4 },
-            link: { distance: 98 },
-            charge: { project: -320, attribute: -170, distanceMax: 240 },
-            collide: { padding: 9 },
-            labels: { padding: 3 },
+            link: { distance: 147 },
+            charge: { project: -480, attribute: -255, distanceMax: 360 },
+            collide: { padding: 14 },
+            labels: { padding: 5 },
             obstacles: { padding: 8 },
             boundary: { margin: 28, marginStrength: 0.03 },
             spread: { strength: 0.012 },
         },
         stage: {
             padding: { top: 20, right: 18, bottom: 16, left: 18 },
+        },
+        motion: {
+            camera: { maxYaw: 0.32, maxPitch: 0.24, gazeRadius: 64, attributeRadius: 24, dust: 40 },
         },
     },
 };

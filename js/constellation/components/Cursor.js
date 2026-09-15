@@ -37,7 +37,6 @@ export function createCursor(scope) {
             // native links / buttons inside the hero also get the action state
             const actionable = e.target.closest?.("a, button, [data-open]");
             if (actionable && !e.target.closest(".c-node")) setState("action", actionable.dataset.cursorLabel ?? "");
-            else if (!e.target.closest(".c-node")) setState("default");
         }
         if (!raf) raf = requestAnimationFrame(paint);
     };

@@ -6,8 +6,8 @@
  * To restyle, edit css/constellation.css.
  */
 
-import { portfolio } from "./data/portfolio.js";
-import { mountConstellation } from "./components/Constellation.js?v=1.7";
+import { portfolio } from "./data/portfolio.js?v=1.9";
+import { mountConstellation } from "./components/Constellation.js?v=3.2";
 
 const root = document.querySelector("[data-constellation]");
 

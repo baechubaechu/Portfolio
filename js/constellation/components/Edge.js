@@ -31,6 +31,9 @@ export function createEdgeView(edge) {
         update(sourceNode, targetNode) {
             const a = fromId === sourceNode.id ? sourceNode : targetNode;
             const b = a === sourceNode ? targetNode : sourceNode;
+            const show = a.rVisible !== false && b.rVisible !== false;
+            el.setAttribute("opacity", show ? "1" : "0");
+            if (!show) return;
             const x1 = a.rx.toFixed(2), y1 = a.ry.toFixed(2);
             const x2 = b.rx.toFixed(2), y2 = b.ry.toFixed(2);
             for (const l of [preview, line, pulse]) {

@@ -172,7 +172,6 @@ export function createLayout(graph, config) {
                 if (d2 > max2) continue;
                 if (d2 < 1e-6) { dx = (rand() - 0.5) * 1e-3; dy = (rand() - 0.5) * 1e-3; d2 = dx * dx + dy * dy; }
                 if (d2 < min2) d2 = Math.sqrt(d2 * min2);
-                // strength is negative → repulsion
                 n.vx += dx * (sm * a) / d2; n.vy += dy * (sm * a) / d2;
                 m.vx -= dx * (sn * a) / d2; m.vy -= dy * (sn * a) / d2;
             }

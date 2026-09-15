@@ -83,6 +83,22 @@
     background-repeat: no-repeat;
 }
 
+.c-hero__stage::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 4;
+    background: radial-gradient(ellipse at 50% 46%,
+        rgba(10, 10, 10, 0) 40%,
+        rgba(10, 10, 10, 0.28) 100%);
+}
+
+.c-dust {
+    fill: #f5f5f5;
+    pointer-events: none;
+}
+
 .c-svg {
     display: block;
     width: 100%;
@@ -109,6 +125,14 @@
 
 .c-edge.is-preview .c-edge__preview {
     opacity: calc(var(--c-preview-opacity) * (0.6 + 0.4 * var(--c-w)));
+}
+
+/* gaze: a faint solid asterism, not a dotted relation diagram */
+.c-edge--asterism.is-preview .c-edge__preview {
+    stroke-dasharray: none;
+    stroke-width: 0.9;
+    opacity: calc(0.16 + 0.18 * var(--c-w));
+    transition: opacity 720ms var(--c-ease);
 }
 
 /* solid line, drawn from the focal node outward; weight → opacity */
@@ -162,8 +186,14 @@
 
 .c-node {
     outline: none;
-    opacity: 1;
+    opacity: var(--c-depth, 1);
     transition: opacity var(--c-dur-fade) var(--c-ease);
+    pointer-events: none;
+}
+
+.c-hero.is-settled .c-node {
+    /* depth is rewritten every frame; don't lag the vault */
+    transition: none;
 }
 
 /* initial reveal: staggered fade, then hand over to state transitions */
@@ -174,6 +204,12 @@
 
 .c-hero:not(.is-ready) .c-node {
     opacity: 0 !important;
+}
+
+.c-node__hitbox {
+    fill: transparent;
+    stroke: none;
+    pointer-events: all;
 }
 
 .c-node__hit {
@@ -301,22 +337,20 @@
 
 /* hover (no selection): everything unrelated recedes */
 .c-hero__stage.has-hover:not(.has-selection) .c-node:not(.is-hover-focus):not(.is-hover-linked) {
-    opacity: var(--c-dim-hover);
+    opacity: calc(var(--c-depth, 1) * var(--c-dim-hover));
 }
 
-/* selection: only the constellation stays */
 .c-hero__stage.has-selection .c-node--attribute:not(.is-focus):not(.is-linked) {
-    opacity: var(--c-dim-attribute);
+    opacity: calc(var(--c-depth, 1) * var(--c-dim-attribute));
 }
 
 .c-hero__stage.has-selection .c-node--project:not(.is-focus):not(.is-linked) {
-    opacity: var(--c-dim-project);
+    opacity: calc(var(--c-depth, 1) * var(--c-dim-project));
 }
 
-/* hovering something else while a selection is active: lift it a little */
 .c-hero__stage.has-selection .c-node.is-hover-focus,
 .c-hero__stage.has-selection .c-node.is-hover-linked {
-    opacity: 0.85;
+    opacity: calc(var(--c-depth, 1) * 0.85);
 }
 
 /* ── Floating selection card ───────────────────────────────────────────── */

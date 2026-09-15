@@ -8,26 +8,26 @@
  *           → Observation (the user)
  *
  * Interaction model
- *   idle        nodes only; project labels readable, attribute labels faint
- *   hover       connected nodes lift, everything else dims, dotted preview
- *   select      solid hairlines are drawn from the focal node outward,
- *               one by one (strongest relation first); labels follow
- *   re-select   previous constellation retracts, the next one draws
- *   open        second activation of the selected project → detail page
+ *   look        the pointer turns the head on a celestial vault
+ *   gaze        looking at a project draws its asterism in place
+ *               and opens the detail card — nodes never rearrange
+ *   open        View project on the card → detail page
  */
 
 import { buildGraph } from "../lib/graph.js";
-import { createLayout } from "../lib/graphLayout.js";
-import { resolveConfig } from "../config.js";
+import { createLayout } from "../lib/graphLayout.js?v=2.3";
+import { buildAsterisms } from "../lib/asterism.js?v=1.8";
+import { resolveConfig } from "../config.js?v=2.6";
+import { toSphere, project as projectSky, resolveCamera, createSkyDust } from "../lib/sky.js?v=2.4";
 import {
     createTextMeasurer, debounce, hasFinePointer, mulberry32, hashString,
     prefersReducedMotion, svgEl, waitForFonts,
-} from "../lib/utils.js";
-import { createNodeView } from "./Node.js";
-import { createEdgeView } from "./Edge.js";
-import { createProjectInfo } from "./ProjectInfo.js?v=1.7";
-import { createCursor } from "./Cursor.js";
-import { createIdlePulse } from "./IdlePulse.js";
+} from "../lib/utils.js?v=2.0";
+import { createNodeView } from "./Node.js?v=2.8";
+import { createEdgeView } from "./Edge.js?v=2.4";
+import { createProjectInfo } from "./ProjectInfo.js?v=2.9";
+import { createCursor } from "./Cursor.js?v=2.3";
+import { createIdlePulse } from "./IdlePulse.js?v=1.8";
 
 export async function mountConstellation(root, portfolio) {
     const stageEl = root.querySelector("[data-c-stage]");
@@ -41,6 +41,7 @@ export async function mountConstellation(root, portfolio) {
 
     /* ───────────── graph ───────────── */
     const graph = buildGraph(portfolio);
+    const asterisms = buildAsterisms(graph, portfolio.projects);
     for (const n of graph.nodes) n.labelText = n.label.toUpperCase();
 
     if (figEl) {
@@ -90,13 +91,27 @@ export async function mountConstellation(root, portfolio) {
     layout.settle();
 
     /* ───────────── views ───────────── */
+    const dustLayer = svgEl("g", { class: "c-layer c-layer--dust", "aria-hidden": "true" });
     const edgesLayer = svgEl("g", { class: "c-layer c-layer--edges" });
     const nodesLayer = svgEl("g", { class: "c-layer c-layer--nodes" });
-    svg.append(edgesLayer, nodesLayer);
+    const world = svgEl("g", { class: "c-world" });
+    world.append(dustLayer, edgesLayer, nodesLayer);
+    svg.append(world);
+
+    const dustRand = mulberry32(hashString("dust:" + graph.nodes.map((n) => n.id).join()));
+    const dust = createSkyDust(cfg.motion.camera.dust, dustRand);
+    const dustDots = dust.map((s) => {
+        const c = svgEl("circle", { class: "c-dust", r: s.r });
+        dustLayer.append(c);
+        return { star: s, el: c };
+    });
 
     const edgeViews = new Map();
-    for (const e of layout.edges) {
+    const visualEdges = [...layout.edges];
+    for (const fig of asterisms.byProject.values()) visualEdges.push(...fig.edges);
+    for (const e of visualEdges) {
         const view = createEdgeView(e);
+        if (e.kind === "asterism") view.el.classList.add("c-edge--asterism");
         edgeViews.set(e.id, view);
         edgesLayer.append(view.el);
     }
@@ -128,25 +143,37 @@ export async function mountConstellation(root, portfolio) {
     /* ───────────── state ───────────── */
     let selectedId = null;
     let hoveredId = null;
+    let panelId = null;
+    let overPanel = false;
     let switching = false;
-    const idlePulse = createIdlePulse({ root, graph, nodeViews, edgeViews, kick });
+    const idlePulse = createIdlePulse({ root, graph, nodeViews, edgeViews, asterisms, kick });
 
     const panel = panelEl
         ? createProjectInfo(panelEl, {
             graph,
             getStage: () => size,
             getAnchor: (id) => {
-                const el = nodeViews.get(id)?.el;
-                if (!el) return null;
-                const s = stageEl.getBoundingClientRect();
-                const r = el.getBoundingClientRect();
+                const n = graph.byId.get(id);
+                if (!n) return null;
+                const fig = n.type === "project" ? asterisms.get(id) : null;
+                const ids = fig ? [...fig.memberIds] : [id];
+                let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+                for (const nid of ids) {
+                    const m = graph.byId.get(nid);
+                    const r = nodeAvoidRect(m);
+                    if (!r) continue;
+                    x0 = Math.min(x0, r.x0);
+                    y0 = Math.min(y0, r.y0);
+                    x1 = Math.max(x1, r.x1);
+                    y1 = Math.max(y1, r.y1);
+                }
+                if (!Number.isFinite(x0)) return null;
+                const pad = 26;
                 return {
-                    x0: r.left - s.left,
-                    y0: r.top - s.top,
-                    x1: r.right - s.left,
-                    y1: r.bottom - s.top,
-                    width: size.width,
-                    height: size.height,
+                    x0: x0 - pad, y0: y0 - pad, x1: x1 + pad, y1: y1 + pad,
+                    ox: n.rx ?? (x0 + x1) / 2,
+                    oy: n.ry ?? (y0 + y1) / 2,
+                    width: size.width, height: size.height,
                 };
             },
             onSelect: (id) => select(id),
@@ -163,55 +190,124 @@ export async function mountConstellation(root, portfolio) {
     const cursor = hasFinePointer() ? createCursor(stageEl) : null;
     stageEl.classList.toggle("has-custom-cursor", !!cursor);
 
+    function nodeAvoidRect(n) {
+        if (!n || n.rVisible === false) return null;
+        const x = n.rx, y = n.ry;
+        if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
+        const s = n.rScale ?? 1;
+        const disc = 14 * s;
+        let x0 = x - disc, y0 = y - disc, x1 = x + disc, y1 = y + disc;
+        const lw = (n.labelW || 48) * Math.min(s, 1.15);
+        const lh = (n.labelH || 13) * Math.min(s, 1.15);
+        const gap = ((n.r || 4) + (n.labelGap || 8)) * s;
+        switch (n.side) {
+            case "left":
+                x0 = Math.min(x0, x - gap - lw);
+                y0 = Math.min(y0, y - lh / 2);
+                y1 = Math.max(y1, y + lh / 2);
+                break;
+            case "above":
+                y0 = Math.min(y0, y - gap - lh);
+                x0 = Math.min(x0, x - lw / 2);
+                x1 = Math.max(x1, x + lw / 2);
+                break;
+            case "below":
+                y1 = Math.max(y1, y + gap + lh);
+                x0 = Math.min(x0, x - lw / 2);
+                x1 = Math.max(x1, x + lw / 2);
+                break;
+            default:
+                x1 = Math.max(x1, x + gap + lw);
+                y0 = Math.min(y0, y - lh / 2);
+                y1 = Math.max(y1, y + lh / 2);
+        }
+        return { x0, y0, x1, y1 };
+    }
+
     function describe(n) {
         const sel = n.id === selectedId;
         if (n.type === "project") {
             const p = n.data;
             const base = `${p.title}, project, ${p.year ?? ""}`.trim();
-            if (!sel) return `${base}. Select to reveal its attributes.`;
-            return p.href ? `${base}. Selected. Activate again to open the project.` : `${base}. Selected.`;
+            if (!sel) return `${base}. Look to see its constellation.`;
+            return `${base}. Looking at this project.`;
         }
         return `${n.label}, attribute, shared by ${n.degree} project${n.degree === 1 ? "" : "s"}.${sel ? " Selected." : ""}`;
+    }
+
+    function figureOf(id) {
+        const n = id ? graph.byId.get(id) : null;
+        return n?.type === "project" ? asterisms.get(id) : null;
     }
 
     function applyState() {
         idlePulse.setBusy(!!selectedId || !!hoveredId);
         const sel = selectedId ? graph.byId.get(selectedId) : null;
         const hov = hoveredId ? graph.byId.get(hoveredId) : null;
+        const selFig = figureOf(sel?.id);
+        const hovFig = figureOf(hov?.id);
         const selAdj = sel ? graph.adjacency.get(sel.id) : null;
         const hovAdj = hov ? graph.adjacency.get(hov.id) : null;
+        const selMembers = selFig?.memberIds ?? null;
+        const hovMembers = hovFig?.memberIds ?? null;
 
         root.dataset.mode = sel ? sel.type : "idle";
         stageEl.classList.toggle("has-selection", !!sel);
         stageEl.classList.toggle("has-hover", !!hov && hov.id !== sel?.id);
 
-        // draw order: strongest relation first
         const lead = switching ? cfg.motion.retractDuration * 0.55 : 0;
         const stagger = reduceMotion ? 0 : cfg.motion.drawStagger;
+        const labelLag = reduceMotion ? 0 : cfg.motion.labelLag;
         const edgeDelay = new Map();
-        if (sel) {
+        if (selFig) {
+            selFig.edges.forEach((e, i) => edgeDelay.set(e.id, lead + i * stagger));
+        } else if (sel) {
             graph.neighborsOf(sel.id).forEach(({ edge }, i) => edgeDelay.set(edge.id, lead + i * stagger));
         }
 
         for (const n of graph.nodes) {
             const v = nodeViews.get(n.id);
             const isFocus = sel?.id === n.id;
-            const isLinked = !!selAdj?.has(n.id);
+            const isLinked = selMembers ? selMembers.has(n.id) && !isFocus : !!selAdj?.has(n.id);
             const isHoverFocus = hov?.id === n.id;
-            const isHoverLinked = !!hovAdj?.has(n.id);
+            const isHoverLinked = hovMembers ? hovMembers.has(n.id) && !isHoverFocus : !!hovAdj?.has(n.id);
             v.setClass("is-focus", isFocus);
             v.setClass("is-linked", isLinked);
             v.setClass("is-hover-focus", isHoverFocus);
             v.setClass("is-hover-linked", isHoverLinked);
-            v.setDelay(isLinked ? (edgeDelay.get(graph.edgeBetween(sel.id, n.id).id) ?? 0) + (reduceMotion ? 0 : cfg.motion.labelLag) : 0);
+            let delay = 0;
+            if (isLinked && sel) {
+                if (selFig) {
+                    let best = Infinity;
+                    for (const e of selFig.edges) {
+                        if (e.source === n.id || e.target === n.id) {
+                            best = Math.min(best, edgeDelay.get(e.id) ?? Infinity);
+                        }
+                    }
+                    delay = (best === Infinity ? 0 : best) + labelLag;
+                } else {
+                    delay = (edgeDelay.get(graph.edgeBetween(sel.id, n.id)?.id) ?? 0) + labelLag;
+                }
+            }
+            v.setDelay(delay);
             v.setAria(describe(n), isFocus);
         }
 
-        for (const e of layout.edges) {
+        for (const e of visualEdges) {
             const v = edgeViews.get(e.id);
-            const drawn = !!sel && (e.source === sel.id || e.target === sel.id);
-            const preview = !drawn && !!hov && (e.source === hov.id || e.target === hov.id);
-            if (drawn) v.setOrigin(sel.id);
+            let drawn = false;
+            let preview = false;
+            if (e.kind === "asterism") {
+                drawn = !!selFig && e.projectId === selFig.projectId;
+                preview = !drawn && !!hovFig && e.projectId === hovFig.projectId;
+                if (drawn || preview) v.setOrigin(e.source);
+            } else if (sel?.type === "attribute") {
+                drawn = e.source === sel.id || e.target === sel.id;
+                if (drawn) v.setOrigin(sel.id);
+                preview = !drawn && !!hov && hov.type === "attribute" && (e.source === hov.id || e.target === hov.id);
+            } else {
+                preview = !!hov && hov.type === "attribute" && (e.source === hov.id || e.target === hov.id);
+            }
             v.setDelay(drawn ? edgeDelay.get(e.id) ?? 0 : 0);
             v.setClass("is-drawn", drawn);
             v.setClass("is-preview", preview);
@@ -220,15 +316,21 @@ export async function mountConstellation(root, portfolio) {
         switching = false;
     }
 
+    function showPanel(node) {
+        const next = node?.id ?? null;
+        if (next === panelId) return;
+        panelId = next;
+        if (!node) panel?.render({ mode: "idle" });
+        else panel?.render({ mode: node.type, node });
+    }
+
     function select(id) {
-        if (id === selectedId) return;
-        switching = !!selectedId && !!id;
-        selectedId = id;
-        layout.setFocus(id);
-        layout.reheat(cfg.sim.focusAlpha);
-        applyState();
         const node = id ? graph.byId.get(id) : null;
-        panel?.render(node ? { mode: node.type, node } : { mode: "idle" });
+        hoveredId = id;
+        selectedId = node ? id : null;
+        switching = false;
+        showPanel(node && (node.type === "project" || node.type === "attribute") ? node : null);
+        applyState();
         updateCursorForHover();
         kick();
     }
@@ -237,17 +339,16 @@ export async function mountConstellation(root, portfolio) {
         const p = node?.data;
         if (!p?.href) return;
         if (p.detailId) {
-            try { localStorage.setItem("currentProjectId", p.detailId); } catch { /* private mode */ }
+            try { localStorage.setItem("currentProjectId", node.data.detailId); } catch { /* private mode */ }
         }
         window.location.href = p.href;
     }
 
-    function activate(id) {
+    function activate(id, { openIfSelected = false } = {}) {
         const node = graph.byId.get(id);
         if (!node) return;
-        if (selectedId === id) {
-            if (node.type === "project") openProject(node);
-            else select(null);
+        if (selectedId === id && openIfSelected && node.type === "project") {
+            openProject(node);
             return;
         }
         select(id);
@@ -256,46 +357,161 @@ export async function mountConstellation(root, portfolio) {
     function updateCursorForHover() {
         if (!cursor) return;
         if (!hoveredId) { cursor.setState("default"); return; }
-        const n = graph.byId.get(hoveredId);
-        if (n.id === selectedId && n.type === "project" && n.data.href) cursor.setState("action", "Open →");
-        else cursor.setState("node");
+        cursor.setState("node");
     }
 
     function setHover(id) {
+        if (overPanel && !id) return;
         if (id === hoveredId) return;
         hoveredId = id;
+        const n = id ? graph.byId.get(id) : null;
+        if (n?.type === "project") {
+            selectedId = id;
+            showPanel(n);
+        } else {
+            selectedId = null;
+            if (!overPanel) showPanel(null);
+        }
         applyState();
         updateCursorForHover();
+        kick();
+    }
+
+    /* ───────────── celestial look ───────────── */
+    let yaw = 0, pitch = 0, yawT = 0, pitchT = 0;
+    let pointerOn = false;
+
+    function cameraCfg() {
+        return resolveCamera(cfg, size);
+    }
+
+    function setLookTarget(nx, ny) {
+        const cam = cameraCfg();
+        if (reduceMotion) { yawT = 0; pitchT = 0; return; }
+        yawT = (nx - 0.5) * 2 * cam.maxYaw;
+        pitchT = (0.5 - ny) * 2 * cam.maxPitch;
+    }
+
+    function gazeFromPointer(px, py, e) {
+        const onNode = e ? nodeFromEvent(e) : null;
+        if (onNode) { setHover(onNode); return; }
+        const cam = cameraCfg();
+        let bestP = null, bestPD = cam.gazeRadius;
+        for (const n of graph.projects) {
+            if (n.rVisible === false) continue;
+            const d = Math.hypot((n.rx ?? n.x) - px, (n.ry ?? n.y) - py);
+            if (d < bestPD) { bestPD = d; bestP = n.id; }
+        }
+        if (bestP) { setHover(bestP); return; }
+        let bestA = null, bestAD = cam.attributeRadius;
+        for (const n of graph.attributes) {
+            if (n.rVisible === false) continue;
+            const d = Math.hypot((n.rx ?? n.x) - px, (n.ry ?? n.y) - py);
+            if (d < bestAD) { bestAD = d; bestA = n.id; }
+        }
+        setHover(bestA);
+    }
+
+    function pointerToStage(e) {
+        const r = stageEl.getBoundingClientRect();
+        return {
+            px: e.clientX - r.left,
+            py: e.clientY - r.top,
+            nx: r.width ? (e.clientX - r.left) / r.width : 0.5,
+            ny: r.height ? (e.clientY - r.top) / r.height : 0.5,
+        };
     }
 
     /* ───────────── events ───────────── */
-    const nodeFromEvent = (e) => e.target.closest?.(".c-node")?.dataset.id ?? null;
+    function nodeFromEvent(e) {
+        const path = typeof e.composedPath === "function" ? e.composedPath() : [];
+        for (const n of path) {
+            if (n?.classList?.contains?.("c-node") && n.dataset?.id) return n.dataset.id;
+        }
+        return e.target.closest?.(".c-node")?.dataset.id ?? null;
+    }
     const isHoverPointer = (e) => e.pointerType === "mouse" || e.pointerType === "pen" || e.pointerType === undefined;
+    const stillInHero = (el) => !!(el && (el === root || root.contains(el)));
 
-    svg.addEventListener("pointerover", (e) => {
+    function nearestNode(px, py, radius) {
+        let best = null, bestD = radius;
+        for (const n of graph.nodes) {
+            if (n.rVisible === false) continue;
+            const d = Math.hypot((n.rx ?? n.x) - px, (n.ry ?? n.y) - py);
+            if (d < bestD) { bestD = d; best = n.id; }
+        }
+        return best;
+    }
+
+    function pickNode(e) {
+        const fromDom = nodeFromEvent(e);
+        if (fromDom) return fromDom;
+        const { px, py } = pointerToStage(e);
+        return nearestNode(px, py, cameraCfg().clickRadius ?? 28);
+    }
+
+    function releaseLook() {
+        overPanel = false;
+        pointerOn = false;
+        yawT = 0;
+        pitchT = 0;
+        setHover(null);
+        kick();
+    }
+
+    stageEl.addEventListener("pointermove", (e) => {
         if (!isHoverPointer(e)) return;
-        const id = nodeFromEvent(e);
-        if (id) setHover(id);
+        pointerOn = true;
+        const { px, py, nx, ny } = pointerToStage(e);
+        setLookTarget(nx, ny);
+        gazeFromPointer(px, py, e);
+        kick();
+    }, { passive: true });
+
+    // Keep the current look while the pointer is on the info panel
+    // (the panel is a sibling of the stage, so leaving the stage used to
+    // snap the vault back to center).
+    stageEl.addEventListener("pointerleave", (e) => {
+        if (stillInHero(e.relatedTarget)) return;
+        requestAnimationFrame(() => {
+            if (root.matches(":hover")) return;
+            releaseLook();
+        });
     });
-    svg.addEventListener("pointerout", (e) => {
-        if (!isHoverPointer(e)) return;
-        const id = nodeFromEvent(e);
-        const to = e.relatedTarget?.closest?.(".c-node")?.dataset.id ?? null;
-        if (id && to !== id) setHover(null);
+    root.addEventListener("pointerleave", () => releaseLook());
+    panelEl?.addEventListener("pointerenter", () => {
+        overPanel = true;
+        pointerOn = true;
+        kick();
     });
-    svg.addEventListener("click", (e) => {
-        const id = nodeFromEvent(e);
-        if (id) { e.preventDefault(); activate(id); }
-        else if (selectedId) select(null);
+    panelEl?.addEventListener("pointerleave", (e) => {
+        overPanel = false;
+        if (stillInHero(e.relatedTarget)) return;
+        releaseLook();
+    });
+
+    // Touch / click still focuses a node. Mouse users get the card on gaze.
+    stageEl.addEventListener("pointerdown", (e) => {
+        if (e.button != null && e.button !== 0) return;
+        const id = pickNode(e);
+        if (!id) return;
+        e.preventDefault();
+        setHover(id);
+    });
+    stageEl.addEventListener("click", (e) => {
+        if (pickNode(e)) return;
+        if (!hoveredId && selectedId) select(null);
     });
     svg.addEventListener("keydown", (e) => {
         const id = nodeFromEvent(e);
         if (!id) return;
-        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); activate(id); }
+        if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            activate(id, { openIfSelected: true });
+        }
     });
     svg.addEventListener("focusin", (e) => { const id = nodeFromEvent(e); if (id) setHover(id); });
-    svg.addEventListener("focusout", (e) => { const id = nodeFromEvent(e); if (id) setHover(null); });
-    const onDocKey = (e) => { if (e.key === "Escape" && selectedId) select(null); };
+    const onDocKey = (e) => { if (e.key === "Escape") select(null); };
     document.addEventListener("keydown", onDocKey);
 
     /* ───────────── render loop ───────────── */
@@ -307,21 +523,46 @@ export async function mountConstellation(root, portfolio) {
         if (active) layout.tick();
 
         const amp = driftOn ? cfg.motion.drift.amplitude : 0;
+        const cam = cameraCfg();
+        const ease = reduceMotion ? 1 : (cam.ease ?? 0.1);
+        yaw += (yawT - yaw) * ease;
+        pitch += (pitchT - pitch) * ease;
+
         for (const n of graph.nodes) {
+            let x = n.x, y = n.y;
             if (amp) {
                 const d = drift.get(n.id);
-                n.rx = n.x + Math.sin((now / d.px) * Math.PI * 2 + d.fx) * amp;
-                n.ry = n.y + Math.cos((now / d.py) * Math.PI * 2 + d.fy) * amp;
-            } else {
-                n.rx = n.x; n.ry = n.y;
+                x += Math.sin((now / d.px) * Math.PI * 2 + d.fx) * amp;
+                y += Math.cos((now / d.py) * Math.PI * 2 + d.fy) * amp;
             }
-            nodeViews.get(n.id).update(n.rx, n.ry);
+            const sph = toSphere({ ...n, x, y }, size, cam);
+            const p = projectSky(sph.wx, sph.wy, sph.wz, yaw, pitch, cam, size);
+            n.rx = p.x; n.ry = p.y; n.rVisible = p.visible;
+            n.rScale = p.scale; n.rFade = p.fade; n.rDepth = p.depth;
+            nodeViews.get(n.id).update(p.x, p.y, p.visible ? p.scale : 0.001, p.visible ? p.fade : 0);
         }
-        for (const e of layout.edges) edgeViews.get(e.id).update(e.sourceNode, e.targetNode);
 
-        if (selectedId) panel?.place(graph.byId.get(selectedId));
+        const byDepth = [...graph.nodes].sort((a, b) => b.rDepth - a.rDepth);
+        for (const n of byDepth) nodesLayer.append(nodeViews.get(n.id).el);
 
-        if (active || driftOn) raf = requestAnimationFrame(frame);
+        for (const e of visualEdges) edgeViews.get(e.id).update(e.sourceNode, e.targetNode);
+
+        for (const { star, el } of dustDots) {
+            const p = projectSky(star.wx, star.wy, star.wz, yaw, pitch, cam, size);
+            if (!p.visible) {
+                el.setAttribute("opacity", "0");
+                continue;
+            }
+            el.setAttribute("cx", p.x.toFixed(1));
+            el.setAttribute("cy", p.y.toFixed(1));
+            el.setAttribute("r", (star.r * p.scale).toFixed(2));
+            el.setAttribute("opacity", (star.o * p.fade).toFixed(3));
+        }
+
+        if (panelId) panel?.place(graph.byId.get(panelId));
+
+        const looking = Math.abs(yawT - yaw) > 0.0004 || Math.abs(pitchT - pitch) > 0.0004;
+        if (active || driftOn || looking || pointerOn) raf = requestAnimationFrame(frame);
     }
 
     function kick() { if (!raf) raf = requestAnimationFrame(frame); }

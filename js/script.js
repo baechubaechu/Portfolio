@@ -17,7 +17,17 @@ function initRevealNav() {
     nav.parentNode.insertBefore(shell, nav);
     shell.append(zone, nav);
 
-    zone.addEventListener('click', () => nav.classList.toggle('is-open'));
+    // The hotzone is visual-only (pointer-events: none) so top-edge
+    // constellation stars stay clickable. Reveal the bar from pointer Y.
+    const HOT = 44;
+    const onMove = (e) => {
+        const overNav = nav.contains(e.target);
+        shell.classList.toggle('is-hot', overNav || e.clientY <= HOT);
+    };
+    window.addEventListener('pointermove', onMove, { passive: true });
+    document.addEventListener('pointerleave', () => {
+        if (!nav.classList.contains('is-open')) shell.classList.remove('is-hot');
+    });
 }
 
 

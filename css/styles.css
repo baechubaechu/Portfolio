@@ -77,7 +77,7 @@ body {
     right: 0;
     height: 40px;
     z-index: 1;
-    pointer-events: auto;
+    pointer-events: none;
 }
 
 .navbar {
@@ -96,7 +96,7 @@ body {
     transition: transform 480ms cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
-.nav-shell:hover .navbar,
+.nav-shell.is-hot .navbar,
 .nav-shell:focus-within .navbar,
 .navbar.is-open {
     transform: translateY(0);
