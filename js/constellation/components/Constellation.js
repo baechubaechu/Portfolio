@@ -18,7 +18,7 @@
 import { buildGraph } from "../lib/graph.js";
 import { createLayout } from "../lib/graphLayout.js?v=2.3";
 import { buildAsterisms } from "../lib/asterism.js?v=1.8";
-import { resolveConfig } from "../config.js?v=3.1";
+import { resolveConfig } from "../config.js?v=3.2";
 import { toSphere, project as projectSky, resolveCamera, createSkyDust } from "../lib/sky.js?v=2.8";
 import {
     createTextMeasurer, debounce, hasFinePointer, mulberry32, hashString,
@@ -347,9 +347,27 @@ export async function mountConstellation(root, portfolio) {
     }
     function setDwellLock(id) {
         try {
-            if (id) sessionStorage.setItem("c-dwell-lock", id);
-            else sessionStorage.removeItem("c-dwell-lock");
+            if (id) {
+                sessionStorage.setItem("c-dwell-lock", id);
+                sessionStorage.setItem("c-dwell-lock-at", String(Date.now()));
+            } else {
+                sessionStorage.removeItem("c-dwell-lock");
+                sessionStorage.removeItem("c-dwell-lock-at");
+            }
         } catch { /* private mode */ }
+    }
+    /** Same-star lock only for a brief moment after returning from a detail page. */
+    function dwellLocked(id) {
+        try {
+            const lock = sessionStorage.getItem("c-dwell-lock");
+            if (!lock || lock !== id) return false;
+            const at = Number(sessionStorage.getItem("c-dwell-lock-at") || 0);
+            if (!at || Date.now() - at > 700) {
+                setDwellLock(null);
+                return false;
+            }
+            return true;
+        } catch { return false; }
     }
 
     function resetDwell() {
@@ -358,15 +376,19 @@ export async function mountConstellation(root, portfolio) {
         dwellStart = 0;
     }
 
-    const DEPART_MS = 920;
-    /** Pilot: Student Driven Village gets the lightspeed warp before navigation. */
-    const WARP_PILOT_ID = "student-driven-village";
-    const WARP_GATHER_MS = 420;
-    const WARP_STREAK_MS = 2100;
-    const WARP_TOTAL_MS = WARP_GATHER_MS + WARP_STREAK_MS;
+    const WARP_GATHER_MS = 1100;
+    const WARP_PREP_MS = 530;
+    const WARP_BLOOM_MS = 1500;
+    const WARP_STREAK_MS = 3600;
+    const WARP_TOTAL_MS = WARP_GATHER_MS + WARP_PREP_MS + WARP_BLOOM_MS + WARP_STREAK_MS;
 
     let warpEl = null;
     let warpRaf = 0;
+    let navTimer = 0;
+    let leaveTimer = 0;
+    let warpStartTimer = 0;
+    let warpPrepTimer = 0;
+    let warpLineTimer = 0;
 
     function ensureWarpOverlay() {
         if (warpEl) return warpEl;
@@ -387,15 +409,112 @@ export async function mountConstellation(root, portfolio) {
         warpRaf = 0;
     }
 
+    let bloomDots = [];
+
+    function clearBloomStars() {
+        for (const el of bloomDots) el.remove();
+        bloomDots = [];
+    }
+
+    function spawnBloomStars(fx, fy) {
+        clearBloomStars();
+        const count = 1380;
+        const rx = size.width * 0.78;
+        const ry = size.height * 0.78;
+        const fade = 420;
+        const window = Math.max(0, WARP_BLOOM_MS - fade);
+        const frag = document.createDocumentFragment();
+        for (let i = 0; i < count; i++) {
+            const el = svgEl("circle", { class: "c-dust c-dust--bloom" });
+            let x, y;
+            if (Math.random() < 0.6) {
+                x = fx + (Math.random() * 2 - 1) * rx;
+                y = fy + (Math.random() * 2 - 1) * ry;
+            } else {
+                const ang = Math.random() * Math.PI * 2;
+                const rad = Math.random() ** 0.45;
+                x = fx + Math.cos(ang) * rad * rx;
+                y = fy + Math.sin(ang) * rad * ry;
+            }
+            el.setAttribute("cx", x.toFixed(1));
+            el.setAttribute("cy", y.toFixed(1));
+            el.setAttribute("r", (Math.random() < 0.16 ? 1.15 + Math.random() * 1.2 : 0.28 + Math.random() * 0.7).toFixed(2));
+            el.style.setProperty("--c-bloom-delay", `${(WARP_PREP_MS + Math.random() * window).toFixed(0)}ms`);
+            frag.append(el);
+            bloomDots.push(el);
+        }
+        dustLayer.append(frag);
+    }
+
+    function abortOpen() {
+        opening = false;
+        clearTimeout(navTimer);
+        clearTimeout(leaveTimer);
+        clearTimeout(warpStartTimer);
+        clearTimeout(warpPrepTimer);
+        clearTimeout(warpLineTimer);
+        navTimer = 0;
+        leaveTimer = 0;
+        warpStartTimer = 0;
+        warpPrepTimer = 0;
+        warpLineTimer = 0;
+        stopWarpField();
+        clearBloomStars();
+        root.classList.remove("is-leaving", "is-departing", "is-warping", "is-warp-prep", "is-warp-lines");
+        for (const v of nodeViews.values()) v.setClass("is-warp-focus", false);
+        world.style.transition = "none";
+        world.style.transform = "";
+        world.style.opacity = "";
+        if (warpEl) warpEl.style.opacity = "0";
+        requestAnimationFrame(() => { world.style.transition = ""; });
+        resetDwell();
+    }
+
+    function toOverlay(x, y) {
+        const m = world.getCTM();
+        const rootR = root.getBoundingClientRect();
+        const svgR = svg.getBoundingClientRect();
+        if (!m) return { x: x - rootR.left + svgR.left, y: y - rootR.top + svgR.top };
+        return {
+            x: m.a * x + m.c * y + m.e + svgR.left - rootR.left,
+            y: m.b * x + m.d * y + m.f + svgR.top - rootR.top,
+        };
+    }
+
+    function snapshotWarpSeeds(keepIds) {
+        const keep = new Set(keepIds);
+        const field = [];
+        const cores = [];
+        for (const n of graph.nodes) {
+            if (n.rVisible === false) continue;
+            const pt = toOverlay(n.rx, n.ry);
+            if (keep.has(n.id)) cores.push(pt);
+            else field.push(pt);
+        }
+        for (const { el } of dustDots) {
+            const ox = Number(el.getAttribute("cx"));
+            const oy = Number(el.getAttribute("cy"));
+            const op = Number(el.getAttribute("opacity") || 0);
+            if (!Number.isFinite(ox) || !Number.isFinite(oy) || op < 0.02) continue;
+            field.push(toOverlay(ox, oy));
+        }
+        for (const el of bloomDots) {
+            const ox = Number(el.getAttribute("cx"));
+            const oy = Number(el.getAttribute("cy"));
+            if (!Number.isFinite(ox) || !Number.isFinite(oy)) continue;
+            field.push(toOverlay(ox, oy));
+        }
+        return { field, cores };
+    }
+
     /**
-     * Hyperspace tunnel: stars start as points near a vanishing centre,
-     * then stretch into radial streaks as speed ramps — the "warp drive feel"
-     * look (dots → lines rushing past the cockpit).
+     * Retro jump-to-lightspeed: each live star grows a hairline, then the
+     * lines lengthen. Optical printer, not a particle pack.
      */
-    function runWarpField(duration) {
+    function runWarpField(duration, seeds = { field: [] }) {
         const canvas = warpEl.querySelector("canvas");
         if (!canvas) return;
-        const ctx = canvas.getContext("2d", { alpha: false });
+        const ctx = canvas.getContext("2d", { alpha: true });
         const dpr = Math.min(2, window.devicePixelRatio || 1);
         const w = Math.max(1, root.clientWidth);
         const h = Math.max(1, root.clientHeight);
@@ -405,95 +524,83 @@ export async function mountConstellation(root, portfolio) {
         canvas.style.height = `${h}px`;
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-        const COUNT = 1400;
         const cx = w * 0.5;
         const cy = h * 0.5;
-        const fov = Math.max(w, h) * 0.72;
-        const spawn = (far) => {
-            const ang = Math.random() * Math.PI * 2;
-            const rad = Math.random() ** 1.15 * 1.55 + 0.04;
+        const reach = Math.hypot(w, h);
+        const stars = (seeds.field || []).map((s) => {
+            const dx = s.x - cx;
+            const dy = s.y - cy;
             return {
-                x: Math.cos(ang) * rad,
-                y: Math.sin(ang) * rad * (h / Math.max(1, w)),
-                z: far ? 0.62 + Math.random() * 0.38 : 0.12 + Math.random() * 0.88,
+                ang: Math.atan2(dy, dx),
+                r0: Math.max(2, Math.hypot(dx, dy)),
+                born: -1,
             };
-        };
-        const stars = Array.from({ length: COUNT }, () => spawn(false));
-
-        ctx.fillStyle = "#0a0a0a";
-        ctx.fillRect(0, 0, w, h);
-        ctx.strokeStyle = "#f5f5f5";
-        ctx.lineCap = "round";
+        });
+        // Extra hairlines arrive in a late-biased drizzle so the field packs
+        // instead of appearing all at once. Additive strokes then expose to white.
+        const extras = Array.from({ length: 2100 }, () => ({
+            ang: Math.random() * Math.PI * 2,
+            r0: 6 + Math.random() ** 0.7 * reach * 0.8,
+            born: 0.03 + Math.random() ** 0.5 * 0.86,
+        }));
+        const all = stars.concat(extras);
 
         const t0 = performance.now();
-        let last = t0;
+        const live = () => root.classList.contains("is-warping");
 
         const tick = (now) => {
-            if (!root.classList.contains("is-warping")) return;
-            const dt = Math.min(32, now - last) / 16.67;
-            last = now;
+            if (!live()) return;
             const p = Math.min(1, (now - t0) / duration);
-            // Dots first, then a hard push so streaks read as a cockpit tunnel.
-            const accel = p < 0.22 ? (p / 0.22) * 0.16 : 0.16 + ((p - 0.22) / 0.78) ** 1.35 * 0.84;
-            const speed = 0.0045 + accel * 0.125;
-            const streak = 0.004 + accel * accel * 0.48;
+            const grow = p < 0.16
+                ? (p / 0.16) * 0.32
+                : 0.32 + ((p - 0.16) / 0.84) ** 1.12 * 0.68;
 
-            ctx.fillStyle = "#0a0a0a";
-            ctx.fillRect(0, 0, w, h);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            ctx.globalCompositeOperation = "source-over";
+            ctx.globalAlpha = 1;
+            ctx.clearRect(0, 0, w, h);
 
-            for (const s of stars) {
-                const z0 = s.z;
-                s.z -= speed * dt;
-                if (s.z < 0.02) Object.assign(s, spawn(true));
-                const zTail = z0 + streak;
-                const x1 = cx + (s.x / Math.max(0.02, s.z)) * fov;
-                const y1 = cy + (s.y / Math.max(0.02, s.z)) * fov;
-                const x0 = cx + (s.x / zTail) * fov;
-                const y0 = cy + (s.y / zTail) * fov;
-                const near = 1 - Math.min(1, s.z);
-                ctx.globalAlpha = 0.1 + near * 0.9;
-                ctx.lineWidth = 0.35 + near * 1.15;
+            ctx.strokeStyle = "#f7f7f7";
+            ctx.lineCap = "butt";
+            ctx.lineWidth = 1.3;
+            ctx.globalCompositeOperation = "lighter";
+
+            for (const s of all) {
+                if (s.born >= 0 && p < s.born) continue;
+                const local = s.born < 0
+                    ? grow
+                    : Math.min(1, (p - s.born) / 0.22);
+                const g = local * local;
+                const len = 1.2 + g * reach * 0.94;
+                const slide = g * reach * 0.36;
+                const rStar = s.r0 + slide * (0.2 + s.r0 / reach);
+                const rTip = rStar + len;
+                const cos = Math.cos(s.ang);
+                const sin = Math.sin(s.ang);
+                const base = s.born < 0 ? 0.2 + grow * 0.22 : 0.1 + local * 0.24;
+                ctx.globalAlpha = base * (0.5 + p * 0.85);
                 ctx.beginPath();
-                ctx.moveTo(x0, y0);
-                ctx.lineTo(x1, y1);
+                ctx.moveTo(cx + cos * rStar, cy + sin * rStar);
+                ctx.lineTo(cx + cos * rTip, cy + sin * rTip);
                 ctx.stroke();
             }
+
+            // Optical-printer exposure: packed lines milk the frame, then a cut.
+            const wash = p < 0.2 ? 0 : ((p - 0.2) / 0.8) ** 1.5;
+            const punch = p < 0.78 ? 0 : ((p - 0.78) / 0.22) ** 1.35;
+            ctx.globalCompositeOperation = "source-over";
+            ctx.globalAlpha = wash * 0.32 + punch * 0.68;
+            ctx.fillStyle = "#f5f5f5";
+            ctx.fillRect(0, 0, w, h);
             ctx.globalAlpha = 1;
             warpRaf = requestAnimationFrame(tick);
         };
         stopWarpField();
         warpRaf = requestAnimationFrame(tick);
     }
-
     /**
-     * Departure: the chosen asterism glides to the centre of the stage
-     * while everything else recedes. Returns the time to wait before
-     * navigating (0 when motion is reduced).
-     */
-    function departTo(node) {
-        if (reduceMotion) return 0;
-        const fig = asterisms.get(node.id);
-        const ids = fig ? [...fig.memberIds] : [node.id];
-        let sx = 0, sy = 0, n = 0;
-        for (const id of ids) {
-            const m = graph.byId.get(id);
-            if (!m || m.rVisible === false) continue;
-            sx += m.rx; sy += m.ry; n++;
-        }
-        if (!n) return 0;
-        const fx = sx / n, fy = sy / n;
-        const cx = size.width / 2, cy = size.height / 2;
-        const s = 1.08;
-        world.style.transformOrigin = "0 0";
-        world.style.transition = `transform ${DEPART_MS}ms var(--c-ease)`;
-        world.style.transform = `translate(${cx.toFixed(1)}px, ${cy.toFixed(1)}px) scale(${s}) translate(${(-fx).toFixed(1)}px, ${(-fy).toFixed(1)}px)`;
-        root.classList.add("is-departing");
-        return DEPART_MS + 60;
-    }
-
-    /**
-     * Lightspeed warp (pilot). Gather the figure, then rush into it.
-     * Returns total ms before navigation should fire.
+     * Lightspeed warp. Centre the figure, let it fall back to ordinary stars,
+     * then streak. Returns total ms before navigation should fire.
      */
     function warpTo(node) {
         if (reduceMotion) return 0;
@@ -511,21 +618,34 @@ export async function mountConstellation(root, portfolio) {
         const cx = size.width / 2, cy = size.height / 2;
 
         world.style.transformOrigin = "0 0";
-        world.style.transition = `transform ${WARP_GATHER_MS}ms var(--c-ease), opacity ${WARP_GATHER_MS}ms linear`;
+        world.style.transition = `transform ${WARP_GATHER_MS}ms var(--c-ease)`;
         world.style.transform =
-            `translate(${cx.toFixed(1)}px, ${cy.toFixed(1)}px) scale(1.16) ` +
+            `translate(${cx.toFixed(1)}px, ${cy.toFixed(1)}px) scale(1.12) ` +
             `translate(${(-fx).toFixed(1)}px, ${(-fy).toFixed(1)}px)`;
+        for (const id of ids) nodeViews.get(id)?.setClass("is-warp-focus", true);
         root.classList.add("is-departing");
+        root.style.setProperty("--c-warp-prep", `${WARP_PREP_MS}ms`);
+        root.style.setProperty("--c-warp-bloom", `${WARP_BLOOM_MS}ms`);
+        root.style.setProperty("--c-warp-streak", `${WARP_STREAK_MS}ms`);
+        if (warpEl) warpEl.style.opacity = "";
 
-        setTimeout(() => {
-            root.classList.add("is-warping");
-            runWarpField(WARP_STREAK_MS);
+        warpStartTimer = setTimeout(() => {
+            root.classList.add("is-warp-prep");
+            spawnBloomStars(fx, fy);
+            warpPrepTimer = setTimeout(() => {
+                const seeds = snapshotWarpSeeds([]);
+                root.classList.add("is-warping");
+                runWarpField(WARP_STREAK_MS, seeds);
+                warpLineTimer = setTimeout(() => {
+                    root.classList.add("is-warp-lines");
+                }, 520);
+            }, Math.max(0, WARP_PREP_MS + WARP_BLOOM_MS - 180));
         }, WARP_GATHER_MS);
 
         return WARP_TOTAL_MS;
     }
 
-    function openProject(node) {
+    function openProject(node, { skipWarp = false } = {}) {
         const p = node?.data;
         if (!p?.href || opening) return;
         opening = true;
@@ -533,31 +653,29 @@ export async function mountConstellation(root, portfolio) {
         if (p.detailId) {
             try { localStorage.setItem("currentProjectId", p.detailId); } catch { /* private mode */ }
         }
+        if (skipWarp) {
+            window.location.href = p.href;
+            return;
+        }
         // The detail page picks this up to continue the figure without a restart.
         try { sessionStorage.setItem("c-arrive", node.id); } catch { /* private mode */ }
 
-        const useWarp = node.id === WARP_PILOT_ID;
-        const wait = useWarp ? warpTo(node) : departTo(node);
+        const wait = warpTo(node);
         if (!wait) {
             root.classList.add("is-leaving");
             window.location.href = p.href;
             return;
         }
-        const fadeAt = useWarp
-            ? Math.max(0, wait - 380)
-            : Math.max(0, wait - 300);
-        setTimeout(() => root.classList.add("is-leaving"), fadeAt);
-        setTimeout(() => { window.location.href = p.href; }, wait);
+        leaveTimer = setTimeout(() => root.classList.add("is-leaving"), Math.max(0, wait - 160));
+        navTimer = setTimeout(() => { window.location.href = p.href; }, wait);
     }
 
     function tickDwell(now) {
         const n = selectedId ? graph.byId.get(selectedId) : null;
-        const lock = dwellLockId();
-        if (lock && hoveredId && hoveredId !== lock) setDwellLock(null);
         const holding = !overPanel && !opening
             && n?.type === "project" && n.data?.href
             && hoveredId === selectedId
-            && lock !== n.id;
+            && !dwellLocked(n.id);
         if (!holding) {
             resetDwell();
             return;
@@ -567,7 +685,7 @@ export async function mountConstellation(root, portfolio) {
             dwellId = n.id;
             dwellStart = now;
         }
-        const dur = cfg.motion.dwellMs ?? 4000;
+        const dur = cfg.motion.dwellMs ?? 3000;
         const t = Math.min(1, (now - dwellStart) / dur);
         nodeViews.get(n.id)?.setDwell(t);
         if (t >= 1) openProject(n);
@@ -719,12 +837,18 @@ export async function mountConstellation(root, portfolio) {
         releaseLook();
     });
 
-    // Touch / click still focuses a node. Mouse users get the card on gaze.
+    // Touch / click still focuses a node. Project names skip the warp
+    // (temporary, for iterating the detail arrival).
     stageEl.addEventListener("pointerdown", (e) => {
         if (e.button != null && e.button !== 0) return;
         const id = pickNode(e);
         if (!id) return;
         e.preventDefault();
+        const node = graph.byId.get(id);
+        if (e.target.closest?.(".c-node__label") && node?.type === "project" && node.data?.href) {
+            openProject(node, { skipWarp: true });
+            return;
+        }
         setHover(id);
     });
     stageEl.addEventListener("click", (e) => {
@@ -855,18 +979,26 @@ export async function mountConstellation(root, portfolio) {
         reveal();
     }
 
-    const onPageShow = () => {
-        opening = false;
-        stopWarpField();
-        root.classList.remove("is-leaving", "is-departing", "is-warping");
-        world.style.transition = "none";
-        world.style.transform = "";
-        world.style.opacity = "";
-        requestAnimationFrame(() => { world.style.transition = ""; });
-        resetDwell();
+    const onPageShow = (e) => {
+        abortOpen();
+        if (warpEl) warpEl.style.opacity = "";
+        // Fresh load / refresh: do not keep a leftover lock from an earlier visit.
+        // Back/forward cache: retimestamp so the star under the cursor does not
+        // instantly complete a restored dwell, then expire after 700ms.
+        if (e?.persisted) {
+            const id = dwellLockId();
+            if (id) setDwellLock(id);
+        } else {
+            setDwellLock(null);
+        }
+        try { sessionStorage.removeItem("c-skip-dwell"); } catch { /* private mode */ }
         kick();
     };
+    const onPageHide = () => {
+        abortOpen();
+    };
     window.addEventListener("pageshow", onPageShow);
+    window.addEventListener("pagehide", onPageHide);
 
     return {
         graph, layout, select, get selectedId() { return selectedId; },
@@ -876,6 +1008,7 @@ export async function mountConstellation(root, portfolio) {
             cancelAnimationFrame(raf);
             window.removeEventListener("resize", onResize);
             window.removeEventListener("pageshow", onPageShow);
+            window.removeEventListener("pagehide", onPageHide);
             document.removeEventListener("keydown", onDocKey);
             ro?.disconnect();
             cursor?.destroy();

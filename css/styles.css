@@ -1138,10 +1138,11 @@ footer {
 
 /* Project Detail Page Styles */
 .detail-page .navbar {
-    transform: none;
+    transform: translateY(0) !important;
     position: sticky;
     top: 0;
-    z-index: 30;
+    z-index: 200;
+    pointer-events: auto;
 }
 
 .detail-page .btn-back {
@@ -1149,14 +1150,17 @@ footer {
     font-size: 0.8rem;
     font-weight: 500;
     letter-spacing: 0.04em;
-    color: var(--text-secondary);
-    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    border: 1px solid var(--text-primary);
     border-radius: 4px;
     padding: 0.45rem 0.9rem;
+    cursor: pointer;
+    pointer-events: auto;
 }
 
 .detail-page .btn-back:hover {
-    color: var(--text-primary);
+    color: var(--bg-color);
+    background: var(--text-primary);
     border-color: var(--text-primary);
 }
 

@@ -58,6 +58,8 @@
     position: absolute;
     inset: 0;
     isolation: isolate;
+    perspective: 1400px;
+    perspective-origin: 50% 48%;
     transition: opacity 260ms var(--c-ease);
     /* four crop marks, drawn on the figure itself */
     --c-mark: var(--c-hair-strong);
@@ -99,11 +101,27 @@
     pointer-events: none;
 }
 
+.c-dust--bloom {
+    opacity: 0;
+    fill: #f5f5f5;
+    pointer-events: none;
+}
+
+.c-hero.is-warp-prep .c-dust--bloom {
+    animation: c-star-bloom 420ms linear var(--c-bloom-delay, 800ms) forwards;
+}
+
+@keyframes c-star-bloom {
+    from { opacity: 0; }
+    to { opacity: 0.78; }
+}
+
 .c-svg {
     display: block;
     width: 100%;
     height: 100%;
     overflow: hidden;
+    transform-origin: 50% 48%;
 }
 
 /* ── Edges ─────────────────────────────────────────────────────────────── */
@@ -327,6 +345,7 @@
     font-weight: 500;
     letter-spacing: 0.09em;
     opacity: 0.92;
+    cursor: pointer;
 }
 
 .c-node--attribute .c-node__label {
@@ -698,19 +717,17 @@
 
 /* ── Leaving (→ detail page) ───────────────────────────────────────────── */
 
-/* ── Departure: the chosen figure glides to centre, the rest recedes ─── */
+/* ── Departure: the chosen figure glides to centre; the rest stays ──── */
 
-.c-hero.is-departing .c-node:not(.is-focus):not(.is-linked),
-.c-hero.is-departing .c-edge:not(.is-drawn),
-.c-hero.is-departing .c-dust,
 .c-hero.is-departing .c-float,
 .c-hero.is-departing .c-node__dwell,
 .c-hero.is-departing .c-node__ring {
     opacity: 0 !important;
-    transition: opacity 460ms var(--c-ease);
+    transition: opacity 1100ms var(--c-ease);
 }
 
-.c-hero.is-departing .c-node.is-focus .c-node__dot {
+.c-hero.is-departing .c-node.is-focus .c-node__dot,
+.c-hero.is-departing .c-node.is-warp-focus .c-node__dot {
     transform: scale(1.5);
 }
 
@@ -720,7 +737,7 @@
     transition: opacity 320ms var(--c-ease);
 }
 
-/* ── Lightspeed warp (pilot: Student Driven Village) ──────────────────── */
+/* ── Lightspeed warp ──────────────────────────────────────────────────── */
 
 .c-warp {
     position: absolute;
@@ -729,13 +746,13 @@
     pointer-events: none;
     overflow: hidden;
     opacity: 0;
-    background: #0a0a0a;
-    transition: opacity 180ms linear;
+    background: transparent;
+    transition: opacity 400ms linear;
 }
 
 .c-hero.is-warping .c-warp {
     opacity: 1;
-    transition: opacity 90ms linear;
+    transition: opacity 180ms linear;
 }
 
 .c-warp__canvas {
@@ -747,35 +764,100 @@
 .c-warp__flash {
     position: absolute;
     inset: 0;
-    background: radial-gradient(
-        circle at center,
-        #ffffff 0%,
-        #f5f5f5 18%,
-        #cfcfcf 42%,
-        #0a0a0a 78%
-    );
+    background: #f5f5f5;
     opacity: 0;
 }
 
 .c-hero.is-warping .c-warp__flash {
-    animation: c-warp-flash 2100ms linear both;
+    animation: c-warp-flash var(--c-warp-streak, 3600ms) linear both;
 }
 
 @keyframes c-warp-flash {
-    0%, 86% { opacity: 0; }
+    0%, 70% { opacity: 0; }
+    86% { opacity: 0.28; }
     100% { opacity: 1; }
 }
 
-/* During warp the sky is the tunnel; hide the map chrome. */
-.c-hero.is-warping .c-hero__stage,
-.c-hero.is-warping .c-float,
-.c-hero.is-warping .c-cursor {
-    opacity: 0 !important;
-    transition: opacity 220ms linear;
+/* Figure becomes ordinary stars: lines retract, names go, dots sit still. */
+.c-hero.is-warp-prep .c-edge .c-edge__line,
+.c-hero.is-warp-prep .c-edge.is-drawn .c-edge__line {
+    stroke-dashoffset: 1;
+    transition: stroke-dashoffset var(--c-warp-prep, 530ms) var(--c-ease-in);
 }
 
-.c-hero.is-warping.is-leaving .c-warp {
-    /* flash already covers the jump */
+.c-hero.is-warp-prep .c-edge__preview,
+.c-hero.is-warp-prep .c-edge__pulse {
+    opacity: 0 !important;
+    transition: opacity 180ms linear;
+}
+
+.c-hero.is-warp-prep .c-node__dot,
+.c-hero.is-warp-prep .c-node--project .c-node__dot,
+.c-hero.is-warp-prep .c-node--attribute .c-node__dot,
+.c-hero.is-warp-prep .c-node--attribute.is-linked .c-node__dot,
+.c-hero.is-warp-prep .c-node--attribute.is-focus .c-node__dot,
+.c-hero.is-warp-prep .c-node.is-focus .c-node__dot,
+.c-hero.is-warp-prep .c-node.is-warp-focus .c-node__dot {
+    transform: scale(0.38) !important;
+    fill: #e8eef6 !important;
+    stroke: none !important;
+    stroke-width: 0 !important;
+    animation: none !important;
+    transition:
+        transform var(--c-warp-prep, 530ms) var(--c-ease),
+        fill var(--c-warp-prep, 530ms) var(--c-ease),
+        stroke var(--c-warp-prep, 530ms) var(--c-ease);
+}
+
+.c-hero.is-warp-prep .c-node__label,
+.c-hero.is-warp-prep .c-float,
+.c-hero.is-warp-prep .c-cursor,
+.c-hero.is-warp-prep .c-node__dwell,
+.c-hero.is-warp-prep .c-node__ring {
+    opacity: 0 !important;
+    transition: opacity 280ms linear;
+}
+
+/* Graph marks must lose to warp immediately. Selection dim rules are
+   more specific than a plain `.c-node` hide, so they kept other
+   projects and hollow attribute discs on screen for the whole streak. */
+.c-hero.is-warping .c-hero__stage.has-hover .c-node,
+.c-hero.is-warping .c-hero__stage.has-selection .c-node,
+.c-hero.is-warping .c-hero__stage.has-selection .c-node--project,
+.c-hero.is-warping .c-hero__stage.has-selection .c-node--attribute,
+.c-hero.is-warping .c-hero__stage.has-selection .c-node--project:not(.is-focus):not(.is-linked),
+.c-hero.is-warping .c-hero__stage.has-selection .c-node--attribute:not(.is-focus):not(.is-linked),
+.c-hero.is-warping .c-hero__stage.has-selection .c-node.is-hover-focus,
+.c-hero.is-warping .c-hero__stage.has-selection .c-node.is-hover-linked,
+.c-hero.is-warping .c-node {
+    opacity: 0 !important;
+    pointer-events: none;
+    transition: opacity 180ms linear;
+}
+
+.c-hero.is-warping .c-edge {
+    opacity: 0 !important;
+    transition: opacity 120ms linear;
+}
+
+.c-hero.is-warp-lines .c-dust--bloom {
+    animation: none;
+    opacity: 0 !important;
+    transition: opacity 240ms linear;
+}
+
+.c-hero.is-warp-lines .c-dust {
+    opacity: 0 !important;
+    transition: opacity 240ms linear;
+}
+
+.c-hero.is-warping .c-node__label,
+.c-hero.is-warping .c-float,
+.c-hero.is-warping .c-cursor,
+.c-hero.is-warping .c-node__dwell,
+.c-hero.is-warping .c-node__ring {
+    opacity: 0 !important;
+    transition: opacity 160ms linear;
 }
 
 /* ── Failure fallback ──────────────────────────────────────────────────── */

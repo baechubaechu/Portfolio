@@ -50,7 +50,7 @@ export const CONFIG = {
             period: [11000, 17000],
         },
             appearStagger: 38,  // initial reveal, per node
-            dwellMs: 4000,      // hold gaze on a project to open its page
+            dwellMs: 3000,      // hold gaze on a project to open its page
             camera: {
             ease: 0.05,          // lerp per frame toward the look target
             gazeRadius: 88,      // px: looking at a project within this distance

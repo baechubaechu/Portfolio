@@ -32,39 +32,12 @@ function initRevealNav() {
     });
 }
 
-function cameFromHome() {
-    if (history.length < 2) return false;
-    try {
-        const u = new URL(document.referrer);
-        if (u.origin !== location.origin) return false;
-        const path = u.pathname;
-        return !path.includes('project-detail') && !path.includes('/projects/');
-    } catch {
-        return false;
-    }
-}
-
 function goHome() {
-    if (cameFromHome()) {
-        history.back();
-        return;
-    }
-    const home = document.querySelector('a.logo, a.btn-back');
-    window.location.href = home?.getAttribute('href') || 'index.html';
+    window.location.href = 'index.html';
 }
 
 function initDetailNav() {
     if (!document.body.classList.contains('detail-page')) return;
-    document.querySelectorAll('a.logo, a.btn-back, a.btn-secondary').forEach((a) => {
-        const href = a.getAttribute('href') || '';
-        if (!href.includes('index.html')) return;
-        a.addEventListener('click', (e) => {
-            if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-            if (!cameFromHome()) return;
-            e.preventDefault();
-            history.back();
-        });
-    });
     document.addEventListener('keydown', (e) => {
         if (e.key !== 'Escape') return;
         goHome();
@@ -73,6 +46,7 @@ function initDetailNav() {
 
 
 function initComputationalCanvas() {
+    if (document.body.classList.contains('is-system')) return;
     const canvas = document.getElementById('computational-canvas');
     if (!canvas) return;
 

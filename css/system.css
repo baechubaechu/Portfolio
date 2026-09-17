@@ -1,0 +1,463 @@
+/* =========================================================================
+   Arrival system — Abraxas prototype
+   Same ink / hairline / type as the home sky. No narrative layer.
+   ========================================================================= */
+
+body.is-system {
+    --sys-bg: #0a0a0a;
+    --sys-ink: #f5f5f5;
+    --sys-ink-2: #b5b5b5;
+    --sys-hair: rgba(255, 255, 255, 0.13);
+    --sys-hair-strong: rgba(255, 255, 255, 0.38);
+    --sys-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --sys-font-mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, Menlo, monospace;
+    --sys-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+    overflow: hidden;
+    background: var(--sys-bg);
+}
+
+body.is-system .grid-background,
+body.is-system #computational-canvas,
+body.is-system .project-detail-container {
+    display: none !important;
+}
+
+body.is-system .navbar {
+    background: transparent;
+    backdrop-filter: none;
+    border-bottom: 0;
+}
+
+.sys {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    background: var(--sys-bg);
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.sys.is-orbiting {
+    cursor: grabbing;
+}
+
+.sys__svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.sys__dust {
+    pointer-events: none;
+}
+
+.sys__speck {
+    fill: #e8eef6;
+    pointer-events: none;
+}
+
+.sys__speck--hot {
+    fill: #f4f1ea;
+}
+
+.sys__orbit {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.38);
+    stroke-width: 1;
+}
+
+.sys__sun-hit {
+    fill: transparent;
+    stroke: none;
+    pointer-events: all;
+    cursor: pointer;
+}
+
+.sys__sun-fo {
+    pointer-events: none;
+    overflow: visible;
+}
+
+.sys__sun-wrap {
+    width: 100%;
+    height: 100%;
+}
+
+.sys__sun-tex {
+    display: block;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.sys__sun-limb {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.22);
+    stroke-width: 0.8;
+    pointer-events: none;
+}
+
+.sys__sun-label {
+    fill: var(--sys-ink);
+    font-family: var(--sys-font-sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.09em;
+    dominant-baseline: central;
+    paint-order: stroke fill;
+    stroke: var(--sys-bg);
+    stroke-width: 3px;
+    stroke-linejoin: round;
+}
+
+.sys__planet-dot {
+    fill: var(--sys-bg);
+    stroke: var(--sys-ink);
+    stroke-width: 1;
+}
+
+.sys__planet-label {
+    fill: var(--sys-ink-2);
+    font-family: var(--sys-font-mono);
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    dominant-baseline: central;
+    paint-order: stroke fill;
+    stroke: var(--sys-bg);
+    stroke-width: 3px;
+    stroke-linejoin: round;
+    opacity: 0.78;
+}
+
+html.is-warp-arrive,
+html.is-warp-arrive body {
+    background: #f5f5f5;
+}
+
+html.is-warp-arrive .grid-background,
+html.is-warp-arrive #computational-canvas,
+html.is-warp-arrive #loading-state {
+    opacity: 0 !important;
+}
+
+.sys__veil {
+    position: absolute;
+    inset: 0;
+    background: #f5f5f5;
+    pointer-events: none;
+    opacity: 0;
+    z-index: 4;
+}
+
+.sys__veil.is-on {
+    opacity: 1;
+}
+
+body.is-system.is-system-settled .sys__veil.is-on {
+    opacity: 0;
+    transition: opacity 920ms linear;
+}
+
+body.is-system:not(.is-arriving) .sys__world,
+body.is-system:not(.is-arriving) .sys__dust {
+    animation: sys-in 800ms var(--sys-ease) both;
+}
+
+@keyframes sys-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.sys__sun-btn {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 3;
+    width: 118px;
+    height: 36px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    transform-origin: 0 0;
+}
+
+.sys.is-over-sun,
+.sys__sun-btn:hover {
+    cursor: pointer;
+}
+
+.sys.is-reading {
+    cursor: grab;
+}
+
+.sys.is-reading .sys__sun-btn {
+    pointer-events: none;
+    opacity: 0;
+}
+
+.sys__sun.is-focus .sys__sun-limb {
+    stroke: rgba(255, 255, 255, 0.4);
+}
+
+.sys.is-awaiting .sys__sun-limb {
+    animation: sys-limb-wait 2.6s ease-in-out infinite;
+}
+
+@keyframes sys-limb-wait {
+    0%, 100% { stroke: rgba(255, 255, 255, 0.18); }
+    50% { stroke: rgba(255, 255, 255, 0.58); }
+}
+
+.sys-legend {
+    position: absolute;
+    left: 50%;
+    bottom: 28px;
+    z-index: 5;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 0;
+    transform: translateX(-50%);
+    font-family: var(--sys-font-mono);
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #6a6a6a;
+    pointer-events: none;
+    opacity: 0;
+}
+
+.sys.is-awaiting .sys-legend {
+    opacity: 1;
+}
+
+.sys.is-reading .sys-legend {
+    opacity: 0;
+}
+
+.sys-legend span + span::before {
+    content: "·";
+    margin: 0 0.9em;
+    opacity: 0.5;
+}
+
+.sys__back {
+    position: absolute;
+    left: 28px;
+    top: 88px;
+    z-index: 5;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    font-family: var(--sys-font-mono);
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--sys-ink-2);
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 640ms var(--sys-ease) 220ms, color 160ms linear;
+}
+
+.sys.is-reading .sys__back {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.sys__back:hover,
+.sys__back:focus-visible {
+    color: var(--sys-ink);
+}
+
+body.is-reading-sun .btn-back {
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.sys-dock {
+    --sys-mark: var(--sys-hair-strong);
+    position: fixed;
+    top: 88px;
+    right: 28px;
+    bottom: 28px;
+    z-index: 6;
+    width: calc(40% - 36px);
+    max-width: none;
+    padding: 22px 22px 20px;
+    overflow: auto;
+    color: var(--sys-ink);
+    background-color: rgba(10, 10, 10, 0.55);
+    border: 0;
+    background-image:
+        linear-gradient(var(--sys-mark), var(--sys-mark)),
+        linear-gradient(var(--sys-mark), var(--sys-mark)),
+        linear-gradient(var(--sys-mark), var(--sys-mark)),
+        linear-gradient(var(--sys-mark), var(--sys-mark)),
+        linear-gradient(var(--sys-mark), var(--sys-mark)),
+        linear-gradient(var(--sys-mark), var(--sys-mark)),
+        linear-gradient(var(--sys-mark), var(--sys-mark)),
+        linear-gradient(var(--sys-mark), var(--sys-mark));
+    background-size:
+        10px 1px, 1px 10px,
+        10px 1px, 1px 10px,
+        10px 1px, 1px 10px,
+        10px 1px, 1px 10px;
+    background-position:
+        left top, left top,
+        right top, right top,
+        left bottom, left bottom,
+        right bottom, right bottom;
+    background-repeat: no-repeat;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(12px);
+    pointer-events: none;
+    cursor: default;
+    user-select: text;
+    -webkit-user-select: text;
+    text-shadow:
+        0 0 6px rgba(10, 10, 10, 0.9),
+        0 1px 10px rgba(10, 10, 10, 0.55);
+    transition:
+        opacity 640ms var(--sys-ease) 0ms,
+        transform 640ms var(--sys-ease) 0ms,
+        visibility 0s 640ms;
+}
+
+.sys-dock.is-open {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+    visibility: visible;
+    transition:
+        opacity 780ms var(--sys-ease) 260ms,
+        transform 780ms var(--sys-ease) 260ms,
+        visibility 0s 0s;
+}
+
+.sys-dock__kicker {
+    margin: 0 0 8px;
+    font-family: var(--sys-font-mono);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #808080;
+}
+
+.sys-dock__title {
+    margin: 0 0 10px;
+    font-family: var(--sys-font-sans);
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+}
+
+.sys-dock__quote {
+    margin: 0 0 16px;
+    font-family: var(--sys-font-sans);
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.45;
+    color: var(--sys-ink-2);
+}
+
+.sys-dock__meta {
+    margin: 0 0 16px;
+    display: grid;
+    gap: 8px 0;
+}
+
+.sys-dock__meta > div {
+    display: grid;
+    grid-template-columns: 88px 1fr;
+    gap: 8px;
+    align-items: baseline;
+}
+
+.sys-dock__meta dt {
+    font-family: var(--sys-font-mono);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #808080;
+}
+
+.sys-dock__meta dd {
+    margin: 0;
+    font-family: var(--sys-font-sans);
+    font-size: 12px;
+    color: var(--sys-ink);
+}
+
+.sys-dock__figure {
+    margin: 0 0 16px;
+}
+
+.sys-dock__figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 38vh;
+    object-fit: contain;
+    object-position: left top;
+    border: 1px solid var(--sys-hair);
+}
+
+.sys-dock__thesis {
+    margin: 0;
+    font-family: var(--sys-font-sans);
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--sys-ink-2);
+}
+
+@media (max-width: 719px) {
+    .sys__back {
+        left: 20px;
+        top: 72px;
+    }
+
+    .sys-dock {
+        top: auto;
+        right: 16px;
+        left: 16px;
+        bottom: 16px;
+        width: auto;
+        max-height: 42vh;
+        transform: translateY(12px);
+    }
+
+    .sys-dock.is-open { transform: none; }
+
+    .sys-dock__figure img {
+        max-height: 18vh;
+    }
+
+    .sys-legend {
+        bottom: 16px;
+        max-width: calc(100% - 32px);
+        row-gap: 6px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body.is-system.is-arriving.is-system-settled .sys__veil,
+    body.is-system:not(.is-arriving) .sys__world,
+    body.is-system:not(.is-arriving) .sys__dust,
+    .sys-dock,
+    .sys-dock.is-open,
+    .sys.is-awaiting .sys__sun-limb {
+        transition: none;
+        animation: none;
+    }
+        transition: none;
+        animation: none;
+    }
+}

@@ -31,6 +31,7 @@ function boot() {
 }
 
 function init(project) {
+    if (document.body.classList.contains("is-system")) return;
     const main = document.getElementById("detail-card-container");
     if (!main || main.dataset.spine) return;
     main.dataset.spine = "on";
