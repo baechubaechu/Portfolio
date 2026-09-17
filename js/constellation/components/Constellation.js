@@ -18,8 +18,8 @@
 import { buildGraph } from "../lib/graph.js";
 import { createLayout } from "../lib/graphLayout.js?v=2.3";
 import { buildAsterisms } from "../lib/asterism.js?v=1.8";
-import { resolveConfig } from "../config.js?v=2.9";
-import { toSphere, project as projectSky, resolveCamera, createSkyDust } from "../lib/sky.js?v=2.6";
+import { resolveConfig } from "../config.js?v=3.1";
+import { toSphere, project as projectSky, resolveCamera, createSkyDust } from "../lib/sky.js?v=2.8";
 import {
     createTextMeasurer, debounce, hasFinePointer, mulberry32, hashString,
     prefersReducedMotion, svgEl, waitForFonts,
@@ -342,28 +342,222 @@ export async function mountConstellation(root, portfolio) {
     let dwellStart = 0;
     let opening = false;
 
+    function dwellLockId() {
+        try { return sessionStorage.getItem("c-dwell-lock"); } catch { return null; }
+    }
+    function setDwellLock(id) {
+        try {
+            if (id) sessionStorage.setItem("c-dwell-lock", id);
+            else sessionStorage.removeItem("c-dwell-lock");
+        } catch { /* private mode */ }
+    }
+
     function resetDwell() {
         if (dwellId) nodeViews.get(dwellId)?.setDwell(0);
         dwellId = null;
         dwellStart = 0;
     }
 
+    const DEPART_MS = 920;
+    /** Pilot: Student Driven Village gets the lightspeed warp before navigation. */
+    const WARP_PILOT_ID = "student-driven-village";
+    const WARP_GATHER_MS = 420;
+    const WARP_STREAK_MS = 2100;
+    const WARP_TOTAL_MS = WARP_GATHER_MS + WARP_STREAK_MS;
+
+    let warpEl = null;
+    let warpRaf = 0;
+
+    function ensureWarpOverlay() {
+        if (warpEl) return warpEl;
+        warpEl = document.createElement("div");
+        warpEl.className = "c-warp";
+        warpEl.setAttribute("aria-hidden", "true");
+        const canvas = document.createElement("canvas");
+        canvas.className = "c-warp__canvas";
+        const flash = document.createElement("div");
+        flash.className = "c-warp__flash";
+        warpEl.append(canvas, flash);
+        root.append(warpEl);
+        return warpEl;
+    }
+
+    function stopWarpField() {
+        cancelAnimationFrame(warpRaf);
+        warpRaf = 0;
+    }
+
+    /**
+     * Hyperspace tunnel: stars start as points near a vanishing centre,
+     * then stretch into radial streaks as speed ramps — the "warp drive feel"
+     * look (dots → lines rushing past the cockpit).
+     */
+    function runWarpField(duration) {
+        const canvas = warpEl.querySelector("canvas");
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d", { alpha: false });
+        const dpr = Math.min(2, window.devicePixelRatio || 1);
+        const w = Math.max(1, root.clientWidth);
+        const h = Math.max(1, root.clientHeight);
+        canvas.width = Math.round(w * dpr);
+        canvas.height = Math.round(h * dpr);
+        canvas.style.width = `${w}px`;
+        canvas.style.height = `${h}px`;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        const COUNT = 1400;
+        const cx = w * 0.5;
+        const cy = h * 0.5;
+        const fov = Math.max(w, h) * 0.72;
+        const spawn = (far) => {
+            const ang = Math.random() * Math.PI * 2;
+            const rad = Math.random() ** 1.15 * 1.55 + 0.04;
+            return {
+                x: Math.cos(ang) * rad,
+                y: Math.sin(ang) * rad * (h / Math.max(1, w)),
+                z: far ? 0.62 + Math.random() * 0.38 : 0.12 + Math.random() * 0.88,
+            };
+        };
+        const stars = Array.from({ length: COUNT }, () => spawn(false));
+
+        ctx.fillStyle = "#0a0a0a";
+        ctx.fillRect(0, 0, w, h);
+        ctx.strokeStyle = "#f5f5f5";
+        ctx.lineCap = "round";
+
+        const t0 = performance.now();
+        let last = t0;
+
+        const tick = (now) => {
+            if (!root.classList.contains("is-warping")) return;
+            const dt = Math.min(32, now - last) / 16.67;
+            last = now;
+            const p = Math.min(1, (now - t0) / duration);
+            // Dots first, then a hard push so streaks read as a cockpit tunnel.
+            const accel = p < 0.22 ? (p / 0.22) * 0.16 : 0.16 + ((p - 0.22) / 0.78) ** 1.35 * 0.84;
+            const speed = 0.0045 + accel * 0.125;
+            const streak = 0.004 + accel * accel * 0.48;
+
+            ctx.fillStyle = "#0a0a0a";
+            ctx.fillRect(0, 0, w, h);
+
+            for (const s of stars) {
+                const z0 = s.z;
+                s.z -= speed * dt;
+                if (s.z < 0.02) Object.assign(s, spawn(true));
+                const zTail = z0 + streak;
+                const x1 = cx + (s.x / Math.max(0.02, s.z)) * fov;
+                const y1 = cy + (s.y / Math.max(0.02, s.z)) * fov;
+                const x0 = cx + (s.x / zTail) * fov;
+                const y0 = cy + (s.y / zTail) * fov;
+                const near = 1 - Math.min(1, s.z);
+                ctx.globalAlpha = 0.1 + near * 0.9;
+                ctx.lineWidth = 0.35 + near * 1.15;
+                ctx.beginPath();
+                ctx.moveTo(x0, y0);
+                ctx.lineTo(x1, y1);
+                ctx.stroke();
+            }
+            ctx.globalAlpha = 1;
+            warpRaf = requestAnimationFrame(tick);
+        };
+        stopWarpField();
+        warpRaf = requestAnimationFrame(tick);
+    }
+
+    /**
+     * Departure: the chosen asterism glides to the centre of the stage
+     * while everything else recedes. Returns the time to wait before
+     * navigating (0 when motion is reduced).
+     */
+    function departTo(node) {
+        if (reduceMotion) return 0;
+        const fig = asterisms.get(node.id);
+        const ids = fig ? [...fig.memberIds] : [node.id];
+        let sx = 0, sy = 0, n = 0;
+        for (const id of ids) {
+            const m = graph.byId.get(id);
+            if (!m || m.rVisible === false) continue;
+            sx += m.rx; sy += m.ry; n++;
+        }
+        if (!n) return 0;
+        const fx = sx / n, fy = sy / n;
+        const cx = size.width / 2, cy = size.height / 2;
+        const s = 1.08;
+        world.style.transformOrigin = "0 0";
+        world.style.transition = `transform ${DEPART_MS}ms var(--c-ease)`;
+        world.style.transform = `translate(${cx.toFixed(1)}px, ${cy.toFixed(1)}px) scale(${s}) translate(${(-fx).toFixed(1)}px, ${(-fy).toFixed(1)}px)`;
+        root.classList.add("is-departing");
+        return DEPART_MS + 60;
+    }
+
+    /**
+     * Lightspeed warp (pilot). Gather the figure, then rush into it.
+     * Returns total ms before navigation should fire.
+     */
+    function warpTo(node) {
+        if (reduceMotion) return 0;
+        ensureWarpOverlay();
+        const fig = asterisms.get(node.id);
+        const ids = fig ? [...fig.memberIds] : [node.id];
+        let sx = 0, sy = 0, n = 0;
+        for (const id of ids) {
+            const m = graph.byId.get(id);
+            if (!m || m.rVisible === false) continue;
+            sx += m.rx; sy += m.ry; n++;
+        }
+        const fx = n ? sx / n : size.width / 2;
+        const fy = n ? sy / n : size.height / 2;
+        const cx = size.width / 2, cy = size.height / 2;
+
+        world.style.transformOrigin = "0 0";
+        world.style.transition = `transform ${WARP_GATHER_MS}ms var(--c-ease), opacity ${WARP_GATHER_MS}ms linear`;
+        world.style.transform =
+            `translate(${cx.toFixed(1)}px, ${cy.toFixed(1)}px) scale(1.16) ` +
+            `translate(${(-fx).toFixed(1)}px, ${(-fy).toFixed(1)}px)`;
+        root.classList.add("is-departing");
+
+        setTimeout(() => {
+            root.classList.add("is-warping");
+            runWarpField(WARP_STREAK_MS);
+        }, WARP_GATHER_MS);
+
+        return WARP_TOTAL_MS;
+    }
+
     function openProject(node) {
         const p = node?.data;
         if (!p?.href || opening) return;
         opening = true;
+        setDwellLock(node.id);
         if (p.detailId) {
             try { localStorage.setItem("currentProjectId", p.detailId); } catch { /* private mode */ }
         }
-        root.classList.add("is-leaving");
-        window.location.href = p.href;
+        // The detail page picks this up to continue the figure without a restart.
+        try { sessionStorage.setItem("c-arrive", node.id); } catch { /* private mode */ }
+
+        const useWarp = node.id === WARP_PILOT_ID;
+        const wait = useWarp ? warpTo(node) : departTo(node);
+        if (!wait) {
+            root.classList.add("is-leaving");
+            window.location.href = p.href;
+            return;
+        }
+        const fadeAt = useWarp
+            ? Math.max(0, wait - 380)
+            : Math.max(0, wait - 300);
+        setTimeout(() => root.classList.add("is-leaving"), fadeAt);
+        setTimeout(() => { window.location.href = p.href; }, wait);
     }
 
     function tickDwell(now) {
         const n = selectedId ? graph.byId.get(selectedId) : null;
+        const lock = dwellLockId();
+        if (lock && hoveredId && hoveredId !== lock) setDwellLock(null);
         const holding = !overPanel && !opening
             && n?.type === "project" && n.data?.href
-            && hoveredId === selectedId;
+            && hoveredId === selectedId
+            && lock !== n.id;
         if (!holding) {
             resetDwell();
             return;
@@ -495,7 +689,7 @@ export async function mountConstellation(root, portfolio) {
     }
 
     stageEl.addEventListener("pointermove", (e) => {
-        if (!isHoverPointer(e)) return;
+        if (!isHoverPointer(e) || opening) return;
         pointerOn = true;
         const { px, py, nx, ny } = pointerToStage(e);
         setLookTarget(nx, ny);
@@ -554,6 +748,8 @@ export async function mountConstellation(root, portfolio) {
 
     function frame(now) {
         raf = 0;
+        // Departing: freeze the sky so the CSS glide is the only motion.
+        if (opening) return;
         const active = layout.isActive();
         if (active) layout.tick();
 
@@ -659,12 +855,27 @@ export async function mountConstellation(root, portfolio) {
         reveal();
     }
 
+    const onPageShow = () => {
+        opening = false;
+        stopWarpField();
+        root.classList.remove("is-leaving", "is-departing", "is-warping");
+        world.style.transition = "none";
+        world.style.transform = "";
+        world.style.opacity = "";
+        requestAnimationFrame(() => { world.style.transition = ""; });
+        resetDwell();
+        kick();
+    };
+    window.addEventListener("pageshow", onPageShow);
+
     return {
         graph, layout, select, get selectedId() { return selectedId; },
         destroy() {
             idlePulse.destroy();
+            stopWarpField();
             cancelAnimationFrame(raf);
             window.removeEventListener("resize", onResize);
+            window.removeEventListener("pageshow", onPageShow);
             document.removeEventListener("keydown", onDocKey);
             ro?.disconnect();
             cursor?.destroy();

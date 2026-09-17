@@ -43,6 +43,12 @@ function renderModularProject(project) {
         const sectionHTML = createSectionHTML(section, project, index);
         if (sectionHTML) {
             container.insertAdjacentHTML('beforeend', sectionHTML);
+            // Let the narrative spine map this block back to its data.
+            const el = container.lastElementChild;
+            if (el) {
+                el.dataset.sectionIndex = String(index);
+                el.dataset.sectionType = section.type || '';
+            }
         }
     });
 
@@ -67,6 +73,10 @@ function renderModularProject(project) {
 
     // Initialize drag-to-scroll for plans gallery
     initDragToScroll();
+
+    // Narrative spine (js/detail/spine.js) builds on the rendered DOM.
+    window.__detailProject = project;
+    document.dispatchEvent(new CustomEvent('detail:rendered', { detail: { project } }));
 }
 
 function initDragToScroll() {

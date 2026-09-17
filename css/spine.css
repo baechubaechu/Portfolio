@@ -1,0 +1,294 @@
+/* =========================================================================
+   Narrative Spine — project detail pages
+   Same ink, hairlines and motion as the home sky (css/constellation.css).
+   ========================================================================= */
+
+.detail-page {
+    --sp-ink: #f5f5f5;
+    --sp-ink-2: #b5b5b5;
+    --sp-ink-3: #7a7a7a;
+    --sp-bg: #0a0a0a;
+    --sp-hair: rgba(255, 255, 255, 0.13);
+    --sp-hair-strong: rgba(255, 255, 255, 0.4);
+    --sp-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+    --sp-mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, Menlo, monospace;
+    --sp-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.detail-page .grid-background { opacity: 0.18; }
+
+.detail-page .project-detail-container { position: relative; }
+
+@media (min-width: 900px) {
+    .detail-page .project-detail-container { padding-left: calc(5% + 92px); }
+}
+
+/* ── Arrival: the figure sits centred, then folds on scroll ──────────── */
+
+.spine-arrival {
+    position: relative;
+    height: clamp(400px, 66vh, 700px);
+    margin: 0 0 1.5rem;
+}
+
+.spine-arrival__hint {
+    position: absolute;
+    left: 50%;
+    bottom: 22px;
+    transform: translateX(-50%);
+    font-family: var(--sp-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--sp-ink-3);
+    white-space: nowrap;
+    opacity: calc(1 - var(--t, 0) * 2.2);
+    animation: spine-fade-in 900ms var(--sp-ease) 600ms both;
+}
+
+.spine-arrival__hint::after {
+    content: "";
+    display: block;
+    width: 1px;
+    height: 26px;
+    margin: 10px auto 0;
+    background: linear-gradient(var(--sp-hair-strong), transparent);
+}
+
+@keyframes spine-fade-in { from { opacity: 0; } }
+
+/* ── SVG overlay ─────────────────────────────────────────────────────── */
+
+.spine-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    pointer-events: none;
+    overflow: visible;
+    opacity: 0;
+    transition: opacity 400ms var(--sp-ease);
+}
+
+.spine-ready .spine-svg { opacity: 1; }
+
+.spine-svg line,
+.spine-svg path {
+    fill: none;
+    stroke: var(--sp-ink);
+    stroke-width: 1;
+    stroke-linecap: butt;
+}
+
+/* the vertical path */
+.spine-rail__track { stroke: var(--sp-hair); }
+
+.spine-rail__path {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    opacity: 0.72;
+}
+
+.spine-head__ring {
+    fill: none;
+    stroke: var(--sp-ink);
+    stroke-width: 1;
+}
+
+/* one node per section */
+.spine-node circle {
+    fill: var(--sp-bg);
+    stroke: var(--sp-ink-2);
+    stroke-width: 1;
+    transform-box: fill-box;
+    transform-origin: center;
+    transition:
+        fill 420ms var(--sp-ease),
+        stroke 420ms var(--sp-ease),
+        transform 420ms var(--sp-ease);
+}
+
+.spine-node.is-reached circle {
+    fill: var(--sp-ink);
+    stroke: var(--sp-ink);
+}
+
+.spine-node.is-active circle { transform: scale(1.45); }
+
+/* section → attribute hairlines, drawn after the node lights */
+.spine-branch {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    opacity: calc(0.26 + 0.5 * var(--w, 0.5));
+    transition:
+        stroke-dashoffset 640ms var(--sp-ease) var(--d, 0ms),
+        opacity 300ms var(--sp-ease);
+}
+
+.spine-branchset.is-reached .spine-branch { stroke-dashoffset: 0; }
+.spine-branchset.is-active .spine-branch { opacity: 1; }
+
+.spine-pulse {
+    stroke-dasharray: 0.16 1;
+    stroke-dashoffset: 0.16;
+    opacity: 0;
+}
+
+.spine-branchset.is-active .spine-pulse {
+    animation: spine-signal 1500ms linear var(--d, 0ms) infinite;
+}
+
+@keyframes spine-signal {
+    0%   { stroke-dashoffset: 0.16; opacity: 0; }
+    18%  { opacity: 0.5; }
+    72%  { opacity: 0.4; }
+    100% { stroke-dashoffset: -1; opacity: 0; }
+}
+
+/* a second citation of an attribute: an open echo of its star */
+.spine-echo {
+    fill: var(--sp-bg);
+    stroke: var(--sp-ink-2);
+    stroke-width: 1;
+    opacity: 0;
+    transition:
+        opacity 400ms var(--sp-ease) var(--d, 0ms),
+        fill 300ms var(--sp-ease),
+        stroke 300ms var(--sp-ease);
+}
+
+.spine-branchset.is-reached .spine-echo { opacity: 1; }
+
+.spine-branchset.is-active .spine-echo {
+    fill: var(--sp-ink);
+    stroke: var(--sp-ink);
+}
+
+/* the project and its attributes, gliding from figure to spine */
+.spine-star {
+    animation: spine-fade-in 700ms var(--sp-ease) var(--d, 0ms) both;
+}
+
+.is-continuing ~ .spine-svg .spine-star {
+    animation-duration: 320ms;
+}
+
+.spine-star circle { fill: var(--sp-ink); }
+
+.spine-star--attribute circle {
+    fill: var(--sp-bg);
+    stroke: var(--sp-ink);
+    stroke-width: 1;
+}
+
+.spine-star text {
+    fill: var(--sp-ink-2);
+    font-family: var(--sp-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    dominant-baseline: central;
+    paint-order: stroke fill;
+    stroke: var(--sp-bg);
+    stroke-width: 3px;
+    stroke-linejoin: round;
+}
+
+.spine-star--project text {
+    fill: var(--sp-ink);
+    font-family: var(--sp-sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.09em;
+}
+
+.spine-alinks line { opacity: calc(0.32 + 0.6 * var(--w, 0.5)); }
+
+/* ── Local constellation chips (in the content column) ───────────────── */
+
+.spine-local {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.4rem;
+    margin: -1.1rem 0 1.9rem;
+    opacity: 0.5;
+    transition: opacity 420ms var(--sp-ease);
+}
+
+.detail-section h2 + .spine-local { margin-top: -1.6rem; }
+
+.detail-section.is-reached .spine-local { opacity: 0.82; }
+.detail-section.is-active .spine-local { opacity: 1; }
+
+.spine-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-family: var(--sp-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--sp-ink-2);
+    transition: color 300ms var(--sp-ease);
+}
+
+.detail-section.is-active .spine-chip { color: var(--sp-ink); }
+
+/* landing pad: the SVG draws the star / echo here */
+.spine-chip__dot {
+    width: 10px;
+    height: 10px;
+    flex: none;
+    border-radius: 50%;
+}
+
+.spine-static .spine-chip__dot {
+    border: 1px solid var(--sp-ink-2);
+    width: 6px;
+    height: 6px;
+}
+
+.spine-chip__bar {
+    position: relative;
+    width: 44px;
+    height: 1px;
+    background: var(--sp-hair);
+    overflow: hidden;
+}
+
+.spine-chip__bar b {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: calc(var(--w, 0.5) * 100%);
+    background: var(--sp-ink);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 620ms var(--sp-ease) 260ms;
+}
+
+.detail-section.is-reached .spine-chip__bar b { transform: scaleX(1); }
+
+/* sequencing: node → lines → content */
+.detail-page .detail-section.fade-in-scroll { transition-delay: 200ms; }
+
+/* ── Static fallback (narrow / reduced motion) ───────────────────────── */
+
+.spine-static .spine-svg,
+.spine-static .spine-arrival { display: none; }
+
+@media (max-width: 899px) {
+    .spine-svg,
+    .spine-arrival { display: none; }
+    .spine-local { opacity: 0.85; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .spine-svg *,
+    .spine-local,
+    .spine-chip,
+    .spine-chip__bar b,
+    .spine-arrival__hint {
+        transition: none !important;
+        animation: none !important;
+    }
+}

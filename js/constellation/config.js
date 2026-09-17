@@ -59,8 +59,9 @@ export const CONFIG = {
             fov: 1.08,           // radians — wide like a planetarium window
             maxYaw: 0.4,
             maxPitch: 0.3,
-            spanX: 0.78,
+            spanX: 0.78,         // upper bound; actual span is fitted to the window
             spanY: 0.57,
+            fitPad: 28,          // px of sky between the figure and the crop marks
             rProject: 1,
             rAttribute: 1.14,
             near: 0.32,

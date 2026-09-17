@@ -698,9 +698,84 @@
 
 /* ── Leaving (→ detail page) ───────────────────────────────────────────── */
 
+/* ── Departure: the chosen figure glides to centre, the rest recedes ─── */
+
+.c-hero.is-departing .c-node:not(.is-focus):not(.is-linked),
+.c-hero.is-departing .c-edge:not(.is-drawn),
+.c-hero.is-departing .c-dust,
+.c-hero.is-departing .c-float,
+.c-hero.is-departing .c-node__dwell,
+.c-hero.is-departing .c-node__ring {
+    opacity: 0 !important;
+    transition: opacity 460ms var(--c-ease);
+}
+
+.c-hero.is-departing .c-node.is-focus .c-node__dot {
+    transform: scale(1.5);
+}
+
 .c-hero.is-leaving .c-hero__stage,
 .c-hero.is-leaving .c-float {
     opacity: 0;
+    transition: opacity 320ms var(--c-ease);
+}
+
+/* ── Lightspeed warp (pilot: Student Driven Village) ──────────────────── */
+
+.c-warp {
+    position: absolute;
+    inset: 0;
+    z-index: 40;
+    pointer-events: none;
+    overflow: hidden;
+    opacity: 0;
+    background: #0a0a0a;
+    transition: opacity 180ms linear;
+}
+
+.c-hero.is-warping .c-warp {
+    opacity: 1;
+    transition: opacity 90ms linear;
+}
+
+.c-warp__canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.c-warp__flash {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        circle at center,
+        #ffffff 0%,
+        #f5f5f5 18%,
+        #cfcfcf 42%,
+        #0a0a0a 78%
+    );
+    opacity: 0;
+}
+
+.c-hero.is-warping .c-warp__flash {
+    animation: c-warp-flash 2100ms linear both;
+}
+
+@keyframes c-warp-flash {
+    0%, 86% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+/* During warp the sky is the tunnel; hide the map chrome. */
+.c-hero.is-warping .c-hero__stage,
+.c-hero.is-warping .c-float,
+.c-hero.is-warping .c-cursor {
+    opacity: 0 !important;
+    transition: opacity 220ms linear;
+}
+
+.c-hero.is-warping.is-leaving .c-warp {
+    /* flash already covers the jump */
 }
 
 /* ── Failure fallback ──────────────────────────────────────────────────── */

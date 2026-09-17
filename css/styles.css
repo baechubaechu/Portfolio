@@ -1137,8 +1137,31 @@ footer {
 }
 
 /* Project Detail Page Styles */
+.detail-page .navbar {
+    transform: none;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+}
+
+.detail-page .btn-back {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 0.45rem 0.9rem;
+}
+
+.detail-page .btn-back:hover {
+    color: var(--text-primary);
+    border-color: var(--text-primary);
+}
+
 .detail-page main {
-    padding-top: 48px;
+    padding-top: 1.5rem;
 }
 
 .project-detail-container {

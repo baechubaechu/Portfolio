@@ -7,7 +7,7 @@
  */
 
 import { portfolio } from "./data/portfolio.js?v=1.9";
-import { mountConstellation } from "./components/Constellation.js?v=3.9";
+import { mountConstellation } from "./components/Constellation.js?v=4.7";
 
 const root = document.querySelector("[data-constellation]");
 

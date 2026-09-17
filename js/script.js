@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     initRevealNav();
+    initDetailNav();
     renderProjects();
     initComputationalCanvas();
 });
@@ -7,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function initRevealNav() {
     const nav = document.querySelector('.navbar');
     if (!nav || nav.parentElement?.classList.contains('nav-shell')) return;
+    if (document.body.classList.contains('detail-page')) return;
 
     const shell = document.createElement('div');
     shell.className = 'nav-shell';
@@ -27,6 +29,45 @@ function initRevealNav() {
     window.addEventListener('pointermove', onMove, { passive: true });
     document.addEventListener('pointerleave', () => {
         if (!nav.classList.contains('is-open')) shell.classList.remove('is-hot');
+    });
+}
+
+function cameFromHome() {
+    if (history.length < 2) return false;
+    try {
+        const u = new URL(document.referrer);
+        if (u.origin !== location.origin) return false;
+        const path = u.pathname;
+        return !path.includes('project-detail') && !path.includes('/projects/');
+    } catch {
+        return false;
+    }
+}
+
+function goHome() {
+    if (cameFromHome()) {
+        history.back();
+        return;
+    }
+    const home = document.querySelector('a.logo, a.btn-back');
+    window.location.href = home?.getAttribute('href') || 'index.html';
+}
+
+function initDetailNav() {
+    if (!document.body.classList.contains('detail-page')) return;
+    document.querySelectorAll('a.logo, a.btn-back, a.btn-secondary').forEach((a) => {
+        const href = a.getAttribute('href') || '';
+        if (!href.includes('index.html')) return;
+        a.addEventListener('click', (e) => {
+            if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+            if (!cameFromHome()) return;
+            e.preventDefault();
+            history.back();
+        });
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Escape') return;
+        goHome();
     });
 }
 
