@@ -31,8 +31,8 @@ function renderModularProject(project) {
     const container = document.getElementById('detail-card-container');
     if (!container) return;
 
-    // Abraxas prototype: skip the written detail and land in its system.
-    if (project.id === "ABRAXAS") {
+    // Constellation destinations land in the system, not the written spine.
+    if (project.sections?.length && window.__systemHref?.(project.id)) {
         container.innerHTML = "";
         window.__detailProject = project;
         document.body.classList.add("is-system");
