@@ -1,6 +1,9 @@
 /**
  * Portfolio graph data.
  *
+ * Through-line: Part and Beyond.
+ * Scattered pieces gathered until they read as one form.
+ *
  * This is the ONLY file you need to edit to add / remove / reconnect
  * projects and attributes. The graph, layout and UI are derived from it.
  *

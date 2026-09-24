@@ -576,6 +576,61 @@
     border-bottom-color: var(--c-hair);
 }
 
+/* ── Manifesto — quiet core line on the figure ─────────────────────────── */
+
+.c-manifesto {
+    position: absolute;
+    left: 28px;
+    bottom: 28px;
+    z-index: 5;
+    max-width: min(22rem, calc(100% - 56px));
+    margin: 0;
+    pointer-events: none;
+    user-select: none;
+}
+
+.c-manifesto__core {
+    margin: 0 0 6px;
+    font-family: var(--c-font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--c-ink);
+}
+
+.c-manifesto__line {
+    margin: 0;
+    font-family: var(--c-font-sans);
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.45;
+    letter-spacing: 0.01em;
+    color: var(--c-ink-2);
+}
+
+.c-hero.is-warping .c-manifesto,
+.c-hero.is-warp-prep .c-manifesto {
+    opacity: 0;
+    transition: opacity 280ms var(--c-ease);
+}
+
+@media (max-width: 719px) {
+    .c-manifesto {
+        left: 20px;
+        bottom: 20px;
+        max-width: calc(100% - 40px);
+    }
+
+    .c-manifesto__core {
+        font-size: 10px;
+    }
+
+    .c-manifesto__line {
+        font-size: 12px;
+    }
+}
+
 /* ── Meta (bottom of the rail) ─────────────────────────────────────────── */
 
 .c-hero__meta {

@@ -1,0 +1,12 @@
+{
+  "name": "portfolio",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 5173 --open",
+    "preview": "vite preview --port 5173 --open"
+  },
+  "devDependencies": {
+    "vite": "^6.3.5"
+  }
+}
