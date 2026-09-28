@@ -6,14 +6,15 @@
  * drawn in perspective (a slightly elevated look, not a floor-plan).
  */
 
-import { portfolio } from "../constellation/data/portfolio.js?v=1.9";
+import { portfolio } from "../constellation/data/portfolio.js?v=2.2";
 import {
     svgEl, htmlEl, mulberry32, hashString, prefersReducedMotion, esc, clamp,
 } from "../constellation/lib/utils.js?v=2.0";
 
 const ELEV = 0.56;
 const CAM_DIST = 3.12;
-const DIST_READ = 1.52;
+const DIST_TOC = 3.6;
+const TOP_ELEV = 1.46;
 const ORBIT_SAMPLES = 96;
 const CLICK_PX = 7;
 const SUN_GLOW = 2.2;
@@ -41,22 +42,31 @@ function planetLock(s, i) {
     return easeInOutCubic(clamp(s - 1 - i, 0, 1));
 }
 
-function lerpAngOrbit(a, b, t) {
-    let d = b - a;
-    d = ((d % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+function lerpAngShort(a, b, t) {
+    let d = (b - a) % (Math.PI * 2);
+    if (d > Math.PI) d -= Math.PI * 2;
+    if (d < -Math.PI) d += Math.PI * 2;
     return a + d * t;
 }
 
 const SUN_LOOK = {
-    abraxas: {
-        lo: [168, 154, 128], hi: [255, 246, 226], glow: [255, 244, 224],
-        cells: 240, spots: 4, grain: 0.18,
+    "xtra-space": {
+        lo: [120, 126, 146], hi: [240, 244, 255], glow: [226, 234, 255],
+        cells: 260, spots: 4, grain: 0.2,
+    },
+    "little-forest": {
+        lo: [74, 128, 74], hi: [214, 246, 196], glow: [190, 236, 168],
+        cells: 220, spots: 3, grain: 0.22,
+    },
+    "class-ic": {
+        lo: [150, 112, 84], hi: [250, 228, 204], glow: [246, 214, 180],
+        cells: 240, spots: 4, grain: 0.2,
     },
     "student-driven-village": {
         lo: [96, 132, 176], hi: [222, 236, 255], glow: [198, 222, 255],
         cells: 280, spots: 3, grain: 0.22,
     },
-    "parametric-pavilion": {
+    "kitch-fish": {
         lo: [168, 98, 42], hi: [255, 214, 148], glow: [255, 196, 118],
         cells: 170, spots: 7, grain: 0.26,
     },
@@ -287,9 +297,15 @@ function sunDossierHTML(project, total) {
     const gallery = sections.find((s) => s.type === "dev-frontend-gallery" || s.type === "arch-renders") ?? {};
     const narrative = sections.find((s) => s.type === "text-full") ?? {};
     const quote = meta.subtitle || split.leadText || "";
-    const thesis = lastParagraph(narrative.content) || split.description || concept.description || project.description || "";
+    const thesis = project.thesis || lastParagraph(narrative.content) || split.description || concept.description || project.description || "";
     const of = String(Math.max(1, total || 1)).padStart(2, "0");
-    const kicker = [`01 / ${of}`, "Project", meta.category, meta.timeline].filter(Boolean).join("  ·  ");
+    const kind = project.kind || "Project";
+    const kindShown = String(meta.category || "").toLowerCase().startsWith(kind.toLowerCase()) ? null : kind;
+    const kicker = [`01 / ${of}`, kindShown, meta.category, meta.timeline].filter(Boolean).join("  ·  ");
+    const links = [
+        project.githubLink && { label: "GitHub", url: project.githubLink },
+        project.visitLink && { label: "Live", url: project.visitLink },
+    ].filter(Boolean);
     const rows = [
         meta.role && ["Role", plain(meta.role)],
         comp.organizer && ["Organizer", comp.organizer],
@@ -304,6 +320,7 @@ function sunDossierHTML(project, total) {
             `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>` : ""}
         ${img ? `<figure class="sys-dock__figure"><img src="${esc(img)}" alt="${esc(project.title)}"></figure>` : ""}
         ${thesis ? `<p class="sys-dock__thesis">${esc(thesis)}</p>` : ""}
+        ${links.length ? blockHTML({ kind: "links", items: links }) : ""}
     `;
 }
 
@@ -340,6 +357,52 @@ function planetDossierHTML(project, planet, attr, idx, total) {
     `;
 }
 
+function blockHTML(b) {
+    switch (b.kind) {
+        case "text":
+            return `<p class="sys-dock__thesis">${esc(b.body)}</p>`;
+        case "list":
+            return `<ul class="sys-dock__list">${b.items.map((it) => `<li>${esc(it)}</li>`).join("")}</ul>`;
+        case "steps":
+            return `<ol class="sys-dock__list sys-dock__list--steps">${b.items.map((it) => `<li>${esc(it)}</li>`).join("")}</ol>`;
+        case "rules":
+            return `<dl class="sys-dock__rules">${b.items.map(([k, v]) =>
+                `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>`;
+        case "techs":
+            return `<ul class="sys-dock__techs">${b.items.map((t) =>
+                `<li><span>${esc(t.name)}</span>${t.note ? `<em>${esc(t.note)}</em>` : ""}</li>`).join("")}</ul>`;
+        case "code":
+            return `<figure class="sys-dock__code">
+                ${b.filename ? `<figcaption>${esc(b.filename)}${b.language ? ` · ${esc(b.language)}` : ""}</figcaption>` : ""}
+                <pre><code>${esc(b.code)}</code></pre>
+                ${b.caption ? `<p>${esc(b.caption)}</p>` : ""}
+            </figure>`;
+        case "image":
+            return `<figure class="sys-dock__figure"><img src="${esc(b.url)}" alt="${esc(b.caption || "")}" loading="lazy">${b.caption ? `<figcaption>${esc(b.caption)}</figcaption>` : ""}</figure>`;
+        case "gallery":
+            return `<div class="sys-dock__gallery">${b.images.map((im) =>
+                `<img src="${esc(im.url || im)}" alt="${esc(im.caption || "")}" loading="lazy">`).join("")}</div>`;
+        case "links":
+            return `<p class="sys-dock__links">${b.items.map((l) =>
+                `<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)} ↗</a>`).join("")}</p>`;
+        case "note":
+            return `<p class="sys-dock__note">${esc(b.body)}</p>`;
+        default:
+            return "";
+    }
+}
+
+function chapterDossierHTML(chapter, idx, total) {
+    const n = String(idx + 2).padStart(2, "0");
+    const of = String(total || 2).padStart(2, "0");
+    return `
+        <p class="sys-dock__kicker">${esc(`${n} / ${of}  ·  ${chapter.label}`)}</p>
+        <h2 class="sys-dock__title">${esc(String(chapter.title || chapter.label).toUpperCase())}</h2>
+        ${chapter.lead ? `<p class="sys-dock__quote">${esc(chapter.lead)}</p>` : ""}
+        ${(chapter.blocks ?? []).map(blockHTML).join("")}
+    `;
+}
+
 window.__systemHref = (id) => {
     const q = portfolio.projects.find((p) => p.detailId === id || p.id === id);
     return q?.href || null;
@@ -358,7 +421,14 @@ function init(project) {
     const attrOf = new Map(portfolio.attributes.map((a) => [a.id, a]));
     const reduce = prefersReducedMotion();
 
-    const planets = [...(cproj.attributes ?? [])]
+    const chapters = project.chapters ?? [];
+    const planets = chapters.length ? chapters.map((c, i, all) => ({
+        id: c.id,
+        label: c.label.toUpperCase(),
+        weight: 1 - (i / Math.max(1, all.length - 1)) * 0.9,
+        ang0: i * 2.39996,
+        rDot: 2.6,
+    })) : [...(cproj.attributes ?? [])]
         .sort((a, b) => b.weight - a.weight)
         .map((rel) => {
             const spec = cproj.asterism?.stars?.[rel.id];
@@ -421,7 +491,7 @@ function init(project) {
         g.append(dot, label);
         orbitsG.append(orbit);
         bodiesG.append(g);
-        planetEls.push({ ...p, orbit, g, dot, label });
+        planetEls.push({ ...p, orbit, g, dot, label, label0: p.label });
     }
 
     const look = sunLook(cproj.id);
@@ -499,9 +569,14 @@ function init(project) {
         chapBtns.push(btn);
     }
     chapBtns[0]?.classList.add("is-on");
+    function placeRow(k, x, y, gap) {
+        const li = chapBtns[k]?.parentElement;
+        if (li) li.style.transform = `translate(${(x - 14).toFixed(1)}px, ${(y - gap / 2).toFixed(1)}px)`;
+    }
     chapNav.style.setProperty("--n", String(chapItems.length));
     chapNav.dataset.n = String(chapItems.length);
-    stage.append(svg, veil, sunBtn, backBtn, chapNav, hint);
+    const titleEl = htmlEl("h1", { class: "sys__title", text: cproj.title });
+    stage.append(svg, veil, titleEl, sunBtn, backBtn, chapNav, hint);
     document.body.append(stage);
 
     const dock = htmlEl("aside", {
@@ -516,7 +591,9 @@ function init(project) {
     const sunHTML = dock.innerHTML;
     const planetHTML = new Map(planets.map((p, i) => [
         p.id,
-        planetDossierHTML(project, p, attrOf.get(p.id), i, storyMax),
+        chapters.length
+            ? chapterDossierHTML(chapters[i], i, storyMax)
+            : planetDossierHTML(project, p, attrOf.get(p.id), i, storyMax),
     ]));
     let plateId = "sun";
     let plateWant = "sun";
@@ -573,7 +650,7 @@ function init(project) {
     const layout = new Map();
 
     function project3(x, y, z) {
-        const ce = Math.cos(elev), se = Math.sin(elev);
+        const ce = Math.cos(elevView), se = Math.sin(elevView);
         const ca = Math.cos(azim), sa = Math.sin(azim);
         const camX = sa * ce * dist;
         const camY = se * dist;
@@ -600,15 +677,27 @@ function init(project) {
         };
     }
 
-    function orbitPath(r) {
+    // Radial blend from the projected orbit to a flat TOC circle of radius R around the sun.
+    function orbitPath(r, sun, R, u) {
         let d = "";
+        let first = true;
         for (let i = 0; i <= ORBIT_SAMPLES; i++) {
             const a = (i / ORBIT_SAMPLES) * Math.PI * 2;
             const p = project3(Math.cos(a) * r, 0, Math.sin(a) * r);
             if (!p) continue;
-            d += `${i === 0 ? "M" : "L"}${p.x.toFixed(1)} ${p.y.toFixed(1)} `;
+            const q = toward(p, sun, R, u);
+            d += `${first ? "M" : "L"}${q.x.toFixed(1)} ${q.y.toFixed(1)} `;
+            first = false;
         }
         return d + "Z";
+    }
+
+    function toward(p, sun, R, u) {
+        const dx = p.x - sun.x;
+        const dy = p.y - sun.y;
+        const rho = lerp(Math.hypot(dx, dy), R, u);
+        const th = Math.atan2(dy, dx);
+        return { x: sun.x + Math.cos(th) * rho, y: sun.y + Math.sin(th) * rho };
     }
 
     function measure() {
@@ -628,11 +717,25 @@ function init(project) {
             const period = 90000 * (orbitR / Math.max(0.4, r0)) ** 1.5;
             layout.set(p.id, { orbitR, period });
         }
+        const toc = tocGeom();
+        chapNav.style.setProperty("--toc-gap", `${toc.gap}px`);
+        dock.style.left = W >= 720 ? `${Math.round(Math.max(300, toc.x + toc.n * toc.gap + 72))}px` : "";
         applyFraming();
+    }
+
+    // Top-view TOC: sun on the left, planet i parked on a circle of radius (i + 1) · gap.
+    function tocGeom() {
+        const split = W >= 720;
+        const n = Math.max(1, planetEls.length);
+        const top = split ? 140 : 100;
+        const bottom = split ? H - 48 : H * 0.56 - 12;
+        const gap = clamp((bottom - top) / n, 12, 44);
+        return { x: split ? 64 : 40, y: top, gap, n };
     }
 
     let azim = 0;
     let elev = ELEV;
+    let elevView = ELEV;
     let dist = CAM_DIST;
     let distTgt = CAM_DIST;
     let guiding = true;
@@ -650,27 +753,40 @@ function init(project) {
     let lastX = 0;
     let lastY = 0;
 
+    let hoverIdx = -1;
+    stage.addEventListener("pointerleave", () => { hoverIdx = -1; });
+
+    function hitPlanet(cx, cy) {
+        const s = stage.getBoundingClientRect();
+        const px = cx - s.left;
+        const py = cy - s.top;
+        let best = -1;
+        let bestD = 16;
+        for (const [i, p] of planetEls.entries()) {
+            if (p.sx == null) continue;
+            const d = Math.hypot(px - p.sx, py - p.sy);
+            if (d < bestD) { best = i; bestD = d; }
+            const b = p.label.getBoundingClientRect();
+            if (best !== i && cx >= b.left - 4 && cx <= b.right + 4 && cy >= b.top - 4 && cy <= b.bottom + 4) {
+                best = i;
+                bestD = 0;
+            }
+        }
+        return best;
+    }
+
     function hitSun(cx, cy) {
         const b = sunBtn.getBoundingClientRect();
         return cx >= b.left && cx <= b.right && cy >= b.top && cy <= b.bottom;
     }
 
     function framing(s) {
-        const split = W >= 720;
-        const sunU = clamp(s, 0, 1);
-        const pU = planets.length ? clamp((s - 1) / planets.length, 0, 1) : 0;
-        const n = planets.length;
-        const crowded = clamp((n - 4) / 3, 0, 1);
-        const xSun = split ? lerp(0.22, 0.26, crowded) : 0.5;
-        const xDeep = split ? lerp(0.14, 0.20, crowded) : 0.5;
-        const ySun = split ? 0.36 : 0.26;
-        const yDeep = split ? 0.22 : 0.20;
-        const dSun = split ? lerp(1.48, 1.78, crowded) : lerp(1.85, 2.08, crowded);
-        const dDeep = split ? lerp(1.22, 1.48, crowded) : lerp(1.55, 1.78, crowded);
+        const sunU = easeInOutCubic(clamp(s, 0, 1));
+        const toc = tocGeom();
         return {
-            viewX: lerp(0.5, lerp(xSun, xDeep, pU), sunU),
-            viewY: lerp(0.5, lerp(ySun, yDeep, pU), sunU),
-            dist: lerp(CAM_DIST, lerp(dSun, dDeep, pU), sunU),
+            viewX: lerp(0.5, toc.x / Math.max(1, W), sunU),
+            viewY: lerp(0.5, toc.y / Math.max(1, H), sunU),
+            dist: lerp(CAM_DIST, DIST_TOC, sunU),
         };
     }
 
@@ -711,9 +827,16 @@ function init(project) {
         else if (storyTgt <= STORY_CLOSE && reading) closeSun();
     }
 
+    function numberLabels(on) {
+        const tag = (i) => (on ? `${String(i + 1).padStart(2, "0")}\u2003` : "");
+        sunLabel.textContent = tag(0) + cproj.title.toUpperCase();
+        for (const [i, p] of planetEls.entries()) p.label.textContent = tag(i + 1) + p.label0;
+    }
+
     function openSun() {
         if (reading) return;
         reading = true;
+        numberLabels(true);
         dock.inert = false;
         dock.setAttribute("aria-hidden", "false");
         sunBtn.setAttribute("aria-expanded", "true");
@@ -734,6 +857,7 @@ function init(project) {
     function closeSun() {
         if (!reading) return;
         reading = false;
+        numberLabels(false);
         dock.scrollTop = 0;
         dock.classList.remove("is-open");
         stage.classList.remove("is-reading", "is-over-sun");
@@ -773,13 +897,18 @@ function init(project) {
             dismissGuide();
             if (id === "sun") {
                 startCamTween(CAM_OPEN_MS, 1);
+                syncReading();
             } else {
-                const i = planets.findIndex((p) => p.id === id);
-                if (i < 0) return;
-                startCamTween(CAM_OPEN_MS, 1 + i + 0.92);
+                goChapter(planets.findIndex((p) => p.id === id));
             }
-            syncReading();
         });
+    }
+
+    function goChapter(i) {
+        if (i < 0) return;
+        dismissGuide();
+        startCamTween(CAM_OPEN_MS, 1 + i + 0.92);
+        syncReading();
     }
 
     dock.addEventListener("pointerdown", (e) => e.stopPropagation());
@@ -808,7 +937,9 @@ function init(project) {
     });
     stage.addEventListener("pointermove", (e) => {
         if (!dragging) {
-            stage.classList.toggle("is-over-sun", storyTgt < STORY_OPEN && hitSun(e.clientX, e.clientY));
+            hoverIdx = storyTgt < STORY_OPEN ? hitPlanet(e.clientX, e.clientY) : -1;
+            stage.classList.toggle("is-over-sun", storyTgt < STORY_OPEN
+                && (hoverIdx >= 0 || hitSun(e.clientX, e.clientY)));
             return;
         }
         const dx = e.clientX - lastX;
@@ -826,14 +957,22 @@ function init(project) {
         dragging = false;
         stage.classList.remove("is-orbiting");
         try { stage.releasePointerCapture(e.pointerId); } catch { /* already released */ }
-        if (dragPx < CLICK_PX) {
-            if (storyTgt < STORY_OPEN && hitSun(e.clientX, e.clientY)) goRead();
+        if (dragPx < CLICK_PX && storyTgt < STORY_OPEN) {
+            const i = hitPlanet(e.clientX, e.clientY);
+            if (i >= 0) goChapter(i);
+            else if (hitSun(e.clientX, e.clientY)) goRead();
         }
     };
     stage.addEventListener("pointerup", endDrag);
     stage.addEventListener("pointercancel", endDrag);
     window.addEventListener("wheel", (e) => {
         if (e.ctrlKey) return;
+        if (reading && dock.contains(e.target)) {
+            const room = e.deltaY > 0
+                ? dock.scrollHeight - dock.clientHeight - dock.scrollTop
+                : dock.scrollTop;
+            if (room > 1) return;
+        }
         e.preventDefault();
         dismissGuide();
         camTween = null;
@@ -871,16 +1010,17 @@ function init(project) {
         viewY += (f.viewY - viewY) * kCam;
         dist += (f.dist - dist) * kCam;
         syncReading();
-        if (reading) showPlate(plateAt(story));
+        if (reading) showPlate(plateAt(camTween && camTween.to > 1 ? camTween.to : story));
 
+        const tocU = easeInOutCubic(readAmt);
+        const toc = tocGeom();
+        elevView = lerp(elev, TOP_ELEV, tocU);
         const sunP = project3(0, 0, 0);
         if (!sunP) { raf = requestAnimationFrame(frame); return; }
 
         const refS = focal / CAM_DIST;
         const bodyRSys = 16 * (sunP.s / Math.max(1e-6, refS));
-        const pU = planets.length ? clamp((story - 1) / planets.length, 0, 1) : 0;
-        const bodyRRead = clamp(sunP.s * lerp(0.12, 0.07, pU), 20, lerp(40, 26, pU));
-        const bodyR = bodyRSys + (bodyRRead - bodyRSys) * readAmt;
+        const bodyR = lerp(bodyRSys, 10, tocU);
         const css = bodyR * 2 * SUN_GLOW;
         const px = Math.round(clamp(
             css * Math.min(2, window.devicePixelRatio || 1),
@@ -892,7 +1032,7 @@ function init(project) {
             sunCanvas.height = px;
         }
         const spin = reduce ? 0.35 : -t * sunSpin;
-        paintSun(sunCanvas, sunTex, spin, azim, elev);
+        paintSun(sunCanvas, sunTex, spin, azim, elevView);
         sunG.setAttribute("transform", `translate(${sunP.x.toFixed(2)} ${sunP.y.toFixed(2)})`);
         sunFo.setAttribute("x", (-css / 2).toFixed(1));
         sunFo.setAttribute("y", (-css / 2).toFixed(1));
@@ -900,8 +1040,9 @@ function init(project) {
         sunFo.setAttribute("height", css.toFixed(1));
         sunLimb.setAttribute("r", bodyR.toFixed(2));
         sunHit.setAttribute("r", Math.max(22, bodyR + 12).toFixed(2));
-        sunLabel.setAttribute("x", (bodyR + 10).toFixed(1));
-        sunLabel.style.opacity = (1 - readAmt).toFixed(3);
+        sunLabel.setAttribute("x", lerp(bodyR + 10, 24, tocU).toFixed(1));
+        sunLabel.style.opacity = (clamp((tocU - 0.5) / 0.5, 0, 1) * (plateId === "sun" ? 1 : 0.62)).toFixed(3);
+        titleEl.style.opacity = (1 - clamp(tocU / 0.5, 0, 1)).toFixed(3);
         const btnW = Math.max(118, bodyR * 2 + 88);
         const btnH = Math.max(36, bodyR * 2 + 10);
         sunBtn.style.width = `${btnW}px`;
@@ -911,51 +1052,49 @@ function init(project) {
         const bodies = [{ z: sunP.z, el: sunG }];
         let stackY = sunP.y;
         let stackOn = 0;
-        const nPl = planetEls.length;
-        const crowded = clamp((nPl - 4) / 3, 0, 1);
-        const hold0 = lerp(0.36, 0.28, crowded);
-        const holdStep = lerp(0.15, 0.085, crowded);
+        placeRow(0, sunP.x, sunP.y, toc.gap);
 
         for (let i = 0; i < planetEls.length; i++) {
             const p = planetEls[i];
             const L = layout.get(p.id);
             if (!L) continue;
-            const orbitAng = p.ang0 + (reduce ? 0 : (now - t0) / L.period * Math.PI * 2);
-            const lock = planetLock(story, i);
-            const target = Math.PI * 0.5 - azim;
-            const ang = lerpAngOrbit(orbitAng, target, lock);
-            const holdR = hold0 + i * holdStep;
-            const r = lerp(L.orbitR, holdR, lock);
-            const wx = Math.cos(ang) * r;
-            const wz = Math.sin(ang) * r;
-            const pt = project3(wx, 0, wz);
-            p.orbit.setAttribute("d", orbitPath(L.orbitR));
+            const ang = p.ang0 + (reduce ? 0 : (now - t0) / L.period * Math.PI * 2);
+            const pt = project3(Math.cos(ang) * L.orbitR, 0, Math.sin(ang) * L.orbitR);
+            const R = (i + 1) * toc.gap;
+            p.orbit.setAttribute("d", orbitPath(L.orbitR, sunP, R, tocU));
             if (!pt) continue;
-            const sc = Math.max(0.45, Math.min(1.7, pt.s * 0.42));
-            p.g.setAttribute("transform", `translate(${pt.x.toFixed(2)} ${pt.y.toFixed(2)})`);
-            p.dot.setAttribute("r", (p.rDot * (1 + 0.45 * lock) * sc).toFixed(2));
+            const lock = planetLock(story, i);
+            // Parked at the top of its circle, then swept clockwise half a turn to the bottom.
+            const thPark = -Math.PI / 2 + Math.PI * lock;
+            const thFree = Math.atan2(pt.y - sunP.y, pt.x - sunP.x);
+            const th = lerpAngShort(thFree, thPark, tocU);
+            const rho = lerp(Math.hypot(pt.x - sunP.x, pt.y - sunP.y), R, tocU);
+            const x = sunP.x + Math.cos(th) * rho;
+            const y = sunP.y + Math.sin(th) * rho;
+            const sc = lerp(Math.max(0.45, Math.min(1.7, pt.s * 0.42)), 1.15, tocU);
             const active = plateId === p.id;
+            p.g.setAttribute("transform", `translate(${x.toFixed(2)} ${y.toFixed(2)})`);
+            p.dot.setAttribute("r", (p.rDot * (active ? 1.4 : 1) * sc).toFixed(2));
             p.g.classList.toggle("is-focus", active);
             p.g.classList.toggle("is-lock", lock > 0.55);
-            const dim = (pt.z > sunP.z ? 0.55 : 1) * lerp(
-                lerp(1, 0.12, readAmt),
-                active ? 1 : 0.55,
-                lock,
-            );
-            p.g.style.opacity = dim.toFixed(3);
-            p.orbit.style.opacity = lerp(
-                lerp(1, 0.1, readAmt),
-                active ? 0.28 : 0.08,
-                lock,
-            ).toFixed(3);
-            const labOn = active ? 1 : (lock > 0.55 ? 0.7 : (1 - readAmt) * 0.35);
-            p.label.style.opacity = labOn.toFixed(3);
-            p.label.setAttribute("x", "12");
-            p.label.setAttribute("y", active ? "1" : "0");
+            // Parked planets stay hidden; each fades in as it starts down its orbit.
+            const shown = easeInOutCubic(clamp(lock / 0.35, 0, 1));
+            const tocDim = (active ? 1 : 0.78) * shown;
+            p.g.style.opacity = lerp(pt.z > sunP.z ? 0.55 : 1, tocDim, tocU).toFixed(3);
+            p.orbit.style.opacity = lerp(1, (active ? 0.3 : 0.1) * shown, tocU).toFixed(3);
+            const labOn = (active ? 1 : 0.72) * shown;
+            p.label.style.opacity = lerp(hoverIdx === i ? 1 : 0.35, labOn, tocU).toFixed(3);
+            p.g.classList.toggle("is-hover", hoverIdx === i && tocU < 0.5);
+            p.sx = x;
+            p.sy = y;
+            chapBtns[i + 1].parentElement.classList.toggle("is-hidden", shown < 0.5);
+            p.label.setAttribute("x", lerp(12, 24, tocU).toFixed(1));
+            p.label.setAttribute("y", "0");
             p.label.setAttribute("text-anchor", "start");
-            if (lock > 0.8 && pt.y > stackY) stackY = pt.y;
+            if (lock > 0.8) stackY = Math.max(stackY, sunP.y + R);
             if (lock > 0.8) stackOn = Math.max(stackOn, lock);
-            bodies.push({ z: pt.z, el: p.g });
+            placeRow(i + 1, x, y, toc.gap);
+            bodies.push({ z: lerp(pt.z, 0, tocU), el: p.g });
         }
 
         if (stackOn > 0.8) {

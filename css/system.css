@@ -134,6 +134,7 @@ body.is-system .navbar {
     fill: var(--sys-ink);
 }
 
+.sys__planet.is-hover .sys__planet-label,
 .sys__planet.is-lock .sys__planet-label {
     fill: var(--sys-ink);
 }
@@ -314,6 +315,23 @@ body.is-system:not(.is-arriving) .sys__dust {
     }
 }
 
+.sys__title {
+    position: absolute;
+    left: 50%;
+    top: 92px;
+    z-index: 4;
+    margin: 0;
+    transform: translate(-50%, 200%);
+    font-family: var(--sys-font-sans);
+    font-size: clamp(22px, 2.4vw, 36px);
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--sys-ink);
+    pointer-events: none;
+}
+
 .sys__back {
     position: absolute;
     left: 28px;
@@ -344,49 +362,65 @@ body.is-system:not(.is-arriving) .sys__dust {
     color: var(--sys-ink);
 }
 
+/* Invisible hit rows laid over the planet stack; the planets are the TOC. */
 .sys-chaps {
-    --n: 4;
     position: absolute;
-    left: 28px;
-    top: 118px;
+    left: 0;
+    top: 0;
     z-index: 5;
     margin: 0;
     padding: 0;
     list-style: none;
-    opacity: 0;
     pointer-events: none;
 }
 
-.sys.is-reading .sys-chaps {
-    opacity: 1;
+.sys-chaps__li {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 210px;
+}
+
+.sys.is-reading .sys-chaps__li {
     pointer-events: auto;
+}
+
+.sys.is-reading .sys-chaps__li.is-hidden {
+    visibility: hidden;
+    pointer-events: none;
 }
 
 .sys-chaps__item {
     display: block;
     width: 100%;
+    height: var(--toc-gap, 32px);
     margin: 0;
-    padding: clamp(2px, calc(6.5px - 0.55px * var(--n)), 5px) 0;
+    padding: 0;
     border: 0;
     background: none;
-    font-family: var(--sys-font-mono);
-    font-size: clamp(8px, calc(10px - 0.2px * var(--n)), 9px);
-    letter-spacing: clamp(0.08em, calc(0.18em - 0.012em * var(--n)), 0.14em);
-    text-transform: uppercase;
-    color: #4e4e4e;
-    text-align: left;
+    color: transparent;
+    font-size: 0;
     cursor: pointer;
-    transition: color 280ms ease;
-    text-shadow: 0 0 6px var(--sys-bg), 0 0 12px var(--sys-bg);
 }
 
-.sys-chaps__item:hover,
 .sys-chaps__item:focus-visible {
-    color: #a8a8a8;
+    outline: 1px solid var(--sys-hair-strong);
+    outline-offset: -4px;
 }
 
-.sys-chaps__item.is-on {
-    color: var(--sys-ink);
+.sys.is-reading .sys__sun-label {
+    font-family: var(--sys-font-mono);
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+}
+
+.sys.is-reading .sys__planet-label {
+    font-size: 12px;
+}
+
+.sys.is-reading .sys__orbit {
+    pointer-events: none;
 }
 
 body.is-reading-sun .btn-back {
@@ -400,10 +434,11 @@ body.is-reading-sun .btn-back {
     top: 88px;
     right: 28px;
     bottom: 28px;
+    left: 320px;
     z-index: 6;
-    width: calc(40% - 36px);
+    width: auto;
     max-width: none;
-    padding: 22px 22px 20px;
+    padding: 40px clamp(28px, 4vw, 64px) 36px;
     overflow: auto;
     color: var(--sys-ink);
     background-color: rgba(10, 10, 10, 0.55);
@@ -471,26 +506,26 @@ body.is-reading-sun .btn-back {
 }
 
 .sys-dock__kicker {
-    margin: 0 0 8px;
+    margin: 0 0 12px;
     font-family: var(--sys-font-mono);
-    font-size: 9px;
+    font-size: 11px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: #808080;
 }
 
 .sys-dock__title {
-    margin: 0 0 10px;
+    margin: 0 0 14px;
     font-family: var(--sys-font-sans);
-    font-size: 22px;
+    font-size: clamp(28px, 2.6vw, 40px);
     font-weight: 500;
     letter-spacing: 0.08em;
 }
 
 .sys-dock__quote {
-    margin: 0 0 16px;
+    margin: 0 0 24px;
     font-family: var(--sys-font-sans);
-    font-size: 13px;
+    font-size: clamp(16px, 1.25vw, 19px);
     font-weight: 400;
     line-height: 1.45;
     color: var(--sys-ink-2);
@@ -504,14 +539,14 @@ body.is-reading-sun .btn-back {
 
 .sys-dock__meta > div {
     display: grid;
-    grid-template-columns: 88px 1fr;
+    grid-template-columns: 110px 1fr;
     gap: 8px;
     align-items: baseline;
 }
 
 .sys-dock__meta dt {
     font-family: var(--sys-font-mono);
-    font-size: 9px;
+    font-size: 11px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: #808080;
@@ -520,19 +555,19 @@ body.is-reading-sun .btn-back {
 .sys-dock__meta dd {
     margin: 0;
     font-family: var(--sys-font-sans);
-    font-size: 12px;
+    font-size: 15px;
     color: var(--sys-ink);
 }
 
 .sys-dock__figure {
-    margin: 0 0 16px;
+    margin: 0 0 22px;
 }
 
 .sys-dock__figure img {
     display: block;
     width: 100%;
     height: auto;
-    max-height: 38vh;
+    max-height: 62vh;
     object-fit: contain;
     object-position: left top;
     border: 1px solid var(--sys-hair);
@@ -541,9 +576,173 @@ body.is-reading-sun .btn-back {
 .sys-dock__thesis {
     margin: 0;
     font-family: var(--sys-font-sans);
-    font-size: 13px;
-    line-height: 1.55;
+    font-size: clamp(15px, 1.1vw, 17px);
+    line-height: 1.7;
     color: var(--sys-ink-2);
+}
+
+.sys-dock__thesis + *,
+.sys-dock__list + *,
+.sys-dock__rules + *,
+.sys-dock__techs + *,
+.sys-dock__code + *,
+.sys-dock__gallery + * {
+    margin-top: 22px;
+}
+
+.sys-dock > * {
+    max-width: 1080px;
+}
+
+.sys-dock__figure figcaption,
+.sys-dock__code figcaption,
+.sys-dock__code p,
+.sys-dock__note {
+    margin: 6px 0 0;
+    font-family: var(--sys-font-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.08em;
+    line-height: 1.5;
+    color: #808080;
+}
+
+.sys-dock__list {
+    margin: 0;
+    padding: 0 0 0 16px;
+    font-family: var(--sys-font-sans);
+    font-size: clamp(14.5px, 1.05vw, 16px);
+    line-height: 1.65;
+    color: var(--sys-ink-2);
+}
+
+.sys-dock__list li + li {
+    margin-top: 8px;
+}
+
+.sys-dock__list--steps li::marker {
+    font-family: var(--sys-font-mono);
+    font-size: 12px;
+    color: var(--sys-sun, #808080);
+}
+
+.sys-dock__rules {
+    margin: 0;
+    display: grid;
+    gap: 10px;
+}
+
+.sys-dock__rules > div {
+    display: grid;
+    grid-template-columns: minmax(140px, 34%) 1fr;
+    gap: 18px;
+    align-items: baseline;
+    padding-top: 10px;
+    border-top: 1px solid var(--sys-hair);
+}
+
+.sys-dock__rules dt {
+    font-family: var(--sys-font-mono);
+    font-size: 12.5px;
+    letter-spacing: 0.04em;
+    color: var(--sys-ink);
+}
+
+.sys-dock__rules dd {
+    margin: 0;
+    font-family: var(--sys-font-sans);
+    font-size: clamp(14px, 1vw, 15.5px);
+    line-height: 1.5;
+    color: var(--sys-ink-2);
+}
+
+.sys-dock__techs {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.sys-dock__techs li {
+    display: inline-flex;
+    gap: 6px;
+    align-items: baseline;
+    padding: 6px 11px;
+    border: 1px solid var(--sys-hair);
+    font-family: var(--sys-font-sans);
+    font-size: 14px;
+    color: var(--sys-ink);
+}
+
+.sys-dock__techs em {
+    font-family: var(--sys-font-mono);
+    font-size: 11px;
+    font-style: normal;
+    color: #808080;
+}
+
+.sys-dock__code {
+    margin: 0;
+}
+
+.sys-dock__code figcaption {
+    margin: 0 0 6px;
+    text-transform: uppercase;
+}
+
+.sys-dock__code pre {
+    margin: 0;
+    max-height: 52vh;
+    padding: 16px 18px;
+    overflow: auto;
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid var(--sys-hair);
+    text-shadow: none;
+}
+
+.sys-dock__code code {
+    font-family: var(--sys-font-mono);
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--sys-ink);
+    white-space: pre;
+}
+
+.sys-dock__gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 10px;
+}
+
+.sys-dock__gallery img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border: 1px solid var(--sys-hair);
+}
+
+.sys-dock__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin: 16px 0 0;
+}
+
+.sys-dock__links a {
+    font-family: var(--sys-font-mono);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--sys-ink);
+    text-decoration: none;
+    border-bottom: 1px solid var(--sys-sun, var(--sys-hair));
+    padding-bottom: 2px;
+}
+
+.sys-dock__links a:hover {
+    color: var(--sys-sun, var(--sys-ink));
 }
 
 @media (max-width: 719px) {
@@ -552,18 +751,14 @@ body.is-reading-sun .btn-back {
         top: 72px;
     }
 
-    .sys-chaps {
-        left: 20px;
-        top: 100px;
-    }
-
     .sys-dock {
         top: auto;
         right: 16px;
         left: 16px;
         bottom: 16px;
         width: auto;
-        max-height: 42vh;
+        max-height: 44vh;
+        padding: 20px 18px;
         transform: translateY(12px);
     }
 
