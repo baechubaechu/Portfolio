@@ -66,7 +66,7 @@ export const CONFIG = {
             rAttribute: 1.14,
             near: 0.32,
             dust: 480,
-            bandDust: 520,       // extra specks crowded along the zones band
+            bandDust: 320,       // extra specks crowded along the zones band
             bandHaze: 22,        // soft glow blobs along the band
         },
     },

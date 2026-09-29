@@ -18,7 +18,7 @@
 import { buildGraph } from "../lib/graph.js";
 import { createLayout } from "../lib/graphLayout.js?v=2.4";
 import { buildAsterisms } from "../lib/asterism.js?v=1.8";
-import { resolveConfig } from "../config.js?v=3.4";
+import { resolveConfig } from "../config.js?v=3.5";
 import { toSphere, project as projectSky, resolveCamera, createSkyDust, createBandDust, bandToWorld } from "../lib/sky.js?v=2.9";
 import {
     createTextMeasurer, debounce, hasFinePointer, mulberry32, hashString,
@@ -890,6 +890,7 @@ export async function mountConstellation(root, portfolio) {
 
     /* ───────────── render loop ───────────── */
     let raf = 0;
+    let lastSkyKey = "";
 
     function frame(now) {
         raf = 0;
@@ -923,8 +924,12 @@ export async function mountConstellation(root, portfolio) {
 
         for (const e of visualEdges) edgeViews.get(e.id).update(e.sourceNode, e.targetNode);
 
+        // Sky geometry only changes with the camera; when it rests, only the twinkle is written.
+        const skyKey = `${yaw.toFixed(5)}|${pitch.toFixed(5)}|${size.width}x${size.height}`;
+        const skyMoved = skyKey !== lastSkyKey;
+        lastSkyKey = skyKey;
         const tilt = cfg.forces.zones?.tilt ?? 0;
-        for (const { star, el } of hazeDots) {
+        for (const { star, el } of skyMoved ? hazeDots : []) {
             const w = bandToWorld(star, tilt, size, cam);
             const p = projectSky(w.wx, w.wy, w.wz, yaw, pitch, cam, size);
             if (!p.visible) {
@@ -937,18 +942,23 @@ export async function mountConstellation(root, portfolio) {
             el.setAttribute("opacity", (star.o * p.fade).toFixed(3));
         }
 
-        for (const { star, el, band: inBand } of dustDots) {
-            const w = inBand ? bandToWorld(star, tilt, size, cam) : star;
-            const p = projectSky(w.wx, w.wy, w.wz, yaw, pitch, cam, size);
-            if (!p.visible) {
-                el.setAttribute("opacity", "0");
-                continue;
+        for (const d of dustDots) {
+            const { star, el, band: inBand } = d;
+            if (skyMoved) {
+                const w = inBand ? bandToWorld(star, tilt, size, cam) : star;
+                const p = projectSky(w.wx, w.wy, w.wz, yaw, pitch, cam, size);
+                d.fade = p.visible ? p.fade : 0;
+                if (p.visible) {
+                    el.setAttribute("cx", p.x.toFixed(1));
+                    el.setAttribute("cy", p.y.toFixed(1));
+                    el.setAttribute("r", (star.r * p.scale).toFixed(2));
+                }
+                if (inBand || !p.visible) el.setAttribute("opacity", (star.o * d.fade).toFixed(3));
             }
-            el.setAttribute("cx", p.x.toFixed(1));
-            el.setAttribute("cy", p.y.toFixed(1));
-            el.setAttribute("r", (star.r * p.scale).toFixed(2));
+            // Band specks hold still; only the sparse background twinkles.
+            if (inBand || !d.fade) continue;
             const tw = 0.78 + 0.22 * Math.sin(now * 0.0012 * star.tws + star.tw);
-            el.setAttribute("opacity", (star.o * p.fade * tw).toFixed(3));
+            el.setAttribute("opacity", (star.o * d.fade * tw).toFixed(3));
         }
 
         if (panelId) panel?.place(graph.byId.get(panelId));
