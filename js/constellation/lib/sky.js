@@ -75,6 +75,57 @@ export function resolveCamera(cfg, stage) {
     return c;
 }
 
+function gauss(rand) {
+    return Math.sqrt(-2 * Math.log(1 - rand())) * Math.cos(2 * Math.PI * rand());
+}
+
+/**
+ * Milky-way specks and haze along the zones band. Stars are stored in band
+ * coordinates (s along, q across, both in half-stage-height units) and placed
+ * on the vault per frame with `bandToWorld`, so they follow resizes.
+ */
+export function createBandDust(count, hazeCount, rand) {
+    const stars = [];
+    for (let i = 0; i < count; i++) {
+        const mag = rand() ** 2.6;
+        stars.push({
+            s: (rand() - 0.5) * 2.8,
+            q: gauss(rand) * (rand() < 0.7 ? 0.07 : 0.16),
+            R: 1.12 + rand() * 0.4,
+            r: 0.34 + mag * 0.95,
+            o: 0.14 + mag * 0.4,
+            tw: rand() * Math.PI * 2,
+            tws: 0.35 + rand() * 1.1,
+        });
+    }
+    const haze = [];
+    for (let i = 0; i < hazeCount; i++) {
+        haze.push({
+            s: ((i + rand()) / hazeCount - 0.5) * 2.6,
+            q: gauss(rand) * 0.05,
+            R: 1.5,
+            size: 0.16 + rand() * 0.14,
+            o: 0.05 + rand() * 0.05,
+        });
+    }
+    return { stars, haze };
+}
+
+/** Band coordinates → vault position, matching the layout's zones band. */
+export function bandToWorld(b, tilt, stage, cam) {
+    const h = stage.height / 2;
+    const x = stage.width / 2 + (b.s * Math.sin(tilt) + b.q * Math.cos(tilt)) * h;
+    const y = stage.height / 2 + (b.s * Math.cos(tilt) - b.q * Math.sin(tilt)) * h;
+    const lon = (x / stage.width - 0.5) * 2 * cam.spanX;
+    const lat = -(y / stage.height - 0.5) * 2 * cam.spanY;
+    const cl = Math.cos(lat);
+    return {
+        wx: Math.sin(lon) * cl * b.R,
+        wy: Math.sin(lat) * b.R,
+        wz: -Math.cos(lon) * cl * b.R,
+    };
+}
+
 /** Faint distant dust on the vault — not interactive. */
 export function createSkyDust(count, rand) {
     const stars = [];

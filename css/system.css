@@ -135,7 +135,7 @@ body.is-system .navbar {
 }
 
 .sys__planet.is-hover .sys__planet-label,
-.sys__planet.is-lock .sys__planet-label {
+.sys.is-reading .sys__planet.is-focus .sys__planet-label {
     fill: var(--sys-ink);
 }
 

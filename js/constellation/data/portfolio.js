@@ -14,6 +14,8 @@
  * ─ Project ─────────────────────────────────────────────────
  *   id          unique slug (must not collide with an attribute id)
  *   title       display name (kept short: it is drawn on the map)
+ *   domain      "design" | "code": which side of the sky the project
+ *               settles on (attributes gather in the band between)
  *   year        number
  *   category    short label shown in the info panel
  *   href        detail page URL. `null` → shown as "in progress" (no link)
@@ -50,6 +52,7 @@ export const attributes = [
 export const projects = [
     {
         id: "xtra-space",
+        domain: "design",
         title: "X-tra Space",
         year: 2026,
         category: "Graduation project",
@@ -83,6 +86,7 @@ export const projects = [
     },
     {
         id: "student-driven-village",
+        domain: "design",
         title: "Student Driven Village",
         year: 2025,
         category: "School work",
@@ -117,9 +121,10 @@ export const projects = [
     },
     {
         id: "kitch-fish",
+        domain: "design",
         title: "Kitsch Fish",
         year: 2026,
-        category: "Pavilion · in progress",
+        category: "Competition",
         detailId: "sangsangblue",
         href: "project-detail.html?id=sangsangblue",
         panelSlot: "top-left",
@@ -152,6 +157,7 @@ export const projects = [
     },
     {
         id: "little-forest",
+        domain: "design",
         title: "Little Forest",
         year: 2023,
         category: "School work",
@@ -179,6 +185,7 @@ export const projects = [
     },
     {
         id: "class-ic",
+        domain: "design",
         title: "Class.IC",
         year: 2023,
         category: "School work",
@@ -207,6 +214,7 @@ export const projects = [
     },
     {
         id: "emotional-architecture",
+        domain: "code",
         title: "Emotional Architecture",
         year: 2026,
         category: "Interactive installation",
@@ -244,7 +252,39 @@ export const projects = [
         },
     },
     {
+        id: "sida",
+        domain: "code",
+        title: "Sida",
+        year: 2026,
+        category: "AI tool · in progress",
+        detailId: "sida",
+        href: "project-detail.html?id=sida",
+        attributes: [
+            { id: "ai", weight: 0.95 },
+            { id: "code", weight: 0.9 },
+            { id: "research", weight: 0.6 },
+            { id: "interaction", weight: 0.5 },
+        ],
+        // Arrow: a shaft of reasoning with a head
+        asterism: {
+            stars: {
+                "research": [-1.00, 0.40],
+                "sida": [-0.20, 0.05],
+                "code": [0.55, -0.35],
+                "ai": [0.95, 0.20],
+                "interaction": [0.40, 0.80],
+            },
+            links: [
+                ["research", "sida"],
+                ["sida", "code"],
+                ["code", "ai"],
+                ["sida", "interaction"],
+            ],
+        },
+    },
+    {
         id: "deary",
+        domain: "code",
         title: "Deary",
         year: 2026,
         category: "Personal project",

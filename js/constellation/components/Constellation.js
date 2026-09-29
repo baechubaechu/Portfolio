@@ -16,10 +16,10 @@
  */
 
 import { buildGraph } from "../lib/graph.js";
-import { createLayout } from "../lib/graphLayout.js?v=2.3";
+import { createLayout } from "../lib/graphLayout.js?v=2.4";
 import { buildAsterisms } from "../lib/asterism.js?v=1.8";
-import { resolveConfig } from "../config.js?v=3.2";
-import { toSphere, project as projectSky, resolveCamera, createSkyDust } from "../lib/sky.js?v=2.8";
+import { resolveConfig } from "../config.js?v=3.4";
+import { toSphere, project as projectSky, resolveCamera, createSkyDust, createBandDust, bandToWorld } from "../lib/sky.js?v=2.9";
 import {
     createTextMeasurer, debounce, hasFinePointer, mulberry32, hashString,
     prefersReducedMotion, svgEl, waitForFonts,
@@ -106,6 +106,27 @@ export async function mountConstellation(root, portfolio) {
         dustLayer.append(c);
         return { star: s, el: c };
     });
+
+    const hazeGrad = svgEl("radialGradient", { id: "c-haze-grad" });
+    hazeGrad.append(
+        svgEl("stop", { offset: "0%", "stop-color": "#dfe7f2", "stop-opacity": "1" }),
+        svgEl("stop", { offset: "45%", "stop-color": "#dfe7f2", "stop-opacity": "0.35" }),
+        svgEl("stop", { offset: "100%", "stop-color": "#dfe7f2", "stop-opacity": "0" }),
+    );
+    const defs = svgEl("defs", {});
+    defs.append(hazeGrad);
+    svg.prepend(defs);
+    const band = createBandDust(cfg.motion.camera.bandDust ?? 0, cfg.motion.camera.bandHaze ?? 0, dustRand);
+    const hazeDots = band.haze.map((h) => {
+        const c = svgEl("circle", { class: "c-haze", fill: "url(#c-haze-grad)" });
+        dustLayer.prepend(c);
+        return { star: h, el: c };
+    });
+    for (const s of band.stars) {
+        const c = svgEl("circle", { class: "c-dust", r: s.r });
+        dustLayer.append(c);
+        dustDots.push({ star: s, el: c, band: true });
+    }
 
     const edgeViews = new Map();
     const visualEdges = [...layout.edges];
@@ -902,8 +923,23 @@ export async function mountConstellation(root, portfolio) {
 
         for (const e of visualEdges) edgeViews.get(e.id).update(e.sourceNode, e.targetNode);
 
-        for (const { star, el } of dustDots) {
-            const p = projectSky(star.wx, star.wy, star.wz, yaw, pitch, cam, size);
+        const tilt = cfg.forces.zones?.tilt ?? 0;
+        for (const { star, el } of hazeDots) {
+            const w = bandToWorld(star, tilt, size, cam);
+            const p = projectSky(w.wx, w.wy, w.wz, yaw, pitch, cam, size);
+            if (!p.visible) {
+                el.setAttribute("opacity", "0");
+                continue;
+            }
+            el.setAttribute("cx", p.x.toFixed(1));
+            el.setAttribute("cy", p.y.toFixed(1));
+            el.setAttribute("r", (star.size * size.height * p.scale).toFixed(1));
+            el.setAttribute("opacity", (star.o * p.fade).toFixed(3));
+        }
+
+        for (const { star, el, band: inBand } of dustDots) {
+            const w = inBand ? bandToWorld(star, tilt, size, cam) : star;
+            const p = projectSky(w.wx, w.wy, w.wz, yaw, pitch, cam, size);
             if (!p.visible) {
                 el.setAttribute("opacity", "0");
                 continue;

@@ -547,18 +547,18 @@ const projectsData = {
         {
             id: "sangsangblue",
             title: "Kitsch Fish",
-            description: "A 3.6 m competition pavilion for Jeju where sea glass and plastic pieces hang like a school of fish from a frame of bamboo poles, with its 2023 placement logic now being rebuilt in Python.",
+            description: "A 3.6 m competition pavilion for Jeju where sea glass and plastic pieces hang like a school of fish from a frame of bamboo poles, and an honest look at what its 2023 placement logic never checked.",
             thumbnail: "assets/KF-thumbnail.jpg",
-            tags: ["Rhino", "Grasshopper", "Python"],
-            kind: "Code · In progress",
-            thesis: "Kitsch Fish is a 2023 competition pavilion about marine debris off Jeju: you look for fish and find garbage. Bamboo poles act as fishing rods, and pieces of sea glass and plastic hang on fishing line where the fish should be. The 2023 Grasshopper definitions placed and hung those pieces but never checked spacing, clearance or load, so I am now rebuilding the placement logic in Python with an AI coding agent. That work is not finished.",
+            tags: ["Rhino", "Grasshopper"],
+            kind: "Pavilion",
+            thesis: "Kitsch Fish is a 2023 competition pavilion about marine debris off Jeju: you look for fish and find garbage. Bamboo poles act as fishing rods, and pieces of sea glass and plastic hang on fishing line where the fish should be. The 2023 Grasshopper definitions placed and hung those pieces but never checked spacing, clearance or load, and this page records exactly what they left unchecked.",
             sections: [
                 {
                     type: "hero-meta",
                     subtitle: "Fishing for garbage instead of fish",
                     category: "Pavilion / Competition",
                     role: "Designer (3-person team)",
-                    timeline: "2023.05 · redevelopment 2026"
+                    timeline: "2023.05"
                 },
                 {
                     type: "arch-competition-info",
@@ -614,64 +614,153 @@ const projectsData = {
                             "Line length, load per hanging point, and clear height above visitors were not computed anywhere in the files.",
                             "Placement depended on a random seed and hand-set sliders. There was no record of why one layout was chosen over another."
                         ] },
-                        { kind: "text", body: "These are the questions the redevelopment has to answer: do any two pieces clash, does every line end on a real support, and is the head height underneath clear?" },
+                        { kind: "text", body: "Three questions follow from this: do any two pieces clash, does every line end on a real support, and is the head height underneath clear?" },
+                        { kind: "note", body: "Next: rebuilding the placement logic so these three questions become explicit rules checked in code (planned, 2026)." },
                         { kind: "image", url: "assets/KF-detail.jpg", caption: "Joint details from the entry: pole to concrete footing, and fishing line to pole." }
-                    ]
-                },
-                {
-                    id: "rules",
-                    label: "Rules",
-                    lead: "Planned: turn the unchecked assumptions into explicit constraints.",
-                    blocks: [
-                        { kind: "note", body: "In progress — redevelopment underway (2026)." },
-                        { kind: "rules", items: [
-                            ["Spacing", "A minimum distance between any two pieces"],
-                            ["Clear height", "No piece or line below a clear walking height above the deck"],
-                            ["Support", "Every hanging line ends on a node of the ceiling grid"],
-                            ["Line length", "Hanging lines stay within a set range of lengths"],
-                            ["Load", "The total weight hung from each node stays under a limit"]
-                        ] },
-                        { kind: "text", body: "The exact values are not set yet. They will come from the pole and grid dimensions in the original drawings and from the weight of the pieces." }
-                    ]
-                },
-                {
-                    id: "algorithm",
-                    label: "Algorithm",
-                    lead: "Planned: place, check, fix and repeat, in Python instead of on the canvas.",
-                    blocks: [
-                        { kind: "note", body: "In progress — redevelopment underway (2026)." },
-                        { kind: "steps", items: [
-                            "Generate candidate positions inside the fish-shaped volume.",
-                            "Snap each piece's hanging point to the nearest free ceiling-grid node.",
-                            "Detect clashes between pieces and between pieces and the clear-height zone.",
-                            "Resolve clashes automatically by moving or re-snapping pieces, then check again.",
-                            "Stop when every constraint passes or when an iteration limit is reached, and report what still fails."
-                        ] },
-                        { kind: "techs", items: [
-                            { name: "Python", note: "placement and checking logic" },
-                            { name: "Rhino / Grasshopper", note: "geometry input and visual output" },
-                            { name: "AI coding agent", note: "used to write and test the code with me" }
-                        ] }
-                    ]
-                },
-                {
-                    id: "verification",
-                    label: "Verification",
-                    lead: "Planned: show, with numbers, what the rebuilt logic changes compared with 2023.",
-                    blocks: [
-                        { kind: "note", body: "In progress — redevelopment underway (2026)." },
-                        { kind: "text", body: "The final output will be a report that runs the same checks on the original 2023 layout and on the redeveloped one. It will cover clashes between pieces, the closest spacing, lines not ending on a node, pieces below the clear height, line lengths and load per node." },
-                        { kind: "list", items: [
-                            "Same input: the 125 pieces and the ceiling grid from the 2023 model.",
-                            "Same checks on both layouts, so the difference comes from the placement logic alone.",
-                            "Anything that still fails is listed, not hidden."
-                        ] }
                     ]
                 }
             ]
         }
     ],
     otherWorks: [
+        {
+            id: "sida",
+            title: "Sida",
+            description: "A CLI where twelve narrow AI experts help an architect reason through a design, from site reading to review, without designing the building for them.",
+            thumbnail: "assets/SIDA-flow.jpg",
+            tags: ["Python", "LLM", "RAG", "Rhino MCP"],
+            githubLink: "https://github.com/baechubaechu/Sida",
+            kind: "Code · In progress",
+            thesis: "Most AI tools in architecture generate one thing at a time: an image, a text, a summary. Design is not one generation task. Sida (시다, the Korean word for a studio assistant) splits design reasoning into twelve narrow experts coordinated by a Conductor. It keeps a project memory the designer approves, answers regulation questions only from retrieved text, and can model in Rhino. It is a working v0.1 prototype and still in development.",
+            sections: [
+                {
+                    type: "hero-meta",
+                    subtitle: "An assistant for design reasoning, not a designer",
+                    category: "AI Tool / CLI Platform",
+                    role: "Developer (solo)",
+                    timeline: "2026.07 - in progress"
+                },
+                {
+                    type: "arch-panel",
+                    image: "assets/SIDA-flow.jpg"
+                }
+            ],
+            chapters: [
+                {
+                    id: "problem",
+                    label: "Problem",
+                    lead: "How can an LLM support design reasoning without pretending to design the building?",
+                    blocks: [
+                        { kind: "text", body: "A studio project is not a single prompt. It means reading the site, sorting constraints, testing an intention, taking critique and deciding what to draw. A general chatbot mixes all of that into one answer and happily invents numbers and precedents." },
+                        { kind: "text", body: "Sida treats the model as a set of narrow lenses instead of one generator. Its output is structured Markdown that clarifies site issues, program demands, regulation agenda, the concept's claims, open problems and what to represent. It is never a finished design." },
+                        { kind: "rules", items: [
+                            ["Does", "Reads the brief, asks focused questions, runs one expert at a time, keeps decisions and open questions in a project file"],
+                            ["Does not", "Draw the building, fix numbers it has not retrieved, or claim that AI designed the project"]
+                        ] }
+                    ]
+                },
+                {
+                    id: "experts",
+                    label: "Experts",
+                    lead: "Twelve independent lenses, each with declared inputs and things it must not do.",
+                    blocks: [
+                        { kind: "rules", items: [
+                            ["site_reader", "How systems meet and cut each other on the site; no program or form proposals"],
+                            ["program_analyst", "Users, rhythms, adjacency, public–private gradient; no invented areas"],
+                            ["regulation_checker", "Governing codes and what to verify; numbers are never stated as fact"],
+                            ["precedent_scout", "3–6 precedents matched to the problem, each with a lesson and a caution"],
+                            ["concept_framer", "Turns the designer's intent into a testable one-line concept"],
+                            ["constraint_mapper", "Hard / soft constraints, priorities and tensions, with their source lens"],
+                            ["synthesizer", "Where experts agree or conflict, and which decisions are due now"],
+                            ["spatial_reviewer", "Tests the described circulation, section and thresholds; no alternative design"],
+                            ["systems_advisor", "Structure, envelope, services and egress trade-offs; no sizing"],
+                            ["design_critic", "Jury-style critique against the core problem"],
+                            ["representation_planner", "Drawings and diagrams that prove the concept and test its weak points"],
+                            ["presentation_editor", "Review story, portfolio structure, likely questions"]
+                        ] },
+                        { kind: "text", body: "Every expert output ends with a Handoff section naming who should look next. That is how the lenses connect without a fixed pipeline. Adding an expert takes one prompt file and one entry in config.yaml; the Conductor's list and the project's status table are generated from it." }
+                    ]
+                },
+                {
+                    id: "conductor",
+                    label: "Conductor",
+                    lead: "Design is not linear, so the entry point depends on what drives the project.",
+                    blocks: [
+                        { kind: "rules", items: [
+                            ["Primary Driver: site", "Start with site_reader"],
+                            ["idea", "Start with concept_framer"],
+                            ["program", "Start with program_analyst"],
+                            ["regulation", "Start with regulation_checker"],
+                            ["review / competition", "Start with synthesizer or presentation_editor"],
+                            ["3+ experts done, or two disagree", "Suggest synthesizer"],
+                            ["Brief or direction changed", "Name the completed experts that are now stale"]
+                        ] },
+                        { kind: "text", body: "The Conductor talks like a colleague and ends every reply with exactly one machine-readable action. It never runs more than one expert per reply and prefers asking one focused question over calling an expert, which keeps cost down." },
+                        { kind: "code", filename: "agents/00_conductor.md", language: "action block", code: "```action\n{\"type\": \"run\", \"agent\": \"site_reader\"}\n```\n\n# other actions\n{\"type\": \"none\"}                          # question or advice\n{\"type\": \"read\", \"module\": \"site_reader\"}  # open a finished output\n{\"type\": \"exit\"}" },
+                        { kind: "rules", items: [
+                            ["site_driven", "site → program → regulation → constraints → concept → critic"],
+                            ["idea_driven", "concept → precedent → site → program → spatial → critic"],
+                            ["review_prep", "synthesizer → critic → representation → presentation"]
+                        ] }
+                    ]
+                },
+                {
+                    id: "memory",
+                    label: "Project Memory",
+                    lead: "The Conductor reads a short project file instead of the whole chat, and the designer approves every change to it.",
+                    blocks: [
+                        { kind: "text", body: "After each expert runs, Sida proposes a patch to project_state.md: the Module Status row, the meta lines, and only the sections that expert informs. The designer sees a diff and chooses to apply, skip, or apply and edit. The previous version is kept." },
+                        { kind: "code", filename: "project_state.md update (from the README)", language: "diff", code: "[state] site_reader 결과로 project_state.md 갱신안을 만드는 중 ...\n--- project_state.md\n+++ proposed\n-| site_reader | pending | |\n+| site_reader | done | 남북 레벨 차 6m가 동선의 핵심 제약 |\n...\n이 갱신을 적용할까요? [Y = 적용 / n = 건너뛰기 / e = 적용 후 에디터로 열기]:" },
+                        { kind: "text", body: "The sample project is the Geumjeong Station brief from my graduation project, X-tra Space. Its state file holds the core problem, confirmed decisions with dates, open questions, tensions, missing information and the next focus." }
+                    ]
+                },
+                {
+                    id: "law",
+                    label: "Regulation Search",
+                    lead: "Numbers and article text are stated only when they appear in retrieved passages.",
+                    blocks: [
+                        { kind: "steps", items: [
+                            "Build a retrieval query from the brief, the project state and the expert's inputs.",
+                            "Retrieve passages from a RAG server over HTTP, or from local Markdown excerpts offline.",
+                            "Give the model the passages as RETRIEVED KNOWLEDGE with their source paths.",
+                            "Answer with citations; anything not retrieved is marked as something to verify."
+                        ] },
+                        { kind: "rules", items: [
+                            ["Only partly retrieved", "Quote what is there and say the item or number is missing from this search"],
+                            ["Not found", "Never claim the provision does not exist; point to where to look next"],
+                            ["Scope", "Not legal advice, and no design proposals"]
+                        ] }
+                    ]
+                },
+                {
+                    id: "rhino",
+                    label: "Rhino Modeling",
+                    lead: "A separate assistant turns a clear modeling request into safe Rhino operations through MCP.",
+                    blocks: [
+                        { kind: "text", body: "The modeler works in rounds. Each turn returns one JSON block with a short message for the designer and up to three tool calls from an allowed list (for example get_context, run_python, run_command). It reads the document before editing, names objects and layers, and assumes millimetres." },
+                        { kind: "code", filename: "agents/71_rhino_modeler.md", language: "rhino block", code: "```rhino\n{\n  \"say\": \"one or two sentences for the user\",\n  \"done\": false,\n  \"calls\": [\n    {\"tool\": \"get_context\", \"args\": {}}\n  ]\n}\n```" },
+                        { kind: "list", items: [
+                            "Never deletes the whole document or closes the Rhino slot unless asked.",
+                            "Does not invent site or code facts; design judgement is left to the designer.",
+                            "Stops after a set number of rounds."
+                        ] }
+                    ]
+                },
+                {
+                    id: "verification",
+                    label: "Verification",
+                    lead: "About 170 offline tests run the whole app against a mock model, with no network.",
+                    blocks: [
+                        { kind: "text", body: "A mock provider runs the full app without any model, so the Conductor's action parsing, sessions, slash commands, state updates, retrieval, law search and the Rhino modeler loop are all tested offline. The Conductor can also run on a local model through Ollama while the experts stay on a cloud model." },
+                        { kind: "techs", items: [
+                            { name: "Python" }, { name: "OpenRouter", note: "experts" }, { name: "Ollama", note: "local Conductor" },
+                            { name: "RAG", note: "HTTP / local files" }, { name: "Rhino MCP" }, { name: "pytest · ruff" }
+                        ] },
+                        { kind: "note", body: "In progress — v0.1 CLI prototype. It does not read drawings or images yet, regulation and precedent outputs still have to be checked by the designer, and the regulation corpus is still being filled." }
+                    ]
+                }
+            ]
+        },
         {
             id: "deary",
             title: "Deary",

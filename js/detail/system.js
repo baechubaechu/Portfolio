@@ -6,7 +6,7 @@
  * drawn in perspective (a slightly elevated look, not a floor-plan).
  */
 
-import { portfolio } from "../constellation/data/portfolio.js?v=2.2";
+import { portfolio } from "../constellation/data/portfolio.js?v=2.4";
 import {
     svgEl, htmlEl, mulberry32, hashString, prefersReducedMotion, esc, clamp,
 } from "../constellation/lib/utils.js?v=2.0";
@@ -21,6 +21,12 @@ const SUN_GLOW = 2.2;
 const CAM_OPEN_MS = 1340;
 const CAM_CLOSE_MS = 1080;
 const STORY_SPAN = 1080;
+// Floor keeps the camera outside the widest orbit (r ≈ 1.72) at any elevation.
+const ZOOM_MIN = 0.62;
+const ZOOM_RATE = 0.0006;
+const TOC_OFFSCREEN = 28;
+const TOC_SUN_MAX = 30;
+const HILITE = 1.5;
 const STORY_OPEN = 0.56;
 const STORY_CLOSE = 0.4;
 
@@ -73,6 +79,10 @@ const SUN_LOOK = {
     "emotional-architecture": {
         lo: [158, 72, 108], hi: [255, 206, 220], glow: [255, 176, 202],
         cells: 210, spots: 5, grain: 0.2,
+    },
+    sida: {
+        lo: [70, 96, 150], hi: [210, 226, 255], glow: [170, 200, 255],
+        cells: 190, spots: 3, grain: 0.16,
     },
     deary: {
         lo: [28, 118, 112], hi: [176, 248, 232], glow: [138, 240, 220],
@@ -677,7 +687,8 @@ function init(project) {
         };
     }
 
-    // Radial blend from the projected orbit to a flat TOC circle of radius R around the sun.
+    // Point-wise blend from the projected orbit to a flat TOC circle of radius R around the sun.
+    // Matching by orbit parameter (not screen angle) keeps every in-between shape an ellipse.
     function orbitPath(r, sun, R, u) {
         let d = "";
         let first = true;
@@ -685,19 +696,15 @@ function init(project) {
             const a = (i / ORBIT_SAMPLES) * Math.PI * 2;
             const p = project3(Math.cos(a) * r, 0, Math.sin(a) * r);
             if (!p) continue;
-            const q = toward(p, sun, R, u);
+            const psi = a + azim;
+            const q = {
+                x: lerp(p.x, sun.x + Math.cos(psi) * R, u),
+                y: lerp(p.y, sun.y + Math.sin(psi) * R, u),
+            };
             d += `${first ? "M" : "L"}${q.x.toFixed(1)} ${q.y.toFixed(1)} `;
             first = false;
         }
         return d + "Z";
-    }
-
-    function toward(p, sun, R, u) {
-        const dx = p.x - sun.x;
-        const dy = p.y - sun.y;
-        const rho = lerp(Math.hypot(dx, dy), R, u);
-        const th = Math.atan2(dy, dx);
-        return { x: sun.x + Math.cos(th) * rho, y: sun.y + Math.sin(th) * rho };
     }
 
     function measure() {
@@ -723,14 +730,21 @@ function init(project) {
         applyFraming();
     }
 
-    // Top-view TOC: sun on the left, planet i parked on a circle of radius (i + 1) · gap.
+    // Top-view TOC: sun on the left, planet i on a circle of radius (i + 1) · unit.
+    // `gap` is the fully zoomed-out spacing, used only to place the dock.
     function tocGeom() {
         const split = W >= 720;
         const n = Math.max(1, planetEls.length);
         const top = split ? 140 : 100;
         const bottom = split ? H - 48 : H * 0.56 - 12;
         const gap = clamp((bottom - top) / n, 12, 44);
-        return { x: split ? 64 : 40, y: top, gap, n };
+        return { x: split ? 64 : 40, y: top, floor: split ? H : H * 0.56, gap, n };
+    }
+
+    // Unit radius when `landed` planets are down: the next planet's slot sits just below the
+    // visible area, which also keeps every parked planet above the top edge.
+    function tocUnit(toc, landed) {
+        return (toc.floor + TOC_OFFSCREEN - toc.y) / (landed + 1);
     }
 
     let azim = 0;
@@ -738,6 +752,8 @@ function init(project) {
     let elevView = ELEV;
     let dist = CAM_DIST;
     let distTgt = CAM_DIST;
+    let zoom = 1;
+    let zoomTgt = 1;
     let guiding = true;
     function dismissGuide() {
         if (!guiding) return;
@@ -786,7 +802,7 @@ function init(project) {
         return {
             viewX: lerp(0.5, toc.x / Math.max(1, W), sunU),
             viewY: lerp(0.5, toc.y / Math.max(1, H), sunU),
-            dist: lerp(CAM_DIST, DIST_TOC, sunU),
+            dist: lerp(CAM_DIST * zoom, DIST_TOC, sunU),
         };
     }
 
@@ -807,7 +823,10 @@ function init(project) {
         storyTgt = to;
         const span = Math.abs(to - story);
         const dur = ms * clamp(0.7 + span * 0.35, 0.7, 2.1);
-        if (reduce) {
+        // Inside the TOC, jumping to the sun or a visited chapter cuts straight there
+        // instead of replaying every chapter in between.
+        const visited = to <= 1 || planetEls.every((p, i) => p.seen || planetLock(to, i) <= 0);
+        if (reduce || (reading && story >= 1 && to >= 1 && visited)) {
             camTween = null;
             story = to;
             applyFraming();
@@ -885,7 +904,9 @@ function init(project) {
     function goSystem() {
         dock.scrollTop = 0;
         showPlate("sun", true);
-        startCamTween(CAM_CLOSE_MS, 0);
+        // Chapters past the sun don't move on screen, so start the visible 1 → 0 leg at once.
+        if (story > 1) story = 1;
+        startCamTween(CAM_CLOSE_MS * 1.3, 0);
         syncReading();
     }
 
@@ -975,8 +996,12 @@ function init(project) {
         }
         e.preventDefault();
         dismissGuide();
-        camTween = null;
         const dy = e.deltaY;
+        if (storyTgt <= 0 && !camTween && (dy < 0 || zoomTgt < 1 || zoom < 0.99)) {
+            zoomTgt = clamp(zoomTgt * Math.exp(dy * ZOOM_RATE), ZOOM_MIN, 1);
+            return;
+        }
+        camTween = null;
         storyTgt = clamp(storyTgt + dy / STORY_SPAN, 0, storyMax);
         syncReading();
     }, { passive: false });
@@ -1004,6 +1029,8 @@ function init(project) {
             story = storyTgt;
         }
         readAmt = clamp(story, 0, 1);
+        if (storyTgt > 0) zoomTgt = 1;
+        zoom = reduce ? zoomTgt : zoom + (zoomTgt - zoom) * (1 - Math.exp(-dt / 0.18));
         const f = framing(story);
         const kCam = 1 - Math.exp(-dt / 0.16);
         viewX += (f.viewX - viewX) * kCam;
@@ -1018,14 +1045,25 @@ function init(project) {
         const sunP = project3(0, 0, 0);
         if (!sunP) { raf = requestAnimationFrame(frame); return; }
 
+        // Visited chapters stay landed until the reader returns to the free system view.
+        if (storyTgt <= 0 && story < 0.02) for (const p of planetEls) p.seen = false;
+        let landed = 0;
+        for (let i = 0; i < planetEls.length; i++) {
+            landed += planetEls[i].seen ? 1 : planetLock(story, i);
+        }
+        const unit = tocUnit(toc, landed);
+        const tocZoom = (toc.n + 1) / (landed + 1);
+        const rowH = Math.min(unit, 56);
+        chapNav.style.setProperty("--toc-gap", `${rowH.toFixed(1)}px`);
+
         const refS = focal / CAM_DIST;
         const bodyRSys = 16 * (sunP.s / Math.max(1e-6, refS));
-        const bodyR = lerp(bodyRSys, 10, tocU);
+        const bodyR = lerp(bodyRSys, Math.min(10 * tocZoom, TOC_SUN_MAX), tocU);
         const css = bodyR * 2 * SUN_GLOW;
         const px = Math.round(clamp(
             css * Math.min(2, window.devicePixelRatio || 1),
             72 + 48 * readAmt,
-            176,
+            264,
         ));
         if (sunCanvas.width !== px) {
             sunCanvas.width = px;
@@ -1040,7 +1078,7 @@ function init(project) {
         sunFo.setAttribute("height", css.toFixed(1));
         sunLimb.setAttribute("r", bodyR.toFixed(2));
         sunHit.setAttribute("r", Math.max(22, bodyR + 12).toFixed(2));
-        sunLabel.setAttribute("x", lerp(bodyR + 10, 24, tocU).toFixed(1));
+        sunLabel.setAttribute("x", (bodyR + lerp(10, 14, tocU)).toFixed(1));
         sunLabel.style.opacity = (clamp((tocU - 0.5) / 0.5, 0, 1) * (plateId === "sun" ? 1 : 0.62)).toFixed(3);
         titleEl.style.opacity = (1 - clamp(tocU / 0.5, 0, 1)).toFixed(3);
         const btnW = Math.max(118, bodyR * 2 + 88);
@@ -1052,7 +1090,7 @@ function init(project) {
         const bodies = [{ z: sunP.z, el: sunG }];
         let stackY = sunP.y;
         let stackOn = 0;
-        placeRow(0, sunP.x, sunP.y, toc.gap);
+        placeRow(0, sunP.x, sunP.y, rowH);
 
         for (let i = 0; i < planetEls.length; i++) {
             const p = planetEls[i];
@@ -1060,10 +1098,11 @@ function init(project) {
             if (!L) continue;
             const ang = p.ang0 + (reduce ? 0 : (now - t0) / L.period * Math.PI * 2);
             const pt = project3(Math.cos(ang) * L.orbitR, 0, Math.sin(ang) * L.orbitR);
-            const R = (i + 1) * toc.gap;
+            const R = (i + 1) * unit;
             p.orbit.setAttribute("d", orbitPath(L.orbitR, sunP, R, tocU));
             if (!pt) continue;
-            const lock = planetLock(story, i);
+            if (planetLock(story, i) > 0.8) p.seen = true;
+            const lock = p.seen ? 1 : planetLock(story, i);
             // Parked at the top of its circle, then swept clockwise half a turn to the bottom.
             const thPark = -Math.PI / 2 + Math.PI * lock;
             const thFree = Math.atan2(pt.y - sunP.y, pt.x - sunP.x);
@@ -1072,18 +1111,19 @@ function init(project) {
             const x = sunP.x + Math.cos(th) * rho;
             const y = sunP.y + Math.sin(th) * rho;
             const sc = lerp(Math.max(0.45, Math.min(1.7, pt.s * 0.42)), 1.15, tocU);
-            const active = plateId === p.id;
-            p.g.setAttribute("transform", `translate(${x.toFixed(2)} ${y.toFixed(2)})`);
-            p.dot.setAttribute("r", (p.rDot * (active ? 1.4 : 1) * sc).toFixed(2));
+            const active = reading && plateId === p.id;
+            p.hl = (p.hl || 0) + ((active ? 1 : 0) - (p.hl || 0)) * (reduce ? 1 : kCam);
+            const grow = 1 + (HILITE - 1) * p.hl * tocU;
+            p.g.setAttribute("transform", `translate(${x.toFixed(2)} ${y.toFixed(2)}) scale(${grow.toFixed(3)})`);
+            p.dot.setAttribute("r", (p.rDot * sc).toFixed(2));
             p.g.classList.toggle("is-focus", active);
             p.g.classList.toggle("is-lock", lock > 0.55);
             // Parked planets stay hidden; each fades in as it starts down its orbit.
             const shown = easeInOutCubic(clamp(lock / 0.35, 0, 1));
-            const tocDim = (active ? 1 : 0.78) * shown;
-            p.g.style.opacity = lerp(pt.z > sunP.z ? 0.55 : 1, tocDim, tocU).toFixed(3);
-            p.orbit.style.opacity = lerp(1, (active ? 0.3 : 0.1) * shown, tocU).toFixed(3);
-            const labOn = (active ? 1 : 0.72) * shown;
-            p.label.style.opacity = lerp(hoverIdx === i ? 1 : 0.35, labOn, tocU).toFixed(3);
+            p.g.style.opacity = lerp(pt.z > sunP.z ? 0.55 : 1, shown, tocU).toFixed(3);
+            p.dot.style.opacity = lerp(1, lerp(0.7, 1, p.hl), tocU).toFixed(3);
+            p.orbit.style.opacity = lerp(1, lerp(0.1, 0.3, p.hl) * shown, tocU).toFixed(3);
+            p.label.style.opacity = lerp(hoverIdx === i ? 1 : 0.35, lerp(0.8, 1, p.hl), tocU).toFixed(3);
             p.g.classList.toggle("is-hover", hoverIdx === i && tocU < 0.5);
             p.sx = x;
             p.sy = y;
@@ -1093,11 +1133,11 @@ function init(project) {
             p.label.setAttribute("text-anchor", "start");
             if (lock > 0.8) stackY = Math.max(stackY, sunP.y + R);
             if (lock > 0.8) stackOn = Math.max(stackOn, lock);
-            placeRow(i + 1, x, y, toc.gap);
+            placeRow(i + 1, x, y, rowH);
             bodies.push({ z: lerp(pt.z, 0, tocU), el: p.g });
         }
 
-        if (stackOn > 0.8) {
+        if (reading && stackOn > 0.8) {
             stackLine.setAttribute("d", `M${sunP.x.toFixed(1)} ${sunP.y.toFixed(1)} L${sunP.x.toFixed(1)} ${stackY.toFixed(1)}`);
             stackLine.style.opacity = ((stackOn - 0.8) / 0.2).toFixed(3);
         } else {

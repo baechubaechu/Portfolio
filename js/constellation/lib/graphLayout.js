@@ -10,6 +10,8 @@
  *   link       connected nodes attract; rest length & strength scale with weight
  *   charge     all nodes repel (projects push harder)
  *   spread     on non-square stages the cloud is eased along the long axis
+ *   zones      design / code projects settle on either side of a tilted
+ *              band; attributes are drawn onto the band
  *   collide    node discs never overlap
  *   labels     label boxes are pushed apart (and away from other discs)
  *   obstacles  optional keep-out rectangles inside the stage (unused while
@@ -113,6 +115,18 @@ export function createLayout(graph, config) {
             n.y = H / 2 + Math.sin(t) * H * 0.3;
             n.vx = 0; n.vy = 0;
         });
+        // With zones, start each project on its own side of the band.
+        if (cfg.forces.zones) {
+            const { nx, ny, reach } = zonesFrame();
+            for (const n of projects) {
+                const side = domainSide(n);
+                if (!side) continue;
+                const off = (n.x - W / 2) * nx + (n.y - H / 2) * ny;
+                const shift = side * cfg.forces.zones.side * reach - off;
+                n.x += nx * shift;
+                n.y += ny * shift;
+            }
+        }
 
         attrs.forEach((n) => {
             const ns = graph.neighborsOf(n.id);
@@ -275,6 +289,42 @@ export function createLayout(graph, config) {
         }
     }
 
+    /** Signed side of a project's field: design −1, code +1, anything else 0. */
+    function domainSide(n) {
+        const d = n.data?.domain;
+        return d === "code" ? 1 : d === "design" ? -1 : 0;
+    }
+
+    /** Unit normal of the zones band (positive side = code) and the stage reach across it. */
+    function zonesFrame() {
+        const f = cfg.forces.zones;
+        const nx = Math.cos(f.tilt), ny = -Math.sin(f.tilt);
+        return { nx, ny, reach: stage.width * Math.abs(nx) + stage.height * Math.abs(ny) };
+    }
+
+    function forceZones(a) {
+        const f = cfg.forces.zones;
+        if (!f) return;
+        const { nx, ny, reach } = zonesFrame();
+        const c = freeCenter();
+        for (const n of nodes) {
+            let want, k;
+            if (n.type === "attribute") {
+                want = 0;
+                k = f.band;
+            } else {
+                const side = domainSide(n);
+                if (!side) continue;
+                want = side * f.side * reach;
+                k = f.project;
+            }
+            const off = (n.x - c.x) * nx + (n.y - c.y) * ny;
+            const push = (want - off) * k * a;
+            n.vx += nx * push;
+            n.vy += ny * push;
+        }
+    }
+
     function forceSpread(a) {
         const f = cfg.forces.spread;
         if (!f) return;
@@ -332,6 +382,7 @@ export function createLayout(graph, config) {
         forceLink(alpha);
         forceCharge(alpha);
         forceSpread(alpha);
+        forceZones(alpha);
         forceCollide();
         forceLabels();
         forceObstacles();

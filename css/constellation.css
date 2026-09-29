@@ -101,6 +101,15 @@
     pointer-events: none;
 }
 
+.c-haze {
+    pointer-events: none;
+}
+
+.c-hero.is-warp-lines .c-haze {
+    opacity: 0 !important;
+    transition: opacity 240ms linear;
+}
+
 .c-dust--bloom {
     opacity: 0;
     fill: #f5f5f5;

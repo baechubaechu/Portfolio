@@ -66,6 +66,8 @@ export const CONFIG = {
             rAttribute: 1.14,
             near: 0.32,
             dust: 480,
+            bandDust: 520,       // extra specks crowded along the zones band
+            bandHaze: 22,        // soft glow blobs along the band
         },
     },
 
@@ -136,6 +138,21 @@ export const CONFIG = {
         spread: {
             strength: 0.028,
         },
+        /**
+         * Two fields split by a tilted band through the centre: design work
+         * settles on one side, code on the other, and the shared attributes
+         * gather along the band like a milky way.
+         *   tilt     band angle from vertical (rad)
+         *   side     project offset from the band axis, × stage reach
+         *   band     attribute pull toward the axis
+         *   project  project pull toward its side
+         */
+        zones: {
+            tilt: 0.34,
+            side: 0.3,
+            band: 0.26,
+            project: 0.06,
+        },
     },
 
     stage: {
@@ -158,12 +175,14 @@ export const CONFIG = {
             obstacles: { padding: 8 },
             boundary: { margin: 28, marginStrength: 0.03 },
             spread: { strength: 0.012 },
+            // Tall stage: the band runs across, design above and code below.
+            zones: { tilt: -1.28, side: 0.3 },
         },
         stage: {
             padding: { top: 20, right: 18, bottom: 16, left: 18 },
         },
         motion: {
-            camera: { maxYaw: 0.32, maxPitch: 0.24, gazeRadius: 64, attributeRadius: 24, dust: 160 },
+            camera: { maxYaw: 0.32, maxPitch: 0.24, gazeRadius: 64, attributeRadius: 24, dust: 160, bandDust: 200, bandHaze: 12 },
         },
     },
 };
