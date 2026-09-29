@@ -385,11 +385,6 @@ body.is-system:not(.is-arriving) .sys__dust {
     pointer-events: auto;
 }
 
-.sys.is-reading .sys-chaps__li.is-hidden {
-    visibility: hidden;
-    pointer-events: none;
-}
-
 .sys-chaps__item {
     display: block;
     width: 100%;
@@ -567,10 +562,9 @@ body.is-reading-sun .btn-back {
     display: block;
     width: 100%;
     height: auto;
-    max-height: 62vh;
-    object-fit: contain;
-    object-position: left top;
-    border: 1px solid var(--sys-hair);
+    outline: 1px solid var(--sys-hair);
+    outline-offset: -1px;
+    cursor: zoom-in;
 }
 
 .sys-dock__thesis {
@@ -590,8 +584,21 @@ body.is-reading-sun .btn-back {
     margin-top: 22px;
 }
 
-.sys-dock > * {
-    max-width: 1080px;
+.sys-dock__quote,
+.sys-dock__thesis,
+.sys-dock__list {
+    max-width: 78ch;
+}
+
+/* All chapters run as one scroll; the last one fills the dock so every chapter can reach the top. */
+.sys-dock__plate + .sys-dock__plate {
+    margin-top: 96px;
+    padding-top: 40px;
+    border-top: 1px solid var(--sys-hair);
+}
+
+.sys-dock__plate:last-child {
+    min-height: 100%;
 }
 
 .sys-dock__figure figcaption,
@@ -711,16 +718,111 @@ body.is-reading-sun .btn-back {
 
 .sys-dock__gallery {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 10px;
 }
 
-.sys-dock__gallery img {
+.sys-dock__row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+/* Width ∝ aspect ratio (--ar, set on load) gives equal heights across the row. */
+.sys-dock__row img {
+    --ar: 1.3333;
     display: block;
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
+    flex: var(--ar) 1 0;
+    min-width: 0;
+    width: 0;
+    height: auto;
+    aspect-ratio: var(--ar);
+    outline: 1px solid var(--sys-hair);
+    outline-offset: -1px;
+    cursor: zoom-in;
+}
+
+.sys-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: grid;
+    grid-template-columns: 64px 1fr 64px;
+    align-items: center;
+    padding: 48px 24px;
+    background: rgba(6, 6, 6, 0.94);
+    cursor: zoom-out;
+}
+
+.sys-lightbox[hidden] {
+    display: none;
+}
+
+.sys-lightbox__fig {
+    grid-column: 2;
+    margin: 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.sys-lightbox__fig img {
+    display: block;
+    max-width: 100%;
+    max-height: calc(100vh - 150px);
+    object-fit: contain;
+    cursor: default;
+}
+
+.sys-lightbox__fig figcaption,
+.sys-lightbox__count {
+    margin: 0;
+    font-family: var(--sys-font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    line-height: 1.5;
+    color: #9a9a9a;
+    text-align: center;
+    max-width: 90ch;
+}
+
+.sys-lightbox__count {
+    position: absolute;
+    left: 50%;
+    top: 18px;
+    transform: translateX(-50%);
+}
+
+.sys-lightbox__btn {
+    width: 48px;
+    height: 48px;
+    padding: 0;
     border: 1px solid var(--sys-hair);
+    background: rgba(10, 10, 10, 0.6);
+    color: var(--sys-ink);
+    font-size: 26px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.sys-lightbox__btn:hover {
+    border-color: var(--sys-hair-strong);
+}
+
+.sys-lightbox__prev { grid-column: 1; grid-row: 1; justify-self: start; }
+.sys-lightbox__next { grid-column: 3; grid-row: 1; justify-self: end; }
+.sys-lightbox__fig { grid-row: 1; }
+
+.sys-lightbox__close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+}
+
+.sys-lightbox.is-single .sys-lightbox__prev,
+.sys-lightbox.is-single .sys-lightbox__next {
+    visibility: hidden;
 }
 
 .sys-dock__links {
@@ -766,6 +868,8 @@ body.is-reading-sun .btn-back {
 
     .sys-dock__figure img {
         max-height: 18vh;
+        width: auto;
+        max-width: 100%;
     }
 
     .sys-scroll {

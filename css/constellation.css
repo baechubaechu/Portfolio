@@ -598,6 +598,25 @@
     user-select: none;
 }
 
+.c-manifesto--hint {
+    left: auto;
+    right: 28px;
+    text-align: right;
+    text-decoration: none;
+    pointer-events: auto;
+}
+
+.c-manifesto--hint .c-manifesto__core {
+    display: block;
+    color: var(--c-ink-2);
+    transition: color 200ms var(--c-ease);
+}
+
+.c-manifesto--hint:hover .c-manifesto__core,
+.c-manifesto--hint:focus-visible .c-manifesto__core {
+    color: var(--c-ink);
+}
+
 .c-manifesto__core {
     margin: 0 0 6px;
     font-family: var(--c-font-mono);
@@ -629,6 +648,11 @@
         left: 20px;
         bottom: 20px;
         max-width: calc(100% - 40px);
+    }
+
+    .c-manifesto--hint {
+        left: auto;
+        right: 20px;
     }
 
     .c-manifesto__core {

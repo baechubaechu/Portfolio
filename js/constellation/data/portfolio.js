@@ -14,8 +14,9 @@
  * ─ Project ─────────────────────────────────────────────────
  *   id          unique slug (must not collide with an attribute id)
  *   title       display name (kept short: it is drawn on the map)
- *   domain      "design" | "code": which side of the sky the project
- *               settles on (attributes gather in the band between)
+ *   domain      "school" | "other": which side of the sky the project
+ *               settles on, matching the School Works / Other Works
+ *               sections below (attributes gather in the band between)
  *   year        number
  *   category    short label shown in the info panel
  *   href        detail page URL. `null` → shown as "in progress" (no link)
@@ -30,6 +31,8 @@
  *               (not a hub). Omitted → a count-based template is used.
  *   panelSlot   optional card corner: "top-left" | "top-right" |
  *               "bottom-left" | "bottom-right". Omitted → auto.
+ *   bias        optional [fx, fy] (0…1 of the stage): pulls the project
+ *               toward that spot on wide screens, to untangle neighbours.
  *
  * Attributes are shared: every project that lists "parametric"
  * connects to the same single Parametric node. The asterism is a
@@ -52,7 +55,7 @@ export const attributes = [
 export const projects = [
     {
         id: "xtra-space",
-        domain: "design",
+        domain: "school",
         title: "X-tra Space",
         year: 2026,
         category: "Graduation project",
@@ -86,7 +89,7 @@ export const projects = [
     },
     {
         id: "student-driven-village",
-        domain: "design",
+        domain: "school",
         title: "Student Driven Village",
         year: 2025,
         category: "School work",
@@ -121,7 +124,7 @@ export const projects = [
     },
     {
         id: "kitch-fish",
-        domain: "design",
+        domain: "other",
         title: "Kitsch Fish",
         year: 2026,
         category: "Competition",
@@ -157,7 +160,7 @@ export const projects = [
     },
     {
         id: "little-forest",
-        domain: "design",
+        domain: "school",
         title: "Little Forest",
         year: 2023,
         category: "School work",
@@ -185,7 +188,7 @@ export const projects = [
     },
     {
         id: "class-ic",
-        domain: "design",
+        domain: "school",
         title: "Class.IC",
         year: 2023,
         category: "School work",
@@ -214,7 +217,7 @@ export const projects = [
     },
     {
         id: "emotional-architecture",
-        domain: "code",
+        domain: "other",
         title: "Emotional Architecture",
         year: 2026,
         category: "Interactive installation",
@@ -253,10 +256,11 @@ export const projects = [
     },
     {
         id: "sida",
-        domain: "code",
+        domain: "other",
         title: "Sida",
         year: 2026,
         category: "AI tool · in progress",
+        bias: [0.62, 0.2],
         detailId: "sida",
         href: "project-detail.html?id=sida",
         attributes: [
@@ -284,10 +288,11 @@ export const projects = [
     },
     {
         id: "deary",
-        domain: "code",
+        domain: "other",
         title: "Deary",
         year: 2026,
         category: "Personal project",
+        bias: [0.86, 0.72],
         detailId: "deary",
         href: "project-detail.html?id=deary",
         attributes: [

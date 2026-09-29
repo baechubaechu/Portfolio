@@ -6,7 +6,7 @@
  * drawn in perspective (a slightly elevated look, not a floor-plan).
  */
 
-import { portfolio } from "../constellation/data/portfolio.js?v=2.4";
+import { portfolio } from "../constellation/data/portfolio.js?v=2.8";
 import {
     svgEl, htmlEl, mulberry32, hashString, prefersReducedMotion, esc, clamp,
 } from "../constellation/lib/utils.js?v=2.0";
@@ -25,10 +25,11 @@ const STORY_SPAN = 1080;
 const ZOOM_MIN = 0.62;
 const ZOOM_RATE = 0.0006;
 const TOC_OFFSCREEN = 28;
-const TOC_SUN_MAX = 30;
 const HILITE = 1.5;
 const STORY_OPEN = 0.56;
 const STORY_CLOSE = 0.4;
+const DOCK_MAX = 1280;
+const DOCK_EDGE = 28;
 
 function lerp(a, b, t) {
     return a + (b - a) * t;
@@ -42,10 +43,6 @@ function easeInOutSlow(t) {
 function easeInOutCubic(t) {
     t = t < 0 ? 0 : t > 1 ? 1 : t;
     return t < 0.5 ? 4 * t * t * t : 1 - ((-2 * t + 2) ** 3) / 2;
-}
-
-function planetLock(s, i) {
-    return easeInOutCubic(clamp(s - 1 - i, 0, 1));
 }
 
 function lerpAngShort(a, b, t) {
@@ -389,9 +386,14 @@ function blockHTML(b) {
             </figure>`;
         case "image":
             return `<figure class="sys-dock__figure"><img src="${esc(b.url)}" alt="${esc(b.caption || "")}" loading="lazy">${b.caption ? `<figcaption>${esc(b.caption)}</figcaption>` : ""}</figure>`;
-        case "gallery":
-            return `<div class="sys-dock__gallery">${b.images.map((im) =>
-                `<img src="${esc(im.url || im)}" alt="${esc(im.caption || "")}" loading="lazy">`).join("")}</div>`;
+        case "gallery": {
+            const n = b.images.length;
+            const perRow = n <= 3 ? n : n === 4 ? 2 : 3;
+            const rows = [];
+            for (let i = 0; i < n; i += perRow) rows.push(b.images.slice(i, i + perRow));
+            return `<div class="sys-dock__gallery">${rows.map((row) => `<div class="sys-dock__row">${row.map((im) =>
+                `<img src="${esc(im.url || im)}" alt="${esc(im.caption || "")}" loading="lazy">`).join("")}</div>`).join("")}</div>`;
+        }
         case "links":
             return `<p class="sys-dock__links">${b.items.map((l) =>
                 `<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)} ↗</a>`).join("")}</p>`;
@@ -595,56 +597,55 @@ function init(project) {
         "aria-hidden": "true",
     });
     dock.inert = true;
-    const storyMax = 1 + planets.length;
-    dock.innerHTML = sunDossierHTML(project, storyMax);
+    // Story runs 0 → 1 (free system → TOC); the chapters themselves are one continuous scroll.
+    const storyMax = 1;
+    const total = 1 + planets.length;
+    const plateHTML = (id, body) => `<section class="sys-dock__plate" data-plate="${esc(id)}">${body}</section>`;
+    dock.innerHTML = [
+        plateHTML("sun", sunDossierHTML(project, total)),
+        ...planets.map((p, i) => plateHTML(p.id, chapters.length
+            ? chapterDossierHTML(chapters[i], i, total)
+            : planetDossierHTML(project, p, attrOf.get(p.id), i, total))),
+    ].join("");
     document.body.append(dock);
-    const sunHTML = dock.innerHTML;
-    const planetHTML = new Map(planets.map((p, i) => [
-        p.id,
-        chapters.length
-            ? chapterDossierHTML(chapters[i], i, storyMax)
-            : planetDossierHTML(project, p, attrOf.get(p.id), i, storyMax),
-    ]));
-    let plateId = "sun";
-    let plateWant = "sun";
-    let plateWait = 0;
-    const ARRIVE = 0.88;
-    const LEAVE = 0.45;
-
-    function plateAt(s) {
-        if (s <= 1 || !planets.length) return "sun";
-        let id = "sun";
-        for (let i = 0; i < planets.length; i++) {
-            const lock = planetLock(s, i);
-            const need = plateId === planets[i].id ? LEAVE : ARRIVE;
-            if (lock >= need) id = planets[i].id;
+    // Gallery rows split their width by each image's aspect ratio, so every image in a row
+    // shares one height and the row fills the column without cropping.
+    const fitRowImage = (img) => {
+        if (img.naturalWidth && img.naturalHeight) {
+            img.style.setProperty("--ar", (img.naturalWidth / img.naturalHeight).toFixed(4));
         }
+    };
+    dock.addEventListener("load", (e) => {
+        if (e.target.matches?.(".sys-dock__row img")) fitRowImage(e.target);
+    }, true);
+    for (const img of dock.querySelectorAll(".sys-dock__row img")) if (img.complete) fitRowImage(img);
+    const plateEls = [...dock.querySelectorAll("[data-plate]")];
+    let plateId = "sun";
+    let pendingPlate = null;
+
+    function setPlate(id) {
+        if (id === plateId) return;
+        plateId = id;
+        for (const b of chapBtns) b.classList.toggle("is-on", b.dataset.chap === id);
+    }
+
+    // The chapter whose top has passed a line 30% down the dock; the last one once the end is reached.
+    function plateFromScroll() {
+        if (dock.scrollTop + dock.clientHeight >= dock.scrollHeight - 2) return plateEls.at(-1).dataset.plate;
+        const line = dock.scrollTop + dock.clientHeight * 0.3;
+        let id = "sun";
+        for (const el of plateEls) if (el.offsetTop <= line) id = el.dataset.plate;
         return id;
     }
 
-    function applyPlate(id) {
-        if (id === plateId) return;
-        plateId = id;
-        plateWant = id;
-        for (const b of chapBtns) b.classList.toggle("is-on", b.dataset.chap === id);
-        dock.innerHTML = id === "sun" ? sunHTML : (planetHTML.get(id) || sunHTML);
-        dock.scrollTop = 0;
-        if (reduce || !dock.classList.contains("is-open")) return;
-        dock.classList.remove("is-enter");
-        void dock.offsetWidth;
-        dock.classList.add("is-enter");
+    function scrollToPlate(id, smooth) {
+        const el = plateEls.find((p) => p.dataset.plate === id);
+        const top = el && id !== "sun" ? el.offsetTop - parseFloat(getComputedStyle(dock).paddingTop) : 0;
+        dock.scrollTo({ top, behavior: smooth && !reduce ? "smooth" : "auto" });
+        setPlate(id);
     }
 
-    function showPlate(id, instant) {
-        if (id === plateWant) return;
-        plateWant = id;
-        clearTimeout(plateWait);
-        if (instant || reduce) {
-            applyPlate(id);
-            return;
-        }
-        plateWait = setTimeout(() => applyPlate(id), 200);
-    }
+    dock.addEventListener("scroll", () => { if (reading) setPlate(plateFromScroll()); }, { passive: true });
 
     let reading = false;
     let readAmt = 0;
@@ -726,7 +727,19 @@ function init(project) {
         }
         const toc = tocGeom();
         chapNav.style.setProperty("--toc-gap", `${toc.gap}px`);
-        dock.style.left = W >= 720 ? `${Math.round(Math.max(300, toc.x + toc.n * toc.gap + 72))}px` : "";
+        if (W >= 720) {
+            // Past DOCK_MAX the box stops growing and centres in the space right of the TOC,
+            // so wide screens don't leave an empty strip inside it.
+            const left0 = Math.max(300, toc.x + toc.n * toc.gap + 72);
+            const avail = W - left0 - DOCK_EDGE;
+            const width = Math.min(avail, DOCK_MAX);
+            const left = Math.round(left0 + (avail - width) / 2);
+            dock.style.left = `${left}px`;
+            dock.style.right = `${Math.round(W - left - width)}px`;
+        } else {
+            dock.style.left = "";
+            dock.style.right = "";
+        }
         applyFraming();
     }
 
@@ -741,10 +754,9 @@ function init(project) {
         return { x: split ? 64 : 40, y: top, floor: split ? H : H * 0.56, gap, n };
     }
 
-    // Unit radius when `landed` planets are down: the next planet's slot sits just below the
-    // visible area, which also keeps every parked planet above the top edge.
-    function tocUnit(toc, landed) {
-        return (toc.floor + TOC_OFFSCREEN - toc.y) / (landed + 1);
+    // Unit radius spacing every chapter down the column, with one empty slot left below the floor.
+    function tocUnit(toc) {
+        return (toc.floor + TOC_OFFSCREEN - toc.y) / (toc.n + 1);
     }
 
     let azim = 0;
@@ -823,10 +835,7 @@ function init(project) {
         storyTgt = to;
         const span = Math.abs(to - story);
         const dur = ms * clamp(0.7 + span * 0.35, 0.7, 2.1);
-        // Inside the TOC, jumping to the sun or a visited chapter cuts straight there
-        // instead of replaying every chapter in between.
-        const visited = to <= 1 || planetEls.every((p, i) => p.seen || planetLock(to, i) <= 0);
-        if (reduce || (reading && story >= 1 && to >= 1 && visited)) {
+        if (reduce) {
             camTween = null;
             story = to;
             applyFraming();
@@ -865,6 +874,8 @@ function init(project) {
         sunG.classList.add("is-focus");
         backBtn.setAttribute("aria-hidden", "false");
         backBtn.tabIndex = 0;
+        scrollToPlate(pendingPlate || "sun", false);
+        pendingPlate = null;
         if (reduce) {
             dock.style.opacity = "1";
             dock.style.visibility = "visible";
@@ -903,9 +914,7 @@ function init(project) {
 
     function goSystem() {
         dock.scrollTop = 0;
-        showPlate("sun", true);
-        // Chapters past the sun don't move on screen, so start the visible 1 → 0 leg at once.
-        if (story > 1) story = 1;
+        setPlate("sun");
         startCamTween(CAM_CLOSE_MS * 1.3, 0);
         syncReading();
     }
@@ -914,22 +923,26 @@ function init(project) {
         btn.addEventListener("pointerdown", (e) => e.stopPropagation());
         btn.addEventListener("click", (e) => {
             e.stopPropagation();
-            const id = btn.dataset.chap;
             dismissGuide();
-            if (id === "sun") {
-                startCamTween(CAM_OPEN_MS, 1);
-                syncReading();
-            } else {
-                goChapter(planets.findIndex((p) => p.id === id));
-            }
+            goPlate(btn.dataset.chap);
         });
+    }
+
+    // Inside the TOC a chapter is a scroll target; from the free system it opens the TOC there.
+    function goPlate(id) {
+        if (reading) {
+            scrollToPlate(id, true);
+            return;
+        }
+        pendingPlate = id;
+        startCamTween(CAM_OPEN_MS, 1);
+        syncReading();
     }
 
     function goChapter(i) {
         if (i < 0) return;
         dismissGuide();
-        startCamTween(CAM_OPEN_MS, 1 + i + 0.92);
-        syncReading();
+        goPlate(planets[i].id);
     }
 
     dock.addEventListener("pointerdown", (e) => e.stopPropagation());
@@ -943,9 +956,64 @@ function init(project) {
         e.stopPropagation();
         if (storyTgt < 1) goRead();
     });
-    document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && (reading || storyTgt > 0)) goSystem();
+    const lightbox = htmlEl("div", {
+        class: "sys-lightbox", role: "dialog", "aria-modal": "true", "aria-label": "Image viewer", hidden: "",
     });
+    lightbox.innerHTML = `<button type="button" class="sys-lightbox__btn sys-lightbox__close" aria-label="Close">×</button>
+        <button type="button" class="sys-lightbox__btn sys-lightbox__prev" aria-label="Previous image">‹</button>
+        <figure class="sys-lightbox__fig"><img alt=""><figcaption></figcaption></figure>
+        <button type="button" class="sys-lightbox__btn sys-lightbox__next" aria-label="Next image">›</button>
+        <p class="sys-lightbox__count"></p>`;
+    document.body.appendChild(lightbox);
+    const lbImg = lightbox.querySelector("img");
+    const lbCap = lightbox.querySelector("figcaption");
+    const lbCount = lightbox.querySelector(".sys-lightbox__count");
+    let lbList = [];
+    let lbIdx = -1;
+    const lbOpen = () => lbIdx >= 0;
+    function lbShow(i) {
+        lbIdx = (i + lbList.length) % lbList.length;
+        const img = lbList[lbIdx];
+        lbImg.src = img.currentSrc || img.src;
+        lbImg.alt = img.alt;
+        lbCap.textContent = img.closest("figure")?.querySelector("figcaption")?.textContent || img.alt || "";
+        lbCount.textContent = lbList.length > 1 ? `${lbIdx + 1} / ${lbList.length}` : "";
+        lightbox.classList.toggle("is-single", lbList.length < 2);
+    }
+    function lbClose() {
+        lbIdx = -1;
+        lightbox.hidden = true;
+        lbImg.removeAttribute("src");
+    }
+    dock.addEventListener("click", (e) => {
+        const img = e.target.closest?.("img");
+        if (!img || !dock.contains(img)) return;
+        lbList = [...dock.querySelectorAll("img")];
+        lightbox.hidden = false;
+        lbShow(lbList.indexOf(img));
+        lightbox.querySelector(".sys-lightbox__close").focus({ preventScroll: true });
+    });
+    lightbox.addEventListener("click", (e) => {
+        if (e.target.closest(".sys-lightbox__prev")) lbShow(lbIdx - 1);
+        else if (e.target.closest(".sys-lightbox__next")) lbShow(lbIdx + 1);
+        else if (!e.target.closest(".sys-lightbox__fig img")) lbClose();
+    });
+
+    // Capture phase, so the page-level "Escape goes home" handler sees defaultPrevented.
+    document.addEventListener("keydown", (e) => {
+        if (lbOpen()) {
+            if (e.key === "Escape") lbClose();
+            else if (e.key === "ArrowLeft") lbShow(lbIdx - 1);
+            else if (e.key === "ArrowRight") lbShow(lbIdx + 1);
+            else return;
+            e.preventDefault();
+            return;
+        }
+        if (e.key === "Escape" && (reading || storyTgt > 0)) {
+            e.preventDefault();
+            goSystem();
+        }
+    }, true);
 
     stage.addEventListener("pointerdown", (e) => {
         if (e.button !== 0) return;
@@ -988,15 +1056,21 @@ function init(project) {
     stage.addEventListener("pointercancel", endDrag);
     window.addEventListener("wheel", (e) => {
         if (e.ctrlKey) return;
-        if (reading && dock.contains(e.target)) {
-            const room = e.deltaY > 0
-                ? dock.scrollHeight - dock.clientHeight - dock.scrollTop
-                : dock.scrollTop;
-            if (room > 1) return;
+        if (lbOpen()) {
+            e.preventDefault();
+            return;
+        }
+        const dy = e.deltaY * (e.deltaMode === 1 ? 16 : 1);
+        // Reading: the wheel scrolls the dossier anywhere on the page; pulling past its top
+        // (or pushing back while the TOC is still opening) drives the camera instead.
+        if (reading && !(dy < 0 && dock.scrollTop <= 0) && !(dy > 0 && storyTgt < 1)) {
+            if (dock.contains(e.target)) return;
+            e.preventDefault();
+            dock.scrollTop += dy;
+            return;
         }
         e.preventDefault();
         dismissGuide();
-        const dy = e.deltaY;
         if (storyTgt <= 0 && !camTween && (dy < 0 || zoomTgt < 1 || zoom < 0.99)) {
             zoomTgt = clamp(zoomTgt * Math.exp(dy * ZOOM_RATE), ZOOM_MIN, 1);
             return;
@@ -1037,7 +1111,6 @@ function init(project) {
         viewY += (f.viewY - viewY) * kCam;
         dist += (f.dist - dist) * kCam;
         syncReading();
-        if (reading) showPlate(plateAt(camTween && camTween.to > 1 ? camTween.to : story));
 
         const tocU = easeInOutCubic(readAmt);
         const toc = tocGeom();
@@ -1045,20 +1118,13 @@ function init(project) {
         const sunP = project3(0, 0, 0);
         if (!sunP) { raf = requestAnimationFrame(frame); return; }
 
-        // Visited chapters stay landed until the reader returns to the free system view.
-        if (storyTgt <= 0 && story < 0.02) for (const p of planetEls) p.seen = false;
-        let landed = 0;
-        for (let i = 0; i < planetEls.length; i++) {
-            landed += planetEls[i].seen ? 1 : planetLock(story, i);
-        }
-        const unit = tocUnit(toc, landed);
-        const tocZoom = (toc.n + 1) / (landed + 1);
+        const unit = tocUnit(toc);
         const rowH = Math.min(unit, 56);
         chapNav.style.setProperty("--toc-gap", `${rowH.toFixed(1)}px`);
 
         const refS = focal / CAM_DIST;
         const bodyRSys = 16 * (sunP.s / Math.max(1e-6, refS));
-        const bodyR = lerp(bodyRSys, Math.min(10 * tocZoom, TOC_SUN_MAX), tocU);
+        const bodyR = lerp(bodyRSys, 10, tocU);
         const css = bodyR * 2 * SUN_GLOW;
         const px = Math.round(clamp(
             css * Math.min(2, window.devicePixelRatio || 1),
@@ -1089,7 +1155,6 @@ function init(project) {
 
         const bodies = [{ z: sunP.z, el: sunG }];
         let stackY = sunP.y;
-        let stackOn = 0;
         placeRow(0, sunP.x, sunP.y, rowH);
 
         for (let i = 0; i < planetEls.length; i++) {
@@ -1101,12 +1166,9 @@ function init(project) {
             const R = (i + 1) * unit;
             p.orbit.setAttribute("d", orbitPath(L.orbitR, sunP, R, tocU));
             if (!pt) continue;
-            if (planetLock(story, i) > 0.8) p.seen = true;
-            const lock = p.seen ? 1 : planetLock(story, i);
-            // Parked at the top of its circle, then swept clockwise half a turn to the bottom.
-            const thPark = -Math.PI / 2 + Math.PI * lock;
+            // The whole system lines up at once: every planet settles at the bottom of its circle.
             const thFree = Math.atan2(pt.y - sunP.y, pt.x - sunP.x);
-            const th = lerpAngShort(thFree, thPark, tocU);
+            const th = lerpAngShort(thFree, Math.PI / 2, tocU);
             const rho = lerp(Math.hypot(pt.x - sunP.x, pt.y - sunP.y), R, tocU);
             const x = sunP.x + Math.cos(th) * rho;
             const y = sunP.y + Math.sin(th) * rho;
@@ -1117,29 +1179,25 @@ function init(project) {
             p.g.setAttribute("transform", `translate(${x.toFixed(2)} ${y.toFixed(2)}) scale(${grow.toFixed(3)})`);
             p.dot.setAttribute("r", (p.rDot * sc).toFixed(2));
             p.g.classList.toggle("is-focus", active);
-            p.g.classList.toggle("is-lock", lock > 0.55);
-            // Parked planets stay hidden; each fades in as it starts down its orbit.
-            const shown = easeInOutCubic(clamp(lock / 0.35, 0, 1));
-            p.g.style.opacity = lerp(pt.z > sunP.z ? 0.55 : 1, shown, tocU).toFixed(3);
+            p.g.classList.toggle("is-lock", tocU > 0.55);
+            p.g.style.opacity = lerp(pt.z > sunP.z ? 0.55 : 1, 1, tocU).toFixed(3);
             p.dot.style.opacity = lerp(1, lerp(0.7, 1, p.hl), tocU).toFixed(3);
-            p.orbit.style.opacity = lerp(1, lerp(0.1, 0.3, p.hl) * shown, tocU).toFixed(3);
+            p.orbit.style.opacity = lerp(1, lerp(0.1, 0.3, p.hl), tocU).toFixed(3);
             p.label.style.opacity = lerp(hoverIdx === i ? 1 : 0.35, lerp(0.8, 1, p.hl), tocU).toFixed(3);
             p.g.classList.toggle("is-hover", hoverIdx === i && tocU < 0.5);
             p.sx = x;
             p.sy = y;
-            chapBtns[i + 1].parentElement.classList.toggle("is-hidden", shown < 0.5);
             p.label.setAttribute("x", lerp(12, 24, tocU).toFixed(1));
             p.label.setAttribute("y", "0");
             p.label.setAttribute("text-anchor", "start");
-            if (lock > 0.8) stackY = Math.max(stackY, sunP.y + R);
-            if (lock > 0.8) stackOn = Math.max(stackOn, lock);
+            stackY = Math.max(stackY, sunP.y + R);
             placeRow(i + 1, x, y, rowH);
             bodies.push({ z: lerp(pt.z, 0, tocU), el: p.g });
         }
 
-        if (reading && stackOn > 0.8) {
+        if (reading && tocU > 0.8) {
             stackLine.setAttribute("d", `M${sunP.x.toFixed(1)} ${sunP.y.toFixed(1)} L${sunP.x.toFixed(1)} ${stackY.toFixed(1)}`);
-            stackLine.style.opacity = ((stackOn - 0.8) / 0.2).toFixed(3);
+            stackLine.style.opacity = ((tocU - 0.8) / 0.2).toFixed(3);
         } else {
             stackLine.style.opacity = "0";
         }

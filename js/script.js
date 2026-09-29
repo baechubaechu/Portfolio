@@ -39,7 +39,7 @@ function goHome() {
 function initDetailNav() {
     if (!document.body.classList.contains('detail-page')) return;
     document.addEventListener('keydown', (e) => {
-        if (e.key !== 'Escape') return;
+        if (e.key !== 'Escape' || e.defaultPrevented) return;
         goHome();
     });
 }
@@ -274,17 +274,12 @@ function renderProjects() {
         schoolWorksGrid.innerHTML = html;
     }
 
-    const competitionsGrid = document.getElementById('competitions-grid');
-    if (competitionsGrid && projectsData.competitions) {
-        let html = '';
-        projectsData.competitions.forEach(p => html += createCard(p, 'competitions'));
-        competitionsGrid.innerHTML = html;
-    }
-
+    // Competitions are listed under Other Works; they keep their architecture card style.
     const otherWorksGrid = document.getElementById('other-works-grid');
-    if (otherWorksGrid && projectsData.otherWorks) {
+    if (otherWorksGrid) {
         let html = '';
-        projectsData.otherWorks.forEach(p => html += createCard(p, 'otherWorks'));
+        (projectsData.otherWorks || []).forEach(p => html += createCard(p, 'otherWorks'));
+        (projectsData.competitions || []).forEach(p => html += createCard(p, 'competitions'));
         otherWorksGrid.innerHTML = html;
     }
 

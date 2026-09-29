@@ -10,7 +10,7 @@
  *   link       connected nodes attract; rest length & strength scale with weight
  *   charge     all nodes repel (projects push harder)
  *   spread     on non-square stages the cloud is eased along the long axis
- *   zones      design / code projects settle on either side of a tilted
+ *   zones      school / other projects settle on either side of a tilted
  *              band; attributes are drawn onto the band
  *   collide    node discs never overlap
  *   labels     label boxes are pushed apart (and away from other discs)
@@ -289,13 +289,13 @@ export function createLayout(graph, config) {
         }
     }
 
-    /** Signed side of a project's field: design −1, code +1, anything else 0. */
+    /** Signed side of a project's field: school −1, other +1, anything else 0. */
     function domainSide(n) {
         const d = n.data?.domain;
-        return d === "code" ? 1 : d === "design" ? -1 : 0;
+        return d === "other" ? 1 : d === "school" ? -1 : 0;
     }
 
-    /** Unit normal of the zones band (positive side = code) and the stage reach across it. */
+    /** Unit normal of the zones band (positive side = other) and the stage reach across it. */
     function zonesFrame() {
         const f = cfg.forces.zones;
         const nx = Math.cos(f.tilt), ny = -Math.sin(f.tilt);
@@ -322,6 +322,13 @@ export function createLayout(graph, config) {
             const push = (want - off) * k * a;
             n.vx += nx * push;
             n.vy += ny * push;
+            // Optional hand placement for the wide sky: `bias: [fx, fy]` as a fraction of the stage.
+            const b = n.data?.bias;
+            if (b && stage.width >= 720) {
+                const kb = (f.bias ?? 0.5) * a;
+                n.vx += (b[0] * stage.width - n.x) * kb;
+                n.vy += (b[1] * stage.height - n.y) * kb;
+            }
         }
     }
 

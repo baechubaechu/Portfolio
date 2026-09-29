@@ -11,20 +11,19 @@
  *   look        the pointer turns the head on a celestial vault
  *   gaze        looking at a project draws its asterism in place
  *               and opens the detail card — nodes never rearrange
- *   dwell       hold gaze on a project ~4s → detail page
- *               (red arc covers the ring around the star)
+ *   open        click a project star → detail page
  */
 
 import { buildGraph } from "../lib/graph.js";
-import { createLayout } from "../lib/graphLayout.js?v=2.4";
-import { buildAsterisms } from "../lib/asterism.js?v=1.8";
-import { resolveConfig } from "../config.js?v=3.5";
+import { createLayout } from "../lib/graphLayout.js?v=2.7";
+import { buildAsterisms } from "../lib/asterism.js?v=2.0";
+import { resolveConfig } from "../config.js?v=3.8";
 import { toSphere, project as projectSky, resolveCamera, createSkyDust, createBandDust, bandToWorld } from "../lib/sky.js?v=2.9";
 import {
     createTextMeasurer, debounce, hasFinePointer, mulberry32, hashString,
     prefersReducedMotion, svgEl, waitForFonts,
 } from "../lib/utils.js?v=2.0";
-import { createNodeView } from "./Node.js?v=3.0";
+import { createNodeView } from "./Node.js?v=3.2";
 import { createEdgeView } from "./Edge.js?v=2.4";
 import { createProjectInfo } from "./ProjectInfo.js?v=3.0";
 import { createCursor } from "./Cursor.js?v=2.3";
@@ -253,7 +252,7 @@ export async function mountConstellation(root, portfolio) {
             const base = `${p.title}, project, ${p.year ?? ""}`.trim();
             if (!sel) return `${base}. Look to see its constellation.`;
             return p.href
-                ? `${base}. Hold to open the project.`
+                ? `${base}. Click to open the project.`
                 : `${base}. Looking at this project. In progress.`;
         }
         return `${n.label}, attribute, shared by ${n.degree} project${n.degree === 1 ? "" : "s"}.${sel ? " Selected." : ""}`;
@@ -263,7 +262,6 @@ export async function mountConstellation(root, portfolio) {
         const n = id ? graph.byId.get(id) : null;
         return n?.type === "project" ? asterisms.get(id) : null;
     }
-
     function applyState() {
         idlePulse.setBusy(!!selectedId || !!hoveredId);
         const sel = selectedId ? graph.byId.get(selectedId) : null;
@@ -359,43 +357,7 @@ export async function mountConstellation(root, portfolio) {
         kick();
     }
 
-    let dwellId = null;
-    let dwellStart = 0;
     let opening = false;
-
-    function dwellLockId() {
-        try { return sessionStorage.getItem("c-dwell-lock"); } catch { return null; }
-    }
-    function setDwellLock(id) {
-        try {
-            if (id) {
-                sessionStorage.setItem("c-dwell-lock", id);
-                sessionStorage.setItem("c-dwell-lock-at", String(Date.now()));
-            } else {
-                sessionStorage.removeItem("c-dwell-lock");
-                sessionStorage.removeItem("c-dwell-lock-at");
-            }
-        } catch { /* private mode */ }
-    }
-    /** Same-star lock only for a brief moment after returning from a detail page. */
-    function dwellLocked(id) {
-        try {
-            const lock = sessionStorage.getItem("c-dwell-lock");
-            if (!lock || lock !== id) return false;
-            const at = Number(sessionStorage.getItem("c-dwell-lock-at") || 0);
-            if (!at || Date.now() - at > 700) {
-                setDwellLock(null);
-                return false;
-            }
-            return true;
-        } catch { return false; }
-    }
-
-    function resetDwell() {
-        if (dwellId) nodeViews.get(dwellId)?.setDwell(0);
-        dwellId = null;
-        dwellStart = 0;
-    }
 
     const WARP_GATHER_MS = 1100;
     const WARP_PREP_MS = 530;
@@ -488,7 +450,6 @@ export async function mountConstellation(root, portfolio) {
         world.style.opacity = "";
         if (warpEl) warpEl.style.opacity = "0";
         requestAnimationFrame(() => { world.style.transition = ""; });
-        resetDwell();
     }
 
     function toOverlay(x, y) {
@@ -670,7 +631,6 @@ export async function mountConstellation(root, portfolio) {
         const p = node?.data;
         if (!p?.href || opening) return;
         opening = true;
-        setDwellLock(node.id);
         if (p.detailId) {
             try { localStorage.setItem("currentProjectId", p.detailId); } catch { /* private mode */ }
         }
@@ -689,27 +649,6 @@ export async function mountConstellation(root, portfolio) {
         }
         leaveTimer = setTimeout(() => root.classList.add("is-leaving"), Math.max(0, wait - 160));
         navTimer = setTimeout(() => { window.location.href = p.href; }, wait);
-    }
-
-    function tickDwell(now) {
-        const n = selectedId ? graph.byId.get(selectedId) : null;
-        const holding = !overPanel && !opening
-            && n?.type === "project" && n.data?.href
-            && hoveredId === selectedId
-            && !dwellLocked(n.id);
-        if (!holding) {
-            resetDwell();
-            return;
-        }
-        if (dwellId !== n.id) {
-            resetDwell();
-            dwellId = n.id;
-            dwellStart = now;
-        }
-        const dur = cfg.motion.dwellMs ?? 3000;
-        const t = Math.min(1, (now - dwellStart) / dur);
-        nodeViews.get(n.id)?.setDwell(t);
-        if (t >= 1) openProject(n);
     }
 
     function activate(id, { openIfSelected = false } = {}) {
@@ -866,8 +805,10 @@ export async function mountConstellation(root, portfolio) {
         if (!id) return;
         e.preventDefault();
         const node = graph.byId.get(id);
-        if (e.target.closest?.(".c-node__label") && node?.type === "project" && node.data?.href) {
-            openProject(node, { skipWarp: true });
+        // Touch has no hover, so the first tap shows the figure and the second opens it.
+        const previewFirst = e.pointerType === "touch" && selectedId !== id;
+        if (node?.type === "project" && node.data?.href && !previewFirst) {
+            openProject(node, { skipWarp: !!e.target.closest?.(".c-node__label") });
             return;
         }
         setHover(id);
@@ -963,10 +904,8 @@ export async function mountConstellation(root, portfolio) {
 
         if (panelId) panel?.place(graph.byId.get(panelId));
 
-        tickDwell(now);
-
         const looking = Math.abs(yawT - yaw) > 0.0004 || Math.abs(pitchT - pitch) > 0.0004;
-        if (active || driftOn || looking || pointerOn || dwellId) raf = requestAnimationFrame(frame);
+        if (active || driftOn || looking || pointerOn) raf = requestAnimationFrame(frame);
     }
 
     function kick() { if (!raf) raf = requestAnimationFrame(frame); }
@@ -1025,19 +964,12 @@ export async function mountConstellation(root, portfolio) {
         reveal();
     }
 
-    const onPageShow = (e) => {
+    const onPageShow = () => {
         abortOpen();
         if (warpEl) warpEl.style.opacity = "";
-        // Fresh load / refresh: do not keep a leftover lock from an earlier visit.
-        // Back/forward cache: retimestamp so the star under the cursor does not
-        // instantly complete a restored dwell, then expire after 700ms.
-        if (e?.persisted) {
-            const id = dwellLockId();
-            if (id) setDwellLock(id);
-        } else {
-            setDwellLock(null);
-        }
-        try { sessionStorage.removeItem("c-skip-dwell"); } catch { /* private mode */ }
+        try {
+            for (const k of ["c-dwell-lock", "c-dwell-lock-at", "c-skip-dwell"]) sessionStorage.removeItem(k);
+        } catch { /* private mode */ }
         kick();
     };
     const onPageHide = () => {

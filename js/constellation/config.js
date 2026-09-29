@@ -50,9 +50,8 @@ export const CONFIG = {
             period: [11000, 17000],
         },
             appearStagger: 38,  // initial reveal, per node
-            dwellMs: 3000,      // hold gaze on a project to open its page
             camera: {
-            ease: 0.05,          // lerp per frame toward the look target
+            ease: 0.025,         // lerp per frame toward the look target
             gazeRadius: 88,      // px: looking at a project within this distance
             clickRadius: 36,     // px: click near a star still selects it
             attributeRadius: 28,
@@ -139,8 +138,8 @@ export const CONFIG = {
             strength: 0.028,
         },
         /**
-         * Two fields split by a tilted band through the centre: design work
-         * settles on one side, code on the other, and the shared attributes
+         * Two fields split by a tilted band through the centre: school works
+         * settle on one side, other works on the other, and the shared attributes
          * gather along the band like a milky way.
          *   tilt     band angle from vertical (rad)
          *   side     project offset from the band axis, × stage reach
@@ -175,7 +174,7 @@ export const CONFIG = {
             obstacles: { padding: 8 },
             boundary: { margin: 28, marginStrength: 0.03 },
             spread: { strength: 0.012 },
-            // Tall stage: the band runs across, design above and code below.
+            // Tall stage: the band runs across, school works above and other works below.
             zones: { tilt: -1.28, side: 0.3 },
         },
         stage: {
