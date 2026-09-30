@@ -274,10 +274,12 @@ export function buildAsterisms(graph, projects, { geometric = false } = {}) {
     for (const p of projects) {
         const spec = normalizeSpec(p, p.asterism);
         const starIds = Object.keys(spec.stars);
-        const memberIds = new Set(starIds);
+        const memberIds = geometric
+            ? new Set([p.id, ...(p.attributes ?? []).map((a) => a.id)])
+            : new Set(starIds);
 
         for (const rel of p.attributes ?? []) {
-            if (!memberIds.has(rel.id)) {
+            if (!geometric && !memberIds.has(rel.id)) {
                 console.warn(`[constellation] "${p.id}" asterism is missing attribute "${rel.id}"`);
             }
         }

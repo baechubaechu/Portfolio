@@ -16,7 +16,7 @@
 
 import { buildGraph } from "../lib/graph.js?v=1.1";
 import { createLayout } from "../lib/graphLayout.js?v=2.8";
-import { buildAsterisms } from "../lib/asterism.js?v=2.1";
+import { buildAsterisms } from "../lib/asterism.js?v=2.2";
 import { resolveConfig } from "../config.js?v=3.8";
 import { toSphere, project as projectSky, resolveCamera, createSkyDust, createBandDust, bandToWorld } from "../lib/sky.js?v=2.9";
 import {

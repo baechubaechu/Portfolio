@@ -16,7 +16,7 @@ const projectsData = {
             id: "xtra-space",
             title: "X-tra Space",
             description: "A graduation project that re-layers Geumjeong Station's transfer hub so fast and slow flows cross, with an AI operating layer that runs light, sound and display by situation.",
-            thumbnail: "assets/XS-thumbnail.jpg",
+            thumbnail: "assets-web/XS-thumbnail.webp",
             tags: ["Transit Hub Remodel", "Geumjeong Station, Gunpo", "Stacked Circulation Layers", "Sanbon Stream Reopening", "AI-Operated Space", "Graduation Project"],
             kind: "Architecture",
             thesis: "Geumjeong Station is a transfer hub people only pass through. X-tra Space stacks transfer, promenade, urban and auxiliary circulation layers so they cross, and the crossings become new public space. An AI operating layer then manages that space, switching light, sound and display modes from what it senses, and a working version ran live at the graduation show.",
@@ -25,7 +25,7 @@ const projectsData = {
             category: "Architecture / Graduation Project",
             role: "Designer · Developer (solo)",
             timeline: "2025.09 - 2026.06",
-            cover: "assets/XS-cover.jpg",
+            cover: "assets-web/XS-cover.webp",
             chapters: [
                 {
                     id: "site",
@@ -35,9 +35,9 @@ const projectsData = {
                     blocks: [
                         { kind: "text", body: "Modern stations are planned around fast movement, clear guidance and transfer efficiency. In the process the station becomes a pass-through device. People rarely stop, notice the space, or stay. I chose a transfer hub because it is the most everyday and most functional public space there is." },
                         { kind: "text", body: "I compared bed-town stations served by GTX and three or more lines: Daegok, Bupyeong and Geumjeong. Geumjeong, in Gunpo, a bed town that depends on Seoul and Anyang, had the most severance: the rail corridor splits the city, and Sanbon Stream, covered in 1995, is cut along with it. The project builds on the plan to reopen the stream." },
-                        { kind: "image", url: "assets/XS-site.jpg", caption: "Site diagram. The rail corridor splits the city into two edges; street views from either side." },
-                        { kind: "image", url: "assets/XS-site-axis.jpg", caption: "Green axis within 1 to 3 km. Hills in green, streams in blue; the red dashed line is the covered section of Sanbon Stream meeting the station." },
-                        { kind: "image", url: "assets/XS-site-context.jpg", caption: "Site model with street photos, historical aerials, and a collage of the transfer environment around the station." }
+                        { kind: "image", url: "assets-web/XS-site.webp", caption: "Site diagram. The rail corridor splits the city into two edges; street views from either side." },
+                        { kind: "image", url: "assets-web/XS-site-axis.webp", caption: "Green axis within 1 to 3 km. Hills in green, streams in blue; the red dashed line is the covered section of Sanbon Stream meeting the station." },
+                        { kind: "image", url: "assets-web/XS-site-context.webp", caption: "Site model with street photos, historical aerials, and a collage of the transfer environment around the station." }
                     ]
                 },
                 {
@@ -54,8 +54,8 @@ const projectsData = {
                             ["X-tra Space", "Sensory transition, where the layers overlap"]
                         ] },
                         { kind: "text", body: "The massing splits the station into two levels: 1F Transfer and 2F Extra. In the final second-floor plan, the transit layer and the walking layer run side by side, and X-tra Space sits at the points where they meet." },
-                        { kind: "image", url: "assets/XS-plan.jpg", caption: "Second floor plan. 1 Transit layer, 2 Walking layer, 3 X-tra Space, 4 Exit, 5 Platform, 6 Concourse, 7 Cafe/Lounge, 8 Observatory deck, 9 Bicycle storage, 10 Station operations, 11 Restroom, 12 Service." },
-                        { kind: "image", url: "assets/XS-long-section.jpg", caption: "Long section along the tracks. Transfer below, the walking level and planted deck above, under one roof." }
+                        { kind: "image", url: "assets-web/XS-plan.webp", caption: "Second floor plan. 1 Transit layer, 2 Walking layer, 3 X-tra Space, 4 Exit, 5 Platform, 6 Concourse, 7 Cafe/Lounge, 8 Observatory deck, 9 Bicycle storage, 10 Station operations, 11 Restroom, 12 Service." },
+                        { kind: "image", url: "assets-web/XS-long-section.webp", caption: "Long section along the tracks. Transfer below, the walking level and planted deck above, under one roof." }
                     ]
                 },
                 {
@@ -76,8 +76,8 @@ const projectsData = {
                             "Release: open into a void with diffuse light where people can stay."
                         ] },
                         { kind: "gallery", images: [
-                            { url: "assets/XS-section1.jpg", caption: "Section 1: the X-tra Space above the tracks." },
-                            { url: "assets/XS-section2.jpg", caption: "Section 2: the station body, transfer below and the walking level above." }
+                            { url: "assets-web/XS-section1.webp", caption: "Section 1: the X-tra Space above the tracks." },
+                            { url: "assets-web/XS-section2.webp", caption: "Section 2: the station body, transfer below and the walking level above." }
                         ] }
                     ]
                 },
@@ -88,9 +88,9 @@ const projectsData = {
                     lead: "The roof is hung rather than propped, so the space under it stays open for the crossing layers.",
                     blocks: [
                         { kind: "text", body: "The structural idea is a suspension structure with panels. Cables hang from masts and pick up the roof edge, so the long span over the tracks needs fewer supports inside the space. The roof surface is broken into panels between the cable lines." },
-                        { kind: "image", url: "assets/XS-structure.jpg", caption: "Structure study: cables fanning from masts to the curved roof edge, with the roof divided into panels." },
+                        { kind: "image", url: "assets-web/XS-structure.webp", caption: "Structure study: cables fanning from masts to the curved roof edge, with the roof divided into panels." },
                         { kind: "text", body: "In the June design the canopy is carried on branching columns with a ribbed roof, and a louvered panel facade lines the edge of the walking layer." },
-                        { kind: "image", url: "assets/XS-panels.jpg", caption: "Louver panel study along the walking layer (June)." },
+                        { kind: "image", url: "assets-web/XS-panels.webp", caption: "Louver panel study along the walking layer (June)." },
                         { kind: "list", items: [
                             "Model spec planned at the April review:",
                             "Base: white foamex. Roads: grey foamex and laser-cut paper.",
@@ -138,7 +138,7 @@ const projectsData = {
                             ["critical_focus", "5900 K, 600 ms transition. Focus on the section and diagrams."],
                             ["night_reflect", "2900 K, 1400 ms transition. Low, warm."]
                         ] },
-                        { kind: "image", url: "assets/XS-monitor-states.jpg", caption: "Four of the ten pre-rendered states of the same interior, varying light level, colour temperature and occupancy. The monitor picks one from the live head count, sound level and current scene." }
+                        { kind: "image", url: "assets-web/XS-monitor-states.webp", caption: "Four of the ten pre-rendered states of the same interior, varying light level, colour temperature and occupancy. The monitor picks one from the live head count, sound level and current scene." }
                     ]
                 },
                 {
@@ -161,7 +161,7 @@ const projectsData = {
                             { name: "MediaPipe", note: "Face detection in the browser, no cloud call" },
                             { name: "YAML config", note: "auto_strategy.yaml rules, scenes.yaml per-scene light, sound and display" }
                         ] },
-                        { kind: "image", url: "assets/XS-ui.jpg", caption: "Monitor page, re-run on a laptop after the show with no camera attached. Mode, crowd, noise and flow status on top; the live camera view on the left; the space response render on the right." },
+                        { kind: "image", url: "assets-web/XS-ui.webp", caption: "Monitor page, re-run on a laptop after the show with no camera attached. Mode, crowd, noise and flow status on top; the live camera view on the left; the space response render on the right." },
                         { kind: "links", items: [
                             { label: "Source code on GitHub", url: "https://github.com/baechubaechu/Spatial-Environment-Agent" }
                         ] }
@@ -174,7 +174,7 @@ const projectsData = {
                     lead: "The graduation show was the test: real visitors, real noise, running all day.",
                     blocks: [
                         { kind: "text", body: "At the show, input from the tablet and the camera changed the space on the monitor right away. The monitor showed the transformed space image and a related diagram, and the NeoPixel lights in the model switched to the same scene." },
-                        { kind: "image", url: "assets/XS-booth.jpg", caption: "Booth layout study from the June review: panels, a monitor, the site and section models, and a tablet on each table." },
+                        { kind: "image", url: "assets-web/XS-booth.webp", caption: "Booth layout study from the June review: panels, a monitor, the site and section models, and a tablet on each table." },
                         { kind: "list", items: [
                             "Ran: tablet, camera, monitor and ESP32 lights linked through one laptop server.",
                             "Not installed: speakers. Each scene defines a sound track and volume, but the speaker output was not set up at the show.",
@@ -191,7 +191,7 @@ const projectsData = {
             aliases: ["Student Driven Village"],
             title: "Student Driven Village",
             description: "A Multi-layered Residential Complex Mediated by Student Initiatives.",
-            thumbnail: "assets/4-1 thumbnail.png",
+            thumbnail: "assets-web/4-1 thumbnail.webp",
             tags: ["Housing Complex", "Gwacheon Jugong Reconstruction", "Shared Halls for 5 Schools", "Semi-public Layer", "Yangjae Stream"],
             kind: "Architecture",
             thesis: "Gwacheon's Jugong reconstruction is bringing in more families with school-age children, but the new complexes stay gated. We proposed a housing complex that uses those students as the link: club rooms and large shared halls for five nearby schools, set under the housing and open to residents too. Midway we saw that the halls had created a new boundary next to private homes, and we reorganized the scheme around a semi-public layer between them.",
@@ -199,7 +199,7 @@ const projectsData = {
             category: "Architecture / Studio",
             role: "Designer (2-person team)",
             timeline: "2025.03 - 2025.06",
-            cover: "assets/4-1concept.png",
+            cover: "assets-web/4-1concept.webp",
             chapters: [
                 {
                     id: "context",
@@ -213,7 +213,7 @@ const projectsData = {
                             "The city's population cap went from 77,000 (2010) to 97,000 (2020) to 140,000 (2035).",
                             "Taking 3–4 person households as households with children, Gwacheon's share is clearly higher than both the national and the Seoul figures."
                         ] },
-                        { kind: "image", url: "assets/SDV-schools.jpg", caption: "Five schools within 500 m of the site (about a 10-minute walk), inside the walking catchment set in the GH brief." }
+                        { kind: "image", url: "assets-web/SDV-schools.webp", caption: "Five schools within 500 m of the site (about a 10-minute walk), inside the walking catchment set in the GH brief." }
                     ]
                 },
                 {
@@ -229,7 +229,7 @@ const projectsData = {
                             ["Nature and life (gardening, eco volunteering, dog club, cooking)", "Urban garden; residents use it as an intergenerational community garden"]
                         ] },
                         { kind: "text", body: "Halls at this scale could not be kept for students only, around the clock. They were planned from the start to be shared with the people who live there." },
-                        { kind: "image", url: "assets/SDV-program.jpg", caption: "School clubs grouped into four themes, each tied to a large hall and to a resident use." }
+                        { kind: "image", url: "assets-web/SDV-program.webp", caption: "School clubs grouped into four themes, each tied to a large hall and to a resident use." }
                     ]
                 },
                 {
@@ -246,9 +246,9 @@ const projectsData = {
                         ] },
                         { kind: "text", body: "In the final scheme the halls (exhibition hall, gym, open restaurant, performance hall) sit on a sunken street that can be reached from both the stream and the ground level. Each hall is extended outward into an outdoor exhibition, sports or busking space. Above each hall is a smaller semi-public 'intermediate space': a resident art school, sports centre or culture centre whose terrace uses the hall's roof. Housing sits on top of that. The intermediate layer is where students, residents and visitors share the same activity, and it separates the hall from the homes instead of pressing them together." },
                         { kind: "gallery", images: [
-                            { url: "assets/SDV-layers.jpg", caption: "Section diagram: outdoor, public hall, semi-public intermediate space, private housing." },
-                            { url: "assets/SDV-halls.jpg", caption: "Placement of the large halls." },
-                            { url: "assets/SDV-intermediate.jpg", caption: "Placement of the intermediate spaces above the halls." }
+                            { url: "assets-web/SDV-layers.webp", caption: "Section diagram: outdoor, public hall, semi-public intermediate space, private housing." },
+                            { url: "assets-web/SDV-halls.webp", caption: "Placement of the large halls." },
+                            { url: "assets-web/SDV-intermediate.webp", caption: "Placement of the intermediate spaces above the halls." }
                         ] }
                     ]
                 },
@@ -259,22 +259,22 @@ const projectsData = {
                     blocks: [
                         { kind: "text", body: "Vertically, a sunken passage at stream level lets people enter from the Yangjae stream without crossing the six-lane road. Community masses on the north and south lead people down into it, and a community hub and retail draw them in from ground level. Existing five-storey wall-structure blocks are kept and converted to retail by adding columns and slabs in front of the stair cores. Horizontally, the corridor is widened differently for three household types: a lowered pocket space that parents can watch from a second living room (families), small shared rooms on several levels (young one- and two-person households), and linked slabs with voids and terraces so neighbours stay in sight of each other (older residents)." },
                         { kind: "gallery", images: [
-                            { url: "assets/4-1siteplan.png", caption: "Site plan" },
-                            { url: "assets/4-1basementfloorplan.png", caption: "Basement floor plan: sunken street and halls" },
-                            { url: "assets/4-1firstfloorplan.png", caption: "1st floor plan" },
-                            { url: "assets/4-1fourthfloorplan.png", caption: "4th floor plan" },
-                            { url: "assets/4-1typicalfloorplan.png", caption: "Typical housing floor plan" }
+                            { url: "assets-web/4-1siteplan.webp", caption: "Site plan" },
+                            { url: "assets-web/4-1basementfloorplan.webp", caption: "Basement floor plan: sunken street and halls" },
+                            { url: "assets-web/4-1firstfloorplan.webp", caption: "1st floor plan" },
+                            { url: "assets-web/4-1fourthfloorplan.webp", caption: "4th floor plan" },
+                            { url: "assets-web/4-1typicalfloorplan.webp", caption: "Typical housing floor plan" }
                         ] },
                         { kind: "gallery", images: [
-                            { url: "assets/4-1sectionperspective1.png", caption: "Section perspective" },
-                            { url: "assets/4-1sectionperspective2.png", caption: "Section perspective" },
-                            { url: "assets/4-1sectionperspective3.png", caption: "Section perspective" }
+                            { url: "assets-web/4-1sectionperspective1.webp", caption: "Section perspective" },
+                            { url: "assets-web/4-1sectionperspective2.webp", caption: "Section perspective" },
+                            { url: "assets-web/4-1sectionperspective3.webp", caption: "Section perspective" }
                         ] },
                         { kind: "gallery", images: [
-                            { url: "assets/4-1render1.png", caption: "Street and bridge view" },
-                            { url: "assets/4-1render2.png", caption: "Ground-level plaza" },
-                            { url: "assets/4-1render3.png", caption: "Entrance from the street" },
-                            { url: "assets/4-1render4.png", caption: "View from across the stream" }
+                            { url: "assets-web/4-1render1.webp", caption: "Street and bridge view" },
+                            { url: "assets-web/4-1render2.webp", caption: "Ground-level plaza" },
+                            { url: "assets-web/4-1render3.webp", caption: "Entrance from the street" },
+                            { url: "assets-web/4-1render4.webp", caption: "View from across the stream" }
                         ] }
                     ]
                 },
@@ -285,14 +285,14 @@ const projectsData = {
                     blocks: [
                         { kind: "text", body: "The site model shows the new housing next to the kept blocks and the stream edge. The cut models open the housing masses to show the widened corridors and in-between spaces." },
                         { kind: "gallery", images: [
-                            { url: "assets/4-1model1.jpg", caption: "Site model, 1:500" },
-                            { url: "assets/4-1model2.jpg" },
-                            { url: "assets/4-1model3.jpg" },
-                            { url: "assets/4-1model4.jpg" },
-                            { url: "assets/4-1model5.jpg" },
-                            { url: "assets/4-1model6.jpg" },
-                            { url: "assets/4-1model7.jpg", caption: "Housing mass seen from above" },
-                            { url: "assets/4-1model8.jpg", caption: "Cut model showing the interior" }
+                            { url: "assets-web/4-1model1.webp", caption: "Site model, 1:500" },
+                            { url: "assets-web/4-1model2.webp" },
+                            { url: "assets-web/4-1model3.webp" },
+                            { url: "assets-web/4-1model4.webp" },
+                            { url: "assets-web/4-1model5.webp" },
+                            { url: "assets-web/4-1model6.webp" },
+                            { url: "assets-web/4-1model7.webp", caption: "Housing mass seen from above" },
+                            { url: "assets-web/4-1model8.webp", caption: "Cut model showing the interior" }
                         ] }
                     ]
                 }
@@ -303,31 +303,31 @@ const projectsData = {
                     spine: ["research", "phenomenology"],
                     leadText: "Student as a Social Medium for Intergenerational Harmony",
                     description: "This project addresses the social isolation inherent in Gated Communities of reconstructed apartment complexes in Gwacheon. We propose a new Open Community platform that utilizes the city’s high density of students as a primary social medium.",
-                    image: "assets/4-1concept.png"
+                    image: "assets-web/4-1concept.webp"
                 },
                 {
                     type: "arch-plans",
                     spine: ["structure"],
                     columns: 2,
                     plans: [
-                        { url: "assets/4-1siteplan.png", title: "Site Plan" },
-                        { url: "assets/4-1firstfloorplan.png", title: "1st Floor Plan" },
-                        { url: "assets/4-1fourthfloorplan.png", title: "4th Floor Plan" },
-                        { url: "assets/4-1basementfloorplan.png", title: "Basement Floor Plan" },
-                        { url: "assets/4-1typicalfloorplan.png", title: "Typical Floor Plan" },
-                        { url: "assets/4-1sectionperspective1.png", title: "Detail Section" },
-                        { url: "assets/4-1sectionperspective2.png", title: "Detail Section" },
-                        { url: "assets/4-1sectionperspective3.png", title: "Detail Section" },
+                        { url: "assets-web/4-1siteplan.webp", title: "Site Plan" },
+                        { url: "assets-web/4-1firstfloorplan.webp", title: "1st Floor Plan" },
+                        { url: "assets-web/4-1fourthfloorplan.webp", title: "4th Floor Plan" },
+                        { url: "assets-web/4-1basementfloorplan.webp", title: "Basement Floor Plan" },
+                        { url: "assets-web/4-1typicalfloorplan.webp", title: "Typical Floor Plan" },
+                        { url: "assets-web/4-1sectionperspective1.webp", title: "Detail Section" },
+                        { url: "assets-web/4-1sectionperspective2.webp", title: "Detail Section" },
+                        { url: "assets-web/4-1sectionperspective3.webp", title: "Detail Section" },
                     ]
                 },
                 {
                     type: "arch-renders",
                     columns: 2,
                     images: [
-                        { url: "assets/4-1render1.png", title: "OVERALL VIEW" },
-                        { url: "assets/4-1render2.png", title: "ENTRANCE PERSPECTIVE" },
-                        { url: "assets/4-1render3.png", title: "INTERIOR ATRIUM" },
-                        { url: "assets/4-1render4.png", title: "NIGHT VISUALIZATION" }
+                        { url: "assets-web/4-1render1.webp", title: "OVERALL VIEW" },
+                        { url: "assets-web/4-1render2.webp", title: "ENTRANCE PERSPECTIVE" },
+                        { url: "assets-web/4-1render3.webp", title: "INTERIOR ATRIUM" },
+                        { url: "assets-web/4-1render4.webp", title: "NIGHT VISUALIZATION" }
                     ]
                 },
                 {
@@ -335,14 +335,14 @@ const projectsData = {
                     spine: ["physical-model", "fabrication"],
                     columns: 2,
                     images: [
-                        { url: "assets/4-1model1.jpg", title: "SITE MODEL 1:500" },
-                        { url: "assets/4-1model2.jpg", title: "EXPLODED AXONOMETRIC MODEL" },
-                        { url: "assets/4-1model3.jpg", title: "EXPLODED AXONOMETRIC MODEL" },
-                        { url: "assets/4-1model4.jpg", title: "EXPLODED AXONOMETRIC MODEL" },
-                        { url: "assets/4-1model5.jpg", title: "EXPLODED AXONOMETRIC MODEL" },
-                        { url: "assets/4-1model6.jpg", title: "EXPLODED AXONOMETRIC MODEL" },
-                        { url: "assets/4-1model7.jpg", title: "EXPLODED AXONOMETRIC MODEL" },
-                        { url: "assets/4-1model8.jpg", title: "EXPLODED AXONOMETRIC MODEL" },
+                        { url: "assets-web/4-1model1.webp", title: "SITE MODEL 1:500" },
+                        { url: "assets-web/4-1model2.webp", title: "EXPLODED AXONOMETRIC MODEL" },
+                        { url: "assets-web/4-1model3.webp", title: "EXPLODED AXONOMETRIC MODEL" },
+                        { url: "assets-web/4-1model4.webp", title: "EXPLODED AXONOMETRIC MODEL" },
+                        { url: "assets-web/4-1model5.webp", title: "EXPLODED AXONOMETRIC MODEL" },
+                        { url: "assets-web/4-1model6.webp", title: "EXPLODED AXONOMETRIC MODEL" },
+                        { url: "assets-web/4-1model7.webp", title: "EXPLODED AXONOMETRIC MODEL" },
+                        { url: "assets-web/4-1model8.webp", title: "EXPLODED AXONOMETRIC MODEL" },
                     ]
                 }
             ]
@@ -351,7 +351,7 @@ const projectsData = {
             id: "little-forest",
             title: "Little Forest",
             description: "A remodel of the closed Seongsu Technical High School into a pet theme park, a small jungle in the city.",
-            thumbnail: "assets/LF-thumbnail.jpg",
+            thumbnail: "assets-web/LF-thumbnail.webp",
             tags: ["Closed School Remodel", "Pet Theme Park", "Seongsu-dong, Seoul", "Site 13,800 ㎡", "Rounded Terraces"],
             kind: "Architecture",
             thesis: "Seongsu Technical High School closed as student numbers fell. Little Forest turns it into a pet theme park for residents who want hands-on programs and for young visitors drawn to Seongsu. Rounded edges, winding paths that always connect, and planters instead of railings let pets and people walk the whole site safely.",
@@ -359,7 +359,7 @@ const projectsData = {
             category: "Architecture / Studio",
             role: "Designer",
             timeline: "2023.09 - 2023.12",
-            cover: "assets/LF-panel.jpg",
+            cover: "assets-web/LF-panel.webp",
             chapters: [
                 {
                     id: "site",
@@ -376,7 +376,7 @@ const projectsData = {
                             ["Coverage / FAR", "60% / 400%"],
                             ["Parking", "62 required, 80 planned"]
                         ] },
-                        { kind: "image", url: "assets/LF-site.jpg", caption: "Site and surroundings" }
+                        { kind: "image", url: "assets-web/LF-site.webp", caption: "Site and surroundings" }
                     ]
                 },
                 {
@@ -396,8 +396,8 @@ const projectsData = {
                             "Without pets: exhibition, community rooms, multipurpose hall, offices, parking."
                         ] },
                         { kind: "gallery", images: [
-                            { url: "assets/LF-market.jpg", caption: "Pet market data and existing pet theme parks in Korea" },
-                            { url: "assets/LF-program.jpg", caption: "Program diagram: with pets above the line, without pets below" }
+                            { url: "assets-web/LF-market.webp", caption: "Pet market data and existing pet theme parks in Korea" },
+                            { url: "assets-web/LF-program.webp", caption: "Program diagram: with pets above the line, without pets below" }
                         ] }
                     ]
                 },
@@ -414,11 +414,11 @@ const projectsData = {
                             ["Planters, not railings", "Terrace edges are planter boxes, so every walk runs beside greenery"],
                             ["Reuse the school", "Keep part of the existing building and remove the rest (see Reuse)"]
                         ] },
-                        { kind: "image", url: "assets/LF-mass.jpg", caption: "Before and after: mass orientation and the route in from the main road" },
+                        { kind: "image", url: "assets-web/LF-mass.webp", caption: "Before and after: mass orientation and the route in from the main road" },
                         { kind: "gallery", images: [
-                            { url: "assets/LF-concept.jpg", caption: "Rounded terraces and parks" },
-                            { url: "assets/LF-path.jpg", caption: "A walking path lined with planters" },
-                            { url: "assets/LF-detail.jpg", caption: "Section detail, 1:50: planter boxes form the terrace edge; roof walkway and roof planting" }
+                            { url: "assets-web/LF-concept.webp", caption: "Rounded terraces and parks" },
+                            { url: "assets-web/LF-path.webp", caption: "A walking path lined with planters" },
+                            { url: "assets-web/LF-detail.webp", caption: "Section detail, 1:50: planter boxes form the terrace edge; roof walkway and roof planting" }
                         ] }
                     ]
                 },
@@ -428,7 +428,7 @@ const projectsData = {
                     lead: "Remove what blocks the park, keep what can carry the new program.",
                     blocks: [
                         { kind: "text", body: "The demolition plan sorts the existing school into two kinds of removal: parts demolished entirely, and parts where only columns and walls come out. The long block on the northeast edge stays and holds the rehabilitation, care and hotel floors; a new curved wing adds the shop, counselling and education rooms." },
-                        { kind: "image", url: "assets/LF-demolition.jpg", caption: "Demolition plan: hatched = demolished entirely, orange = columns and walls removed" },
+                        { kind: "image", url: "assets-web/LF-demolition.webp", caption: "Demolition plan: hatched = demolished entirely, orange = columns and walls removed" },
                         { kind: "note", body: "The drawings mark what is removed. They do not say how the kept structure is strengthened." }
                     ]
                 },
@@ -438,12 +438,12 @@ const projectsData = {
                     lead: "Parks at ground level, a care and hotel wing above, green edges throughout.",
                     blocks: [
                         { kind: "text", body: "The ground floor holds the exhibition, lockers and showers, a pool, pet showers, a greenhouse garden, a shop, a café, and separate large- and small-dog runs. The second floor has rehabilitation, recovery, emergency, CT, clinic and surgery rooms, grooming and counselling. Hotel rooms sit above, agility is on the top floor, and parking and a water tank are below ground." },
-                        { kind: "image", url: "assets/LF-plan-1f.jpg", caption: "Ground floor plan" },
-                        { kind: "image", url: "assets/LF-section.jpg", caption: "Section perspective" },
+                        { kind: "image", url: "assets-web/LF-plan-1f.webp", caption: "Ground floor plan" },
+                        { kind: "image", url: "assets-web/LF-section.webp", caption: "Section perspective" },
                         { kind: "gallery", images: [
-                            { url: "assets/LF-model-1.jpg", caption: "Model from above" },
-                            { url: "assets/LF-model-2.jpg", caption: "Stacked planted terraces" },
-                            { url: "assets/LF-model-3.jpg", caption: "Terrace edge close-up" }
+                            { url: "assets-web/LF-model-1.webp", caption: "Model from above" },
+                            { url: "assets-web/LF-model-2.webp", caption: "Stacked planted terraces" },
+                            { url: "assets-web/LF-model-3.webp", caption: "Terrace edge close-up" }
                         ] }
                     ]
                 }
@@ -453,7 +453,7 @@ const projectsData = {
             id: "class-ic",
             title: "Class.IC",
             description: "A shared office in Euljiro that gathers the district's scattered craft workshops into one tower, with one-day classes and lounges between them.",
-            thumbnail: "assets/CI-thumbnail.jpg",
+            thumbnail: "assets-web/CI-thumbnail.webp",
             tags: ["Shared Office Tower", "Euljiro Craft Workshops", "B5 / 17F", "GFA 23,000 ㎡", "One-day Classes"],
             kind: "Architecture",
             thesis: "Redevelopment in Euljiro is replacing its workshop streets with office blocks. Class.IC keeps the workshops by stacking them in one building: craft studios and one-day classes on the lower floors, a shared office above, and lounges where shop owners, office workers and class visitors meet. The name joins one-day Class with IC (Inter-Change, 나들목).",
@@ -461,7 +461,7 @@ const projectsData = {
             category: "Architecture / Studio",
             role: "Designer",
             timeline: "2023.03 - 2023.06",
-            cover: "assets/CI-panel.jpg",
+            cover: "assets-web/CI-panel.webp",
             chapters: [
                 {
                     id: "context",
@@ -478,7 +478,7 @@ const projectsData = {
                             ["FAR", "600% base, 780% allowed, 1,004% upper limit with incentives"],
                             ["Scale", "B5 / 17F, about 70 m, GFA about 23,000 ㎡, reinforced concrete"]
                         ] },
-                        { kind: "image", url: "assets/CI-site.jpg", caption: "Land use and redevelopment districts around the site, the old waterway, and the lack of green space within 500 m" }
+                        { kind: "image", url: "assets-web/CI-site.webp", caption: "Land use and redevelopment districts around the site, the old waterway, and the lack of green space within 500 m" }
                     ]
                 },
                 {
@@ -493,8 +493,8 @@ const projectsData = {
                             ["IC (Inter-Change)", "Public lounge and terraces linking the workshops to the office floors"],
                             ["Office", "Shared office on the upper floors"]
                         ] },
-                        { kind: "image", url: "assets/CI-mass-flow.jpg", caption: "Mass process and the one-day class route through the six workshop floors" },
-                        { kind: "image", url: "assets/CI-plans.jpg", caption: "1F, 5F and 16F plans with the class circulation diagram" }
+                        { kind: "image", url: "assets-web/CI-mass-flow.webp", caption: "Mass process and the one-day class route through the six workshop floors" },
+                        { kind: "image", url: "assets-web/CI-plans.webp", caption: "1F, 5F and 16F plans with the class circulation diagram" }
                     ]
                 },
                 {
@@ -511,9 +511,9 @@ const projectsData = {
                             "Below ground: exhibition on B1, parking on B2 to B5."
                         ] },
                         { kind: "gallery", images: [
-                            { url: "assets/CI-concept.jpg", caption: "Split floor on the lower levels, vertical lounge on the office levels" },
-                            { url: "assets/CI-section.jpg", caption: "Section A–A′: split-level workshops and lounges up to about +38 m, offices above" },
-                            { url: "assets/CI-interior.jpg", caption: "Office floor beside the Green Fall" }
+                            { url: "assets-web/CI-concept.webp", caption: "Split floor on the lower levels, vertical lounge on the office levels" },
+                            { url: "assets-web/CI-section.webp", caption: "Section A–A′: split-level workshops and lounges up to about +38 m, offices above" },
+                            { url: "assets-web/CI-interior.webp", caption: "Office floor beside the Green Fall" }
                         ] }
                     ]
                 },
@@ -535,8 +535,8 @@ const projectsData = {
                         ] },
                         { kind: "note", body: "For an office building, every barrier-free item in the checklist is mandatory except the reception desk, which is recommended." },
                         { kind: "gallery", images: [
-                            { url: "assets/CI-barrier-free.jpg", caption: "Barrier-free plan, ground floor" },
-                            { url: "assets/CI-egress.jpg", caption: "Horizontal and vertical evacuation plans" }
+                            { url: "assets-web/CI-barrier-free.webp", caption: "Barrier-free plan, ground floor" },
+                            { url: "assets-web/CI-egress.webp", caption: "Horizontal and vertical evacuation plans" }
                         ] }
                     ]
                 },
@@ -546,11 +546,11 @@ const projectsData = {
                     lead: "Each stacked block wears the material of a workshop street.",
                     blocks: [
                         { kind: "text", body: "The facade uses wood, metal and glass to stand for the workshop streets the building gathers. The masses are stacked and shifted by program, which leaves planted terraces between them." },
-                        { kind: "image", url: "assets/CI-elevation.jpg", caption: "Elevation" },
+                        { kind: "image", url: "assets-web/CI-elevation.webp", caption: "Elevation" },
                         { kind: "gallery", images: [
-                            { url: "assets/CI-model-1.jpg", caption: "Model in its urban context" },
-                            { url: "assets/CI-model-2.jpg", caption: "Louvred facade and planted terrace" },
-                            { url: "assets/CI-model-3.jpg", caption: "Stacked masses from above" }
+                            { url: "assets-web/CI-model-1.webp", caption: "Model in its urban context" },
+                            { url: "assets-web/CI-model-2.webp", caption: "Louvred facade and planted terrace" },
+                            { url: "assets-web/CI-model-3.webp", caption: "Stacked masses from above" }
                         ] }
                     ]
                 }
@@ -563,7 +563,7 @@ const projectsData = {
             aliases: ["sangsangblue"],
             title: "Kitsch Fish",
             description: "A 3.6 m competition pavilion for Jeju where sea glass and plastic pieces hang like a school of fish from a frame of bamboo poles, and an honest look at what its 2023 placement logic never checked.",
-            thumbnail: "assets/KF-thumbnail.jpg",
+            thumbnail: "assets-web/KF-thumbnail.webp",
             tags: ["Competition Pavilion", "Jeju Marine Debris", "3.6 m", "Bamboo Frame", "Sea Glass"],
             kind: "Pavilion",
             thesis: "Kitsch Fish is a 2023 competition pavilion about marine debris off Jeju: you look for fish and find garbage. Bamboo poles act as fishing rods, and pieces of sea glass and plastic hang on fishing line where the fish should be. The 2023 Grasshopper definitions placed and hung those pieces but never checked spacing, clearance or load, and this page records exactly what they left unchecked.",
@@ -572,7 +572,7 @@ const projectsData = {
             role: "Designer (3-person team)",
             timeline: "2023.05",
             team: "Team 곡란 (Goklan): 김기태 (Suwon Univ.), 최하영 (Seoul Institute of the Arts), 박지훈 (Hongik Univ.)",
-            cover: "assets/KF-plan.jpg",
+            cover: "assets-web/KF-plan.webp",
             chapters: [
                 {
                     id: "problem",
@@ -588,9 +588,9 @@ const projectsData = {
                             ["Fishing line", "Hangs the pieces from the frame"]
                         ] },
                         { kind: "gallery", images: [
-                            { url: "assets/KF-thumbnail.jpg", caption: "Cover render at Tamna Cultural Plaza" },
-                            { url: "assets/KF-process.jpg", caption: "Design process: poles, debris caught on them, adjusting type, size and count, forming a fish" },
-                            { url: "assets/KF-materials.jpg", caption: "Main materials" }
+                            { url: "assets-web/KF-thumbnail.webp", caption: "Cover render at Tamna Cultural Plaza" },
+                            { url: "assets-web/KF-process.webp", caption: "Design process: poles, debris caught on them, adjusting type, size and count, forming a fish" },
+                            { url: "assets-web/KF-materials.webp", caption: "Main materials" }
                         ] }
                     ]
                 },
@@ -602,7 +602,7 @@ const projectsData = {
                         { kind: "text", body: "The first, smaller file fills a box region with random points (Populate 3D, 200 points, fixed seed), scales the cloud toward the box centre (factor 0.6), and puts a placeholder sphere on each point. A Collision One|Many component then reports whether one referenced object hits any of the spheres. It only reports; nothing is moved when there is a hit." },
                         { kind: "text", body: "The second file starts from 125 pieces referenced from Rhino. For each piece it takes the area centroid and draws a vertical line up to a referenced ceiling surface (Line SDL, then Line | Plane). The line from the centroid to that intersection is the hanging line, shown as a thin pipe. A template object is copied onto every centroid (Pufferfish Move To Point) and offset in X and Y. Each copy is then rotated about the vertical axis by angles from a Discover 'Continuous' parameter (250 values between 0° and 360°) and previewed with a transparent material (Human)." },
                         { kind: "code", filename: "unnamed.gh (component graph, transcribed)", language: "text", code: "Brep (125 referenced pieces) -> Area -> centroid C\nLine SDL(start C, dir +Z, fixed length) -> Line | Plane(ceiling Brep) -> hang point H\nLine(C, H) -> Pipe(small radius)                 # fishing line\nMove To Point(template, from own centroid, to C) -> Move(+X), Move(+Y) -> Merge\nRotate 3D(angle = Discover Continuous 0..360 deg, center = centroid, axis = Z)\n-> Custom Preview Materials(colour, transparency 0.2)", caption: "Read from the saved file. The two files share no link, and neither contains a script component." },
-                        { kind: "image", url: "assets/KF-aerial.jpg", caption: "Rendered result: the cloud of pieces under the grid at the top of the poles." }
+                        { kind: "image", url: "assets-web/KF-aerial.webp", caption: "Rendered result: the cloud of pieces under the grid at the top of the poles." }
                     ]
                 },
                 {
@@ -618,7 +618,7 @@ const projectsData = {
                         ] },
                         { kind: "text", body: "Three questions follow from this: do any two pieces clash, does every line end on a real support, and is the head height underneath clear?" },
                         { kind: "note", body: "Next: rebuilding the placement logic so these three questions become explicit rules checked in code (planned, 2026)." },
-                        { kind: "image", url: "assets/KF-detail.jpg", caption: "Joint details from the entry: pole to concrete footing, and fishing line to pole." }
+                        { kind: "image", url: "assets-web/KF-detail.webp", caption: "Joint details from the entry: pole to concrete footing, and fishing line to pole." }
                     ]
                 }
             ]
@@ -629,7 +629,7 @@ const projectsData = {
             id: "sida",
             title: "Sida",
             description: "A CLI where twelve narrow AI experts help an architect reason through a design, from site reading to review, without designing the building for them.",
-            thumbnail: "assets/SIDA-flow.jpg",
+            thumbnail: "assets-web/SIDA-flow.webp",
             tags: ["AI Design Assistant", "12 Expert Agents", "Regulation Q&A", "Models in Rhino", "CLI · v0.1"],
             githubLink: "https://github.com/baechubaechu/Sida",
             kind: "Code · In progress",
@@ -638,7 +638,7 @@ const projectsData = {
             category: "AI Tool / CLI Platform",
             role: "Developer (solo)",
             timeline: "2026.07 - in progress",
-            cover: "assets/SIDA-flow.jpg",
+            cover: "assets-web/SIDA-flow.webp",
             chapters: [
                 {
                     id: "problem",
@@ -759,7 +759,7 @@ const projectsData = {
             id: "deary",
             title: "Deary",
             description: "An AI-assisted diary app powered by Gemini. Guided questions turn your day into a reflective diary entry.",
-            thumbnail: "assets/deary_logo.png",
+            thumbnail: "assets-web/deary_logo.webp",
             tags: ["AI Diary App", "Guided Interview", "Writes Only From Your Answers", "Live Web App"],
             githubLink: "https://github.com/baechubaechu/Deary",
             visitLink: "https://deary1.pages.dev/",
@@ -769,7 +769,7 @@ const projectsData = {
             category: "Personal Project",
             role: "UI/UX Designer / Developer",
             timeline: "2026.02~",
-            cover: "assets/deary_logo.png",
+            cover: "assets-web/deary_logo.webp",
             chapters: [
                 {
                     id: "problem",
@@ -778,7 +778,7 @@ const projectsData = {
                     blocks: [
                         { kind: "text", body: "Open-ended prompts like \"How was your day?\" get one-line answers, and a one-line answer makes a flat diary. The problem is not writing; it is recalling specific moments on demand." },
                         { kind: "text", body: "So the product question became: what should an interviewer ask, when should it push further, and when should it stop, so that the final entry is both vivid and true?" },
-                        { kind: "image", url: "assets/deary0.png", caption: "Home screen" }
+                        { kind: "image", url: "assets-web/deary0.webp", caption: "Home screen" }
                     ]
                 },
                 {
@@ -808,7 +808,7 @@ const projectsData = {
                             ["No repeats", "A generated question that matches any asked question is rejected and replaced by an unasked pool question"],
                             ["Stop", "End after 4+ questions once the main themes are covered"]
                         ] },
-                        { kind: "image", url: "assets/deary2.jpg", caption: "Daily questions" }
+                        { kind: "image", url: "assets-web/deary2.webp", caption: "Daily questions" }
                     ]
                 },
                 {
@@ -879,9 +879,9 @@ if (answerLength < 10) {
                     lead: "Question, answer, entry.",
                     blocks: [
                         { kind: "gallery", images: [
-                            { url: "assets/deary0.png", caption: "Home" },
-                            { url: "assets/deary2.jpg", caption: "Daily questions" },
-                            { url: "assets/deary1.jpg", caption: "Generated diary entry" }
+                            { url: "assets-web/deary0.webp", caption: "Home" },
+                            { url: "assets-web/deary2.webp", caption: "Daily questions" },
+                            { url: "assets-web/deary1.webp", caption: "Generated diary entry" }
                         ] },
                         { kind: "links", items: [
                             { label: "Promo video", url: "https://www.youtube.com/watch?v=GRwoxY0-ZwM" },
@@ -914,12 +914,12 @@ if (answerLength < 10) {
                     title: "The Vision",
                     leadText: "Making journaling effortless.",
                     description: "Deary is an AI-assisted diary app that helps you reflect on your day through warm, guided questions generated by Gemini. Instead of staring at a blank page, Deary asks you questions — then turns your answers into a coherent, reflective diary entry. The goal was to remove the friction between experience and expression.",
-                    media: { type: "image", url: "assets/deary_logo.png" },
+                    media: { type: "image", url: "assets-web/deary_logo.webp" },
                     booklets: [
                         {
                             title: "Project Booklet",
                             url: "assets/placeholder.pdf",
-                            thumbnail: "assets/deary_logo.png"
+                            thumbnail: "assets-web/deary_logo.webp"
                         }
                     ]
                 },
@@ -959,9 +959,9 @@ return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? "";`
                     spine: ["interaction"],
                     label: "INTERFACE",
                     screenshots: [
-                        { url: "assets/deary0.png", caption: "Home screen" },
-                        { url: "assets/deary2.jpg", caption: "Daily questions" },
-                        { url: "assets/deary1.jpg", caption: "Generated diary entry" }
+                        { url: "assets-web/deary0.webp", caption: "Home screen" },
+                        { url: "assets-web/deary2.webp", caption: "Daily questions" },
+                        { url: "assets-web/deary1.webp", caption: "Generated diary entry" }
                     ]
                 },
                 {
@@ -978,7 +978,7 @@ return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? "";`
             aliases: ["emotional-architect"],
             title: "Emotional Architecture (with A.I.)",
             description: "Can A.I. understand human emotions? A computational experiment that converts real-time facial expressions and public EEG emotion data into living 3D geometry and AI-rendered architectural space.",
-            thumbnail: "assets/EAthumbnail.png",
+            thumbnail: "assets-web/EAthumbnail.webp",
             tags: ["Emotion → Geometry", "Live Facial Expression", "EEG-driven Corridor", "Exhibited 2026, Seoul"],
             githubLink: "https://github.com/baechubaechu/emotion_sphere",
             visitLink: "https://emotion-sphere.vercel.app",
@@ -988,7 +988,7 @@ return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? "";`
             category: "Computational Side Project / Interactive Installation",
             role: "Developer / Computational Designer",
             timeline: "January 2026",
-            cover: "assets/EAconcept.png",
+            cover: "assets-web/EAconcept.webp",
             chapters: [
                 {
                     id: "question",
@@ -997,7 +997,7 @@ return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? "";`
                     blocks: [
                         { kind: "text", body: "Neuroarchitecture leans on visual hierarchy; architectural phenomenology tends to prescribe the mood a space should create. Both decide the emotion for the visitor." },
                         { kind: "text", body: "This experiment reverses the direction: measure the visitor first, then let the measurement shape the space. The rule is 'form follows data'." },
-                        { kind: "image", url: "assets/EAconcept.png" }
+                        { kind: "image", url: "assets-web/EAconcept.webp" }
                     ]
                 },
                 {
@@ -1073,8 +1073,8 @@ return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? "";`
 
     vertices.SetVertex(i, pt + Rhino.Geometry.Vector3d(normals[i]) * d)` },
                         { kind: "gallery", images: [
-                            { url: "assets/EApositive.jpg", caption: "Positive: inflation" },
-                            { url: "assets/EAnegative.png", caption: "Negative: erosion" }
+                            { url: "assets-web/EApositive.webp", caption: "Positive: inflation" },
+                            { url: "assets-web/EAnegative.webp", caption: "Negative: erosion" }
                         ] }
                     ]
                 },
@@ -1084,7 +1084,7 @@ return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? "";`
                     lead: "The mesh fixes the form; the model only dresses it.",
                     blocks: [
                         { kind: "text", body: "The Rhino viewport capture goes into a ComfyUI workflow with ControlNet, so the generated image keeps the computed geometry. Positive and negative spaces get separate prompt sets for ceiling, wall and floor." },
-                        { kind: "image", url: "assets/EAcomfy.png", caption: "ComfyUI workflow" },
+                        { kind: "image", url: "assets-web/EAcomfy.webp", caption: "ComfyUI workflow" },
                         { kind: "note", body: "Negative prompt ends with: \"don't change the other part from the original picture.\"" }
                     ]
                 },
@@ -1095,8 +1095,8 @@ return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? "";`
                     blocks: [
                         { kind: "text", body: "Visitors made faces at a tablet, watched the sphere react, and read the corridor results in a 16-page booklet. Collected data was disclosed and kept for further research." },
                         { kind: "gallery", images: [
-                            { url: "assets/EApic4.jpg" }, { url: "assets/EApic1.jpg" },
-                            { url: "assets/EApic3.jpg" }, { url: "assets/EApic2.jpg" }
+                            { url: "assets-web/EApic4.webp" }, { url: "assets-web/EApic1.webp" },
+                            { url: "assets-web/EApic3.webp" }, { url: "assets-web/EApic2.webp" }
                         ] },
                         { kind: "links", items: [
                             { label: "Booklet", url: "assets/emotional_architect_booklet.pdf" },
@@ -1127,7 +1127,7 @@ return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? "";`
                     title: "The Concept",
                     leadText: "The lost dimension of emotion.",
                     description: "In a digital society where genuine emotional expression is flattened by social media, this project asks: can a machine not only detect but spatialize human emotion? Visitors stand before a webcam — their facial expressions are captured in real time and converted into geometric deformation of a 3D sphere, while EEG emotion data from a public dataset shapes corridor spaces that are rendered into architectural atmospheres.",
-                    media: { type: "image", url: "assets/EAconcept.png" },
+                    media: { type: "image", url: "assets-web/EAconcept.webp" },
                     booklets: [
                         {
                             title: "Project Booklet",
@@ -1175,9 +1175,9 @@ function deformSphere(emotionScore) {
                     spine: ["interaction"],
                     label: "INTERFACE",
                     screenshots: [
-                        { url: "assets/EAscreen1.jpg" },
-                        { url: "assets/EAscreen1.jpg" },
-                        { url: "assets/EAscreen1.jpg" },
+                        { url: "assets-web/EAscreen1.webp" },
+                        { url: "assets-web/EAscreen1.webp" },
+                        { url: "assets-web/EAscreen1.webp" },
                     ]
                 },
                 {
@@ -1185,10 +1185,10 @@ function deformSphere(emotionScore) {
                     spine: ["interaction"],
                     label: "EXHIBITION & DOCUMENT",
                     photos: [
-                        { url: "assets/EApic4.jpg" },
-                        { url: "assets/EApic1.jpg" },
-                        { url: "assets/EApic3.jpg" },
-                        { url: "assets/EApic2.jpg" }
+                        { url: "assets-web/EApic4.webp" },
+                        { url: "assets-web/EApic1.webp" },
+                        { url: "assets-web/EApic3.webp" },
+                        { url: "assets-web/EApic2.webp" }
                     ],
                     booklets: []
                 }

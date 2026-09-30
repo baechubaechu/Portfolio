@@ -61,10 +61,11 @@ export const projects = [
         href: "project-detail.html?id=xtra-space",
         attributes: [
             { id: "ai", weight: 0.9 },
-            { id: "phenomenology", weight: 0.8 },
+            { id: "interaction", weight: 0.8 },
             { id: "research", weight: 0.7 },
             { id: "structure", weight: 0.6 },
-            { id: "physical-model", weight: 0.5 },
+            { id: "physical-model", weight: 0.6 },
+            { id: "phenomenology", weight: 0.5 },
         ],
         // Cassiopeia-like W, phenomenology as a northern spur
         asterism: {
@@ -129,10 +130,10 @@ export const projects = [
         panelSlot: "top-left",
         attributes: [
             { id: "parametric", weight: 0.9 },
-            { id: "code", weight: 0.8 },
-            { id: "optimization", weight: 0.7 },
-            { id: "fabrication", weight: 0.6 },
-            { id: "structure", weight: 0.5 },
+            { id: "fabrication", weight: 0.7 },
+            { id: "structure", weight: 0.6 },
+            { id: "optimization", weight: 0.5 },
+            { id: "code", weight: 0.4 },
         ],
         // House / pavilion outline
         asterism: {
@@ -164,7 +165,8 @@ export const projects = [
         attributes: [
             { id: "research", weight: 0.8 },
             { id: "phenomenology", weight: 0.7 },
-            { id: "structure", weight: 0.5 },
+            { id: "physical-model", weight: 0.5 },
+            { id: "structure", weight: 0.4 },
         ],
         // Short arc
         asterism: {
@@ -220,8 +222,8 @@ export const projects = [
             { id: "ai", weight: 0.9 },
             { id: "interaction", weight: 0.9 },
             { id: "code", weight: 0.8 },
+            { id: "parametric", weight: 0.7 },
             { id: "research", weight: 0.6 },
-            { id: "parametric", weight: 0.5 },
             { id: "phenomenology", weight: 0.5 },
         ],
         // Orion-like: shoulders, belt, hanging sword
@@ -258,7 +260,7 @@ export const projects = [
         attributes: [
             { id: "ai", weight: 0.95 },
             { id: "code", weight: 0.9 },
-            { id: "research", weight: 0.6 },
+            { id: "research", weight: 0.7 },
             { id: "interaction", weight: 0.5 },
         ],
         // Arrow: a shaft of reasoning with a head
@@ -289,7 +291,7 @@ export const projects = [
         attributes: [
             { id: "code", weight: 0.9 },
             { id: "ai", weight: 0.8 },
-            { id: "interaction", weight: 0.7 },
+            { id: "interaction", weight: 0.8 },
         ],
         // Small kite
         asterism: {
