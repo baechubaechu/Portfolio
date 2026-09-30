@@ -120,12 +120,7 @@ function buildSunTexture(seed, look) {
     const hi = look.hi;
     const grain = look.grain ?? 0.18;
     const nCells = look.cells ?? 240;
-    const canvas = document.createElement("canvas");
-    canvas.width = w;
-    canvas.height = h;
-    const ctx = canvas.getContext("2d");
-    const img = ctx.createImageData(w, h);
-    const px = img.data;
+    const px = new Uint8ClampedArray(w * h * 4);
     const cells = [];
     for (let i = 0; i < nCells; i++) {
         cells.push({
@@ -183,11 +178,10 @@ function buildSunTexture(seed, look) {
             px[i + 3] = 255;
         }
     }
-    ctx.putImageData(img, 0, 0);
     return { data: px, w, h, glow: look.glow ?? hi };
 }
 
-function sampleSun(tex, u, v) {
+function sampleSun(tex, u, v, out) {
     const { data, w, h } = tex;
     u -= Math.floor(u);
     v = clamp(v, 0, 0.999);
@@ -203,12 +197,12 @@ function sampleSun(tex, u, v) {
     const i10 = (y0 * w + x1) * 4;
     const i01 = (y1 * w + x0) * 4;
     const i11 = (y1 * w + x1) * 4;
-    const mix = (a, b, t) => a + (b - a) * t;
-    return [
-        mix(mix(data[i00], data[i10], fx), mix(data[i01], data[i11], fx), fy),
-        mix(mix(data[i00 + 1], data[i10 + 1], fx), mix(data[i01 + 1], data[i11 + 1], fx), fy),
-        mix(mix(data[i00 + 2], data[i10 + 2], fx), mix(data[i01 + 2], data[i11 + 2], fx), fy),
-    ];
+    for (let c = 0; c < 3; c++) {
+        const a = data[i00 + c] + (data[i10 + c] - data[i00 + c]) * fx;
+        const b = data[i01 + c] + (data[i11 + c] - data[i01 + c]) * fx;
+        out[c] = a + (b - a) * fy;
+    }
+    return out;
 }
 
 function lookBasis(azim, elev) {
@@ -229,18 +223,19 @@ function lookBasis(azim, elev) {
     return { fx, fy, fz, rx, ry, rz, ux, uy, uz };
 }
 
-function paintSun(canvas, tex, spin, azim, elev) {
-    const n = canvas.width;
-    const ctx = canvas.getContext("2d", { alpha: true });
-    const img = ctx.createImageData(n, n);
+/**
+ * Per-size sun geometry. The glow ring never changes and the disc normals and limb
+ * darkening only depend on the canvas size, so they are computed once per size;
+ * each frame then only re-shades the disc pixels.
+ */
+function sunRaster(n, tex) {
+    const img = new ImageData(n, n);
     const px = img.data;
     const cx = (n - 1) * 0.5;
     const disc = n / (2 * SUN_GLOW);
     const inv = 1 / disc;
-    const { fx, fy, fz, rx, ry, rz, ux, uy, uz } = lookBasis(azim, elev);
-    const tx = -fx, ty = -fy, tz = -fz;
-    const cs = Math.cos(-spin);
-    const ss = Math.sin(-spin);
+    const glow = tex.glow || [255, 252, 242];
+    const idx = [], nxs = [], nys = [], nzs = [], limbs = [];
     for (let y = 0; y < n; y++) {
         const ny = (y - cx) * inv;
         for (let x = 0; x < n; x++) {
@@ -249,7 +244,6 @@ function paintSun(canvas, tex, spin, azim, elev) {
             const i = (y * n + x) * 4;
             if (rr > 1) {
                 const g = Math.exp(-(Math.sqrt(rr) - 1) * 2.5) * 0.28;
-                const glow = tex.glow || [255, 252, 242];
                 px[i] = glow[0] * g;
                 px[i + 1] = glow[1] * g;
                 px[i + 2] = glow[2] * g;
@@ -257,22 +251,71 @@ function paintSun(canvas, tex, spin, azim, elev) {
                 continue;
             }
             const nz = Math.sqrt(1 - rr);
-            const wx = nx * rx - ny * ux + nz * tx;
-            const wy = nx * ry - ny * uy + nz * ty;
-            const wz = nx * rz - ny * uz + nz * tz;
-            const lx = wx * cs + wz * ss;
-            const lz = -wx * ss + wz * cs;
-            const lon = Math.atan2(lx, lz);
-            const lat = Math.asin(clamp(wy, -1, 1));
-            const col = sampleSun(tex, lon / (Math.PI * 2) + 0.5, 0.5 - lat / Math.PI);
-            const limb = 0.7 + 0.3 * Math.pow(nz, 0.65);
-            px[i] = Math.min(255, col[0] * limb);
-            px[i + 1] = Math.min(255, col[1] * limb);
-            px[i + 2] = Math.min(255, col[2] * limb);
+            idx.push(i);
+            nxs.push(nx);
+            nys.push(ny);
+            nzs.push(nz);
+            limbs.push(0.7 + 0.3 * Math.pow(nz, 0.65));
             px[i + 3] = 255;
         }
     }
-    ctx.putImageData(img, 0, 0);
+    return {
+        n, img,
+        idx: Int32Array.from(idx),
+        nx: Float64Array.from(nxs),
+        ny: Float64Array.from(nys),
+        nz: Float64Array.from(nzs),
+        limb: Float64Array.from(limbs),
+        col: [0, 0, 0],
+    };
+}
+
+function paintSun(ctx, raster, tex, spin, azim, elev) {
+    const px = raster.img.data;
+    const { idx, nx: NX, ny: NY, nz: NZ, limb: LIMB, col } = raster;
+    const { fx, fy, fz, rx, ry, rz, ux, uy, uz } = lookBasis(azim, elev);
+    const tx = -fx, ty = -fy, tz = -fz;
+    const cs = Math.cos(-spin);
+    const ss = Math.sin(-spin);
+    const TAU = Math.PI * 2;
+    for (let k = 0; k < idx.length; k++) {
+        const nx = NX[k], ny = NY[k], nz = NZ[k];
+        const wx = nx * rx - ny * ux + nz * tx;
+        const wy = nx * ry - ny * uy + nz * ty;
+        const wz = nx * rz - ny * uz + nz * tz;
+        const lx = wx * cs + wz * ss;
+        const lz = -wx * ss + wz * cs;
+        const lon = Math.atan2(lx, lz);
+        const lat = Math.asin(clamp(wy, -1, 1));
+        sampleSun(tex, lon / TAU + 0.5, 0.5 - lat / Math.PI, col);
+        const limb = LIMB[k];
+        const i = idx[k];
+        px[i] = Math.min(255, col[0] * limb);
+        px[i + 1] = Math.min(255, col[1] * limb);
+        px[i + 2] = Math.min(255, col[2] * limb);
+    }
+    ctx.putImageData(raster.img, 0, 0);
+}
+
+/** Write an attribute / style only when its value changes (the frame loop repeats most of them). */
+const written = new WeakMap();
+function lastWrites(el) {
+    let c = written.get(el);
+    if (!c) written.set(el, (c = new Map()));
+    return c;
+}
+function setAttr(el, name, value) {
+    const c = lastWrites(el);
+    if (c.get(name) === value) return;
+    c.set(name, value);
+    el.setAttribute(name, value);
+}
+function setStyle(el, prop, value) {
+    const c = lastWrites(el);
+    const key = "style:" + prop;
+    if (c.get(key) === value) return;
+    c.set(key, value);
+    el.style.setProperty(prop, value);
 }
 
 function lastParagraph(text) {
@@ -486,7 +529,7 @@ function init(project) {
         const bright = i < 36;
         const el = svgEl("circle", { class: bright ? "sys__speck sys__speck--hot" : "sys__speck" });
         dustG.append(el);
-        dust.push({
+        const d = {
             el,
             nx: rand() * 1.4 - 0.2,
             ny: rand() * 1.4 - 0.2,
@@ -494,8 +537,10 @@ function init(project) {
             o: bright ? 0.38 + rand() * 0.32 : 0.14 + rand() * 0.24,
             tw: rand() * Math.PI * 2,
             tws: 0.2 + rand() * 0.65,
-        });
+        };
+        dust.push(d);
     }
+    let dustKey = "";
 
     const planetEls = [];
     for (const p of planets) {
@@ -532,6 +577,9 @@ function init(project) {
     sunCanvas.width = 128;
     sunCanvas.height = 128;
     sunWrap.append(sunCanvas);
+    const sunCtx = sunCanvas.getContext("2d", { alpha: true });
+    let sunRas = null;
+    let sunKey = "";
     sunFo.append(sunWrap);
     const sunLimb = svgEl("circle", { class: "sys__sun-limb", r: 13 });
     sunLimb.style.stroke = `rgba(${look.hi[0]},${look.hi[1]},${look.hi[2]},0.42)`;
@@ -587,7 +635,7 @@ function init(project) {
     chapBtns[0]?.classList.add("is-on");
     function placeRow(k, x, y, gap) {
         const li = chapBtns[k]?.parentElement;
-        if (li) li.style.transform = `translate(${(x - 14).toFixed(1)}px, ${(y - gap / 2).toFixed(1)}px)`;
+        if (li) setStyle(li, "transform", `translate(${(x - 14).toFixed(1)}px, ${(y - gap / 2).toFixed(1)}px)`);
     }
     chapNav.style.setProperty("--n", String(chapItems.length));
     chapNav.dataset.n = String(chapItems.length);
@@ -664,7 +712,10 @@ function init(project) {
     let W = 0, H = 0, focal = 1;
     const layout = new Map();
 
-    function project3(x, y, z) {
+    // Camera basis, recomputed only when the camera moves (project3 runs ~800× a frame).
+    const cam = { elev: NaN, azim: NaN, dist: NaN };
+    function camBasis() {
+        if (cam.elev === elevView && cam.azim === azim && cam.dist === dist) return cam;
         const ce = Math.cos(elevView), se = Math.sin(elevView);
         const ca = Math.cos(azim), sa = Math.sin(azim);
         const camX = sa * ce * dist;
@@ -676,9 +727,17 @@ function init(project) {
         let rx = -fz, ry = 0, rz = fx;
         const rl = Math.hypot(rx, ry, rz) || 1;
         rx /= rl; ry /= rl; rz /= rl;
-        const ux = ry * fz - rz * fy;
-        const uy = rz * fx - rx * fz;
-        const uz = rx * fy - ry * fx;
+        Object.assign(cam, {
+            elev: elevView, azim, dist, camX, camY, camZ, fx, fy, fz, rx, ry, rz,
+            ux: ry * fz - rz * fy,
+            uy: rz * fx - rx * fz,
+            uz: rx * fy - ry * fx,
+        });
+        return cam;
+    }
+
+    function project3(x, y, z) {
+        const { camX, camY, camZ, fx, fy, fz, rx, ry, rz, ux, uy, uz } = camBasis();
         const vx = x - camX, vy = y - camY, vz = z - camZ;
         const sx = vx * rx + vy * ry + vz * rz;
         const sy = vx * ux + vy * uy + vz * uz;
@@ -730,7 +789,7 @@ function init(project) {
             layout.set(p.id, { orbitR, period });
         }
         const toc = tocGeom();
-        chapNav.style.setProperty("--toc-gap", `${toc.gap}px`);
+        setStyle(chapNav, "--toc-gap", `${toc.gap}px`);
         if (W >= 720) {
             // Past DOCK_MAX the box stops growing and centres in the space right of the TOC,
             // so wide screens don't leave an empty strip inside it.
@@ -788,7 +847,15 @@ function init(project) {
     let hoverIdx = -1;
     stage.addEventListener("pointerleave", () => { hoverIdx = -1; });
 
+    // Label boxes are read at most once per frame, not once per pointermove per planet.
+    let frameNo = 0;
+    let rectsAt = -1;
+    let labelRects = [];
     function hitPlanet(cx, cy) {
+        if (rectsAt !== frameNo) {
+            labelRects = planetEls.map((p) => p.label.getBoundingClientRect());
+            rectsAt = frameNo;
+        }
         const s = stage.getBoundingClientRect();
         const px = cx - s.left;
         const py = cy - s.top;
@@ -798,7 +865,7 @@ function init(project) {
             if (p.sx == null) continue;
             const d = Math.hypot(px - p.sx, py - p.sy);
             if (d < bestD) { best = i; bestD = d; }
-            const b = p.label.getBoundingClientRect();
+            const b = labelRects[i];
             if (best !== i && cx >= b.left - 4 && cx <= b.right + 4 && cy >= b.top - 4 && cy <= b.bottom + 4) {
                 best = i;
                 bestD = 0;
@@ -1087,7 +1154,9 @@ function init(project) {
     const t0 = performance.now();
     let raf = 0;
     let lastFrame = t0;
+    let bodyOrder = [];
     function frame(now) {
+        frameNo++;
         const t = (now - t0) / 1000;
         const dt = Math.min(0.05, (now - lastFrame) / 1000);
         lastFrame = now;
@@ -1124,7 +1193,7 @@ function init(project) {
 
         const unit = tocUnit(toc);
         const rowH = Math.min(unit, 56);
-        chapNav.style.setProperty("--toc-gap", `${rowH.toFixed(1)}px`);
+        setStyle(chapNav, "--toc-gap", `${rowH.toFixed(1)}px`);
 
         const refS = focal / CAM_DIST;
         const bodyRSys = 16 * (sunP.s / Math.max(1e-6, refS));
@@ -1140,22 +1209,27 @@ function init(project) {
             sunCanvas.height = px;
         }
         const spin = reduce ? 0.35 : -t * sunSpin;
-        paintSun(sunCanvas, sunTex, spin, azim, elevView);
-        sunG.setAttribute("transform", `translate(${sunP.x.toFixed(2)} ${sunP.y.toFixed(2)})`);
-        sunFo.setAttribute("x", (-css / 2).toFixed(1));
-        sunFo.setAttribute("y", (-css / 2).toFixed(1));
-        sunFo.setAttribute("width", css.toFixed(1));
-        sunFo.setAttribute("height", css.toFixed(1));
-        sunLimb.setAttribute("r", bodyR.toFixed(2));
-        sunHit.setAttribute("r", Math.max(22, bodyR + 12).toFixed(2));
-        sunLabel.setAttribute("x", (bodyR + lerp(10, 14, tocU)).toFixed(1));
-        sunLabel.style.opacity = (clamp((tocU - 0.5) / 0.5, 0, 1) * (plateId === "sun" ? 1 : 0.62)).toFixed(3);
-        titleEl.style.opacity = (1 - clamp(tocU / 0.5, 0, 1)).toFixed(3);
+        if (!sunRas || sunRas.n !== px) sunRas = sunRaster(px, sunTex);
+        const nextSunKey = `${px}|${spin}|${azim}|${elevView}`;
+        if (nextSunKey !== sunKey) {
+            sunKey = nextSunKey;
+            paintSun(sunCtx, sunRas, sunTex, spin, azim, elevView);
+        }
+        setAttr(sunG, "transform", `translate(${sunP.x.toFixed(2)} ${sunP.y.toFixed(2)})`);
+        setAttr(sunFo, "x", (-css / 2).toFixed(1));
+        setAttr(sunFo, "y", (-css / 2).toFixed(1));
+        setAttr(sunFo, "width", css.toFixed(1));
+        setAttr(sunFo, "height", css.toFixed(1));
+        setAttr(sunLimb, "r", bodyR.toFixed(2));
+        setAttr(sunHit, "r", Math.max(22, bodyR + 12).toFixed(2));
+        setAttr(sunLabel, "x", (bodyR + lerp(10, 14, tocU)).toFixed(1));
+        setStyle(sunLabel, "opacity", (clamp((tocU - 0.5) / 0.5, 0, 1) * (plateId === "sun" ? 1 : 0.62)).toFixed(3));
+        setStyle(titleEl, "opacity", (1 - clamp(tocU / 0.5, 0, 1)).toFixed(3));
         const btnW = Math.max(118, bodyR * 2 + 88);
         const btnH = Math.max(36, bodyR * 2 + 10);
-        sunBtn.style.width = `${btnW}px`;
-        sunBtn.style.height = `${btnH}px`;
-        sunBtn.style.transform = `translate(${(sunP.x - bodyR - 4).toFixed(1)}px, ${(sunP.y - btnH / 2).toFixed(1)}px)`;
+        setStyle(sunBtn, "width", `${btnW}px`);
+        setStyle(sunBtn, "height", `${btnH}px`);
+        setStyle(sunBtn, "transform", `translate(${(sunP.x - bodyR - 4).toFixed(1)}px, ${(sunP.y - btnH / 2).toFixed(1)}px)`);
 
         const bodies = [{ z: sunP.z, el: sunG }];
         let stackY = sunP.y;
@@ -1168,7 +1242,12 @@ function init(project) {
             const ang = p.ang0 + (reduce ? 0 : (now - t0) / L.period * Math.PI * 2);
             const pt = project3(Math.cos(ang) * L.orbitR, 0, Math.sin(ang) * L.orbitR);
             const R = (i + 1) * unit;
-            p.orbit.setAttribute("d", orbitPath(L.orbitR, sunP, R, tocU));
+            // The ellipse only changes with the camera, the sun or the TOC blend.
+            const orbitKey = `${cam.elev}|${cam.azim}|${cam.dist}|${W}|${H}|${viewX}|${viewY}|${focal}|${L.orbitR}|${R}|${tocU}`;
+            if (orbitKey !== p.orbitKey) {
+                p.orbitKey = orbitKey;
+                setAttr(p.orbit, "d", orbitPath(L.orbitR, sunP, R, tocU));
+            }
             if (!pt) continue;
             // The whole system lines up at once: every planet settles at the bottom of its circle.
             const thFree = Math.atan2(pt.y - sunP.y, pt.x - sunP.x);
@@ -1180,41 +1259,54 @@ function init(project) {
             const active = reading && plateId === p.id;
             p.hl = (p.hl || 0) + ((active ? 1 : 0) - (p.hl || 0)) * (reduce ? 1 : kCam);
             const grow = 1 + (HILITE - 1) * p.hl * tocU;
-            p.g.setAttribute("transform", `translate(${x.toFixed(2)} ${y.toFixed(2)}) scale(${grow.toFixed(3)})`);
-            p.dot.setAttribute("r", (p.rDot * sc).toFixed(2));
+            setAttr(p.g, "transform", `translate(${x.toFixed(2)} ${y.toFixed(2)}) scale(${grow.toFixed(3)})`);
+            setAttr(p.dot, "r", (p.rDot * sc).toFixed(2));
             p.g.classList.toggle("is-focus", active);
             p.g.classList.toggle("is-lock", tocU > 0.55);
-            p.g.style.opacity = lerp(pt.z > sunP.z ? 0.55 : 1, 1, tocU).toFixed(3);
-            p.dot.style.opacity = lerp(1, lerp(0.7, 1, p.hl), tocU).toFixed(3);
-            p.orbit.style.opacity = lerp(1, lerp(0.1, 0.3, p.hl), tocU).toFixed(3);
-            p.label.style.opacity = lerp(hoverIdx === i ? 1 : 0.35, lerp(0.8, 1, p.hl), tocU).toFixed(3);
+            setStyle(p.g, "opacity", lerp(pt.z > sunP.z ? 0.55 : 1, 1, tocU).toFixed(3));
+            setStyle(p.dot, "opacity", lerp(1, lerp(0.7, 1, p.hl), tocU).toFixed(3));
+            setStyle(p.orbit, "opacity", lerp(1, lerp(0.1, 0.3, p.hl), tocU).toFixed(3));
+            setStyle(p.label, "opacity", lerp(hoverIdx === i ? 1 : 0.35, lerp(0.8, 1, p.hl), tocU).toFixed(3));
             p.g.classList.toggle("is-hover", hoverIdx === i && tocU < 0.5);
             p.sx = x;
             p.sy = y;
-            p.label.setAttribute("x", lerp(12, 24, tocU).toFixed(1));
-            p.label.setAttribute("y", "0");
-            p.label.setAttribute("text-anchor", "start");
+            setAttr(p.label, "x", lerp(12, 24, tocU).toFixed(1));
+            setAttr(p.label, "y", "0");
+            setAttr(p.label, "text-anchor", "start");
             stackY = Math.max(stackY, sunP.y + R);
             placeRow(i + 1, x, y, rowH);
             bodies.push({ z: lerp(pt.z, 0, tocU), el: p.g });
         }
 
         if (reading && tocU > 0.8) {
-            stackLine.setAttribute("d", `M${sunP.x.toFixed(1)} ${sunP.y.toFixed(1)} L${sunP.x.toFixed(1)} ${stackY.toFixed(1)}`);
-            stackLine.style.opacity = ((tocU - 0.8) / 0.2).toFixed(3);
+            setAttr(stackLine, "d", `M${sunP.x.toFixed(1)} ${sunP.y.toFixed(1)} L${sunP.x.toFixed(1)} ${stackY.toFixed(1)}`);
+            setStyle(stackLine, "opacity", ((tocU - 0.8) / 0.2).toFixed(3));
         } else {
-            stackLine.style.opacity = "0";
+            setStyle(stackLine, "opacity", "0");
         }
 
+        // Re-stack by depth only when the order actually changes.
         bodies.sort((a, b) => b.z - a.z);
-        for (const b of bodies) bodiesG.append(b.el);
+        if (bodies.length !== bodyOrder.length || bodies.some((b, i) => b.el !== bodyOrder[i])) {
+            bodyOrder = bodies.map((b) => b.el);
+            for (const el of bodyOrder) bodiesG.append(el);
+        }
 
+        // Dust positions follow the camera only while it is dragged; the twinkle runs every frame.
+        const parx = azim * 26;
+        const pary = (elev - ELEV) * -38;
+        const nextDustKey = `${parx}|${pary}|${W}|${H}`;
+        const dustMoved = nextDustKey !== dustKey;
+        dustKey = nextDustKey;
         for (const d of dust) {
-            const parx = azim * 26;
-            const pary = (elev - ELEV) * -38;
-            d.el.setAttribute("cx", (d.nx * W + parx).toFixed(1));
-            d.el.setAttribute("cy", (d.ny * H + pary).toFixed(1));
-            d.el.setAttribute("r", d.r.toFixed(2));
+            if (dustMoved) {
+                d.el.setAttribute("cx", (d.nx * W + parx).toFixed(1));
+                d.el.setAttribute("cy", (d.ny * H + pary).toFixed(1));
+                if (!d.sized) {
+                    d.el.setAttribute("r", d.r.toFixed(2));
+                    d.sized = true;
+                }
+            }
             const tw = 0.7 + 0.3 * Math.sin(t * d.tws + d.tw);
             d.el.setAttribute("opacity", (d.o * tw * (1 - 0.45 * readAmt)).toFixed(3));
         }

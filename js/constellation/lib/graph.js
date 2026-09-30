@@ -4,7 +4,7 @@
  * Data → Relationship. Nothing here knows about pixels or the DOM.
  */
 
-import { clamp } from "./utils.js";
+import { clamp } from "./utils.js?v=2.0";
 
 /**
  * @typedef {{ id: string, type: 'project'|'attribute', label: string, data: object, degree: number }} GraphNode

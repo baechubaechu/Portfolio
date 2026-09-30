@@ -8,7 +8,7 @@
  * Positioned next to the selected node; flips side if it would overflow.
  */
 
-import { esc } from "../lib/utils.js";
+import { esc } from "../lib/utils.js?v=2.0";
 
 export function createProjectInfo(container, { graph, onSelect, onOpen, getAnchor }) {
     container.classList.add("c-panel");
@@ -67,6 +67,24 @@ export function createProjectInfo(container, { graph, onSelect, onOpen, getAncho
             </ul>`;
     }
 
+    // The card's size only changes with its content or the viewport. Reading offsetWidth in
+    // place(), which runs every animation frame, forced a full layout per frame.
+    let boxW = 0, boxH = 0;
+    function measureBox() {
+        boxW = container.offsetWidth;
+        boxH = container.offsetHeight;
+    }
+    const boxRo = typeof ResizeObserver !== "undefined" ? new ResizeObserver(measureBox) : null;
+    boxRo?.observe(container);
+
+    let lastLeft = "", lastTop = "";
+    function moveTo(x, y) {
+        const left = `${x.toFixed(1)}px`;
+        const top = `${y.toFixed(1)}px`;
+        if (left !== lastLeft) container.style.left = (lastLeft = left);
+        if (top !== lastTop) container.style.top = (lastTop = top);
+    }
+
     function place(node) {
         if (!node || !container.classList.contains("is-open")) return;
         const box = getAnchor?.(node.id);
@@ -75,8 +93,9 @@ export function createProjectInfo(container, { graph, onSelect, onOpen, getAncho
         const pad = 56;
         const padTop = 72;
         const gap = 20;
-        const w = container.offsetWidth;
-        const h = container.offsetHeight;
+        if (!boxRo || !boxW || !boxH) measureBox();
+        const w = boxW;
+        const h = boxH;
         if (!w || !h) return;
 
         const { x0, y0, x1, y1, width: sw, height: sh } = box;
@@ -94,8 +113,7 @@ export function createProjectInfo(container, { graph, onSelect, onOpen, getAncho
                 slot.endsWith("left") ? pad : sw - pad - w,
                 slot.startsWith("top") ? padTop : sh - pad - h,
             );
-            container.style.left = `${pinned.x.toFixed(1)}px`;
-            container.style.top = `${pinned.y.toFixed(1)}px`;
+            moveTo(pinned.x, pinned.y);
             return;
         }
 
@@ -133,8 +151,7 @@ export function createProjectInfo(container, { graph, onSelect, onOpen, getAncho
             }
         }
 
-        container.style.left = `${best.x.toFixed(1)}px`;
-        container.style.top = `${best.y.toFixed(1)}px`;
+        moveTo(best.x, best.y);
     }
 
     let token = 0;
@@ -165,7 +182,7 @@ export function createProjectInfo(container, { graph, onSelect, onOpen, getAncho
                 if (my !== token) return;
                 inner.innerHTML = html;
                 container.dataset.mode = state.mode;
-                void inner.offsetWidth;
+                measureBox();
                 place(state.node);
                 inner.classList.add("is-visible");
             }, wasOpen ? 90 : 0);
