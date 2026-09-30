@@ -29,20 +29,49 @@ const projectsData = {
             chapters: [
                 {
                     id: "site",
-                    label: "Site",
+                    label: "Context",
                     title: "A station people only pass through",
                     lead: "Geumjeong Station is transfer infrastructure planned for speed, and it cuts the city and its green axis in two.",
                     blocks: [
                         { kind: "text", body: "Modern stations are planned around fast movement, clear guidance and transfer efficiency. In the process the station becomes a pass-through device. People rarely stop, notice the space, or stay. I chose a transfer hub because it is the most everyday and most functional public space there is." },
                         { kind: "text", body: "I compared bed-town stations served by GTX and three or more lines: Daegok, Bupyeong and Geumjeong. Geumjeong, in Gunpo, a bed town that depends on Seoul and Anyang, had the most severance: the rail corridor splits the city, and Sanbon Stream, covered in 1995, is cut along with it. The project builds on the plan to reopen the stream." },
-                        { kind: "image", url: "assets-web/XS-site.webp", caption: "Site diagram. The rail corridor splits the city into two edges; street views from either side." },
-                        { kind: "image", url: "assets-web/XS-site-axis.webp", caption: "Green axis within 1 to 3 km. Hills in green, streams in blue; the red dashed line is the covered section of Sanbon Stream meeting the station." },
+                        { kind: "rules", items: [
+                            ["Location", "Geumjeong Station, Gunpo, Gyeonggi-do"],
+                            ["Lines", "Seoul Subway Lines 1 and 4, with GTX-C planned"],
+                            ["Compared with", "Daegok and Bupyeong, two other bed-town hubs with GTX and three or more lines"],
+                            ["Severance", "The rail corridor splits the city; Sanbon Stream, covered in 1995, is cut with it"],
+                            ["Given plan", "Reopening Sanbon Stream"]
+                        ] },
+                        { kind: "gallery", images: [
+                            { url: "assets-web/XS-site.webp", caption: "Site diagram. The rail corridor splits the city into two edges; street views from either side." },
+                            { url: "assets-web/XS-site-axis.webp", caption: "Green axis within 1 to 3 km. Hills in green, streams in blue; the red dashed line is the covered section of Sanbon Stream meeting the station." }
+                        ] },
                         { kind: "image", url: "assets-web/XS-site-context.webp", caption: "Site model with street photos, historical aerials, and a collage of the transfer environment around the station." }
                     ]
                 },
                 {
+                    id: "crossing",
+                    label: "Concept",
+                    title: "Designing the crossing",
+                    lead: "Awareness needs contrast, so the design places contrasting conditions right next to each other.",
+                    blocks: [
+                        { kind: "text", body: "Senses are always there, but in a familiar, uniform space we stop noticing them. They only become conscious through change. X-tra Space is made by crossing things that are usually kept apart: transfer and promenade, fast and slow, moving and staying, efficiency and sensation, and a fixed building with an atmosphere that responds." },
+                        { kind: "image", url: "assets-web/XS-flow.webp", caption: "Flows that are usually kept apart, crossing" },
+                        { kind: "rules", items: [
+                            ["Low ceiling / narrow passage", "Compression: tension and focus"],
+                            ["Height change / crossing flows", "Transition: curiosity and alertness"],
+                            ["Void / diffuse light", "Expansion: relief and lingering"]
+                        ] },
+                        { kind: "list", items: [
+                            "Compression: tighten section and width before a crossing.",
+                            "Crossing: let the transfer and walking layers meet at a height change.",
+                            "Release: open into a void with diffuse light where people can stay."
+                        ] }
+                    ]
+                },
+                {
                     id: "layers",
-                    label: "Layers",
+                    label: "Program",
                     title: "Four circulation layers",
                     lead: "The station is rebuilt as stacked layers with different speeds and purposes.",
                     blocks: [
@@ -55,47 +84,38 @@ const projectsData = {
                         ] },
                         { kind: "text", body: "The massing splits the station into two levels: 1F Transfer and 2F Extra. In the final second-floor plan, the transit layer and the walking layer run side by side, and X-tra Space sits at the points where they meet." },
                         { kind: "image", url: "assets-web/XS-plan.webp", caption: "Second floor plan. 1 Transit layer, 2 Walking layer, 3 X-tra Space, 4 Exit, 5 Platform, 6 Concourse, 7 Cafe/Lounge, 8 Observatory deck, 9 Bicycle storage, 10 Station operations, 11 Restroom, 12 Service." },
-                        { kind: "image", url: "assets-web/XS-long-section.webp", caption: "Long section along the tracks. Transfer below, the walking level and planted deck above, under one roof." }
-                    ]
-                },
-                {
-                    id: "crossing",
-                    label: "Crossing",
-                    title: "Designing the crossing",
-                    lead: "Awareness needs contrast, so the design places contrasting conditions right next to each other.",
-                    blocks: [
-                        { kind: "text", body: "Senses are always there, but in a familiar, uniform space we stop noticing them. They only become conscious through change. X-tra Space is made by crossing things that are usually kept apart: transfer and promenade, fast and slow, moving and staying, efficiency and sensation, and a fixed building with an atmosphere that responds." },
-                        { kind: "rules", items: [
-                            ["Low ceiling / narrow passage", "Compression: tension and focus"],
-                            ["Height change / crossing flows", "Transition: curiosity and alertness"],
-                            ["Void / diffuse light", "Expansion: relief and lingering"]
-                        ] },
-                        { kind: "list", items: [
-                            "Compression: tighten section and width before a crossing.",
-                            "Crossing: let the transfer and walking layers meet at a height change.",
-                            "Release: open into a void with diffuse light where people can stay."
-                        ] },
+                        { kind: "image", url: "assets-web/XS-long-section.webp", caption: "Long section along the tracks. Transfer below, the walking level and planted deck above, under one roof." },
                         { kind: "gallery", images: [
                             { url: "assets-web/XS-section1.webp", caption: "Section 1: the X-tra Space above the tracks." },
                             { url: "assets-web/XS-section2.webp", caption: "Section 2: the station body, transfer below and the walking level above." }
-                        ] }
+                        ] },
+                        { kind: "text", body: "X-tra Space is where the layers overlap. Above the tracks, the transfer layer and the walking layer meet at a change in height: people moving fast to their trains pass people walking slowly toward the stream. The section tightens before each crossing and opens after it into a void with diffuse light under the roof, so a space built for passing through gains places to notice the surroundings and stay." }
                     ]
                 },
                 {
                     id: "structure",
-                    label: "Structure",
-                    title: "Suspension structure and panels",
-                    lead: "The roof is hung rather than propped, so the space under it stays open for the crossing layers.",
+                    label: "Roof Algorithm",
+                    title: "A roof drawn by the flows",
+                    lead: "Four vaulted roof bands follow the flows underneath and cross where they cross, generated in Grasshopper from two edge curves each.",
                     blocks: [
-                        { kind: "text", body: "The structural idea is a suspension structure with panels. Cables hang from masts and pick up the roof edge, so the long span over the tracks needs fewer supports inside the space. The roof surface is broken into panels between the cable lines." },
-                        { kind: "image", url: "assets-web/XS-structure.webp", caption: "Structure study: cables fanning from masts to the curved roof edge, with the roof divided into panels." },
-                        { kind: "text", body: "In the June design the canopy is carried on branching columns with a ribbed roof, and a louvered panel facade lines the edge of the walking layer." },
-                        { kind: "image", url: "assets-web/XS-panels.webp", caption: "Louver panel study along the walking layer (June)." },
-                        { kind: "list", items: [
-                            "Model spec planned at the April review:",
-                            "Base: white foamex. Roads: grey foamex and laser-cut paper.",
-                            "Stream: clear acrylic with film. Rails: stainless wire.",
-                            "Platforms, columns, cores: white 3D print. Main roof: semi-transparent acrylic with foamex."
+                        { kind: "text", body: "The roof is not modelled by hand. Each of its four bands is defined only by two edge curves drawn along a flow in plan. A Grasshopper definition turns every pair into a vaulted band with ribs, so when a flow moves, its band is regenerated with it. Where the transfer and walking flows swap sides, the bands cross over each other, and the roof above shows the same crossing as the plan below." },
+                        { kind: "image", url: "assets-web/XS-roof-plan.webp", caption: "Roof plan generated by the definition: four bands crossing at both ends of the station." },
+                        { kind: "steps", items: [
+                            "Edges: two curves per band, drawn along the transfer or walking flow it covers.",
+                            "Stations: Tween Curve fills 50 curves between the edges, and lines across the band mark stations along its length.",
+                            "Arches: at each station the midpoint is lifted by the roof curvature (2,000 to 3,000 mm) and Arc 3Pt draws an arch through the two edge points and the lifted midpoint.",
+                            "Vault: the arches are lofted into one surface, offset for thickness and closed into a solid band.",
+                            "Panels: the band is split into panels and lifted 400 mm, leaving slits for light between them.",
+                            "Ribs: 50 mm rib profiles are placed every 1,000 mm on perpendicular frames and lofted under the vault."
+                        ] },
+                        { kind: "image", url: "assets-web/XS-roof-arches.webp", caption: "View along the tracks: each band is an arch of its own curvature, and the bands pass over one another at the crossings." },
+                        { kind: "text", body: "The columns come from the same file. Twenty-one columns stand on a 12,000 mm grid; each rises 10,767 mm through the first floor, meets a 400 mm box girder, and continues as a 300 mm-radius pipe that branches into 160 mm pipes to pick up the roof." },
+                        { kind: "rules", items: [
+                            ["Roof curvature", "2,000 to 3,000 mm rise, set per band"],
+                            ["Ribs", "50 mm profile every 1,000 mm"],
+                            ["Panel lift", "400 mm"],
+                            ["Columns", "21 on a 12,000 mm grid, 10,767 mm to the box girder"],
+                            ["Branches", "2F pipe r 300 mm, 8,000 mm long, branching into r 160 mm pipes"]
                         ] }
                     ]
                 },
@@ -169,19 +189,19 @@ const projectsData = {
                 },
                 {
                     id: "exhibition",
-                    label: "Exhibition",
-                    title: "What ran at the show, and what didn't",
-                    lead: "The graduation show was the test: real visitors, real noise, running all day.",
+                    label: "Photos",
+                    lead: "The booth at the graduation show.",
                     blocks: [
-                        { kind: "text", body: "At the show, input from the tablet and the camera changed the space on the monitor right away. The monitor showed the transformed space image and a related diagram, and the NeoPixel lights in the model switched to the same scene." },
-                        { kind: "image", url: "assets-web/XS-booth.webp", caption: "Booth layout study from the June review: panels, a monitor, the site and section models, and a tablet on each table." },
-                        { kind: "list", items: [
-                            "Ran: tablet, camera, monitor and ESP32 lights linked through one laptop server.",
-                            "Not installed: speakers. Each scene defines a sound track and volume, but the speaker output was not set up at the show.",
-                            "Changed: Google Vision was turned off for the show, so only local MediaPipe face detection was used.",
-                            "Fixed in the last week before and during the show: false face detections, camera recovery after idle, and slowdowns during long unattended runs."
+                        { kind: "image", url: "assets-web/XS-booth-wide.webp", caption: "The booth: panels, the live monitor with its camera, the site and section models, and the tablet" },
+                        { kind: "gallery", images: [
+                            { url: "assets-web/XS-photo-3.webp", caption: "Tablet input" },
+                            { url: "assets-web/XS-photo-4.webp", caption: "Live monitor over the section model" }
                         ] },
-                        { kind: "note", body: "Limits: this is a booth-scale demonstration, not a station. The thresholds (for example 65 dB, 4 people) were tuned for a small booth, and the images are pre-rendered states chosen by rules, not generated live. Scaling to a real station would need many sensors, zones and a proper operations layer." }
+                        { kind: "gallery", images: [
+                            { url: "assets-web/XS-photo-6.webp", caption: "Section model" },
+                            { url: "assets-web/XS-photo-7.webp", caption: "Roof vaults on branching columns" },
+                            { url: "assets-web/XS-photo-8.webp", caption: "Roof ribs, close up" }
+                        ] }
                     ]
                 }
             ]
@@ -199,7 +219,7 @@ const projectsData = {
             category: "Architecture / Studio",
             role: "Designer (2-person team)",
             timeline: "2025.03 - 2025.06",
-            cover: "assets-web/4-1concept.webp",
+            cover: "assets-web/4-1 thumbnail.webp",
             chapters: [
                 {
                     id: "context",
@@ -207,6 +227,12 @@ const projectsData = {
                     lead: "Reconstruction brings more students to Gwacheon, but the new complexes stay closed to their neighbours.",
                     blocks: [
                         { kind: "text", body: "The site is a Gwacheon Jugong apartment complex under reconstruction, next to the Yangjae stream. Gwacheon's new complexes respond to the old gated-community problem with more ground-floor openings, but more entrances did not remove the invisible boundary between residents and outsiders. We expect that boundary to get stronger as more complexes are rebuilt." },
+                        { kind: "rules", items: [
+                            ["Brief", "2025 GH Space Welfare Youth Competition (studio-linked): space welfare for apartment complexes in a hyper-local era"],
+                            ["Site", "A Gwacheon Jugong complex under reconstruction, beside the Yangjae Stream, Gwacheon, Gyeonggi-do"],
+                            ["Reconstruction", "Three rounds since 2002, still under way"],
+                            ["Schools within 500 m", "Gwacheon Elem. 724 students · Gwanmun Elem. 618 · Cheonggye Elem. 939 · Gwacheon Middle 911 · Gwacheon High 572"]
+                        ] },
                         { kind: "list", items: [
                             "Over the last three years of city data, the number of schools grew by about two a year as reconstruction finished, against the overall trend.",
                             "The 2035 Gwacheon master plan expects about 140,000 residents and 56,000 households, close to double today's household count.",
@@ -217,11 +243,24 @@ const projectsData = {
                     ]
                 },
                 {
+                    id: "concept",
+                    label: "Concept",
+                    lead: "Students as the medium: blurring the boundary through the children who already cross it every day.",
+                    blocks: [
+                        { kind: "text", body: "Gated complexes isolate their residents from the neighbourhood, and more entrances have not changed that. Gwacheon, though, has an unusually high share of students, and students already move between complexes, schools and streets. We proposed an open community platform that uses them as the social medium. A relationship between two students extends to their siblings and parents, so a place where students meet becomes a place where families and generations meet." },
+                        { kind: "rules", items: [
+                            ["Vertical blurring", "Between residents and outsiders: a shared public level that both can reach"],
+                            ["Horizontal blurring", "Among residents: corridors widened into shared space for each household type"]
+                        ] },
+                        { kind: "image", url: "assets-web/SDV-concept.webp", caption: "Ties among students widen to their brothers, sisters and parents" }
+                    ]
+                },
+                {
                     id: "program",
                     label: "Program",
                     lead: "Give students from different schools a reason to meet: room for the clubs they already belong to.",
                     blocks: [
-                        { kind: "text", body: "Our starting question was simple: if students had a place to do what they like together, would they share hobbies and time even with friends from other schools? We surveyed the clubs of the five nearby schools and grouped them into four themes. Each theme gets club rooms plus a large hall where students can show what they practise or make. Relationships between students can extend to their siblings and parents." },
+                        { kind: "text", body: "Our starting question was simple: if students had a place to do what they like together, would they share hobbies and time even with friends from other schools? We surveyed the clubs of the five nearby schools and grouped them into four themes. Each theme gets club rooms plus a large hall where students can show what they practise or make." },
                         { kind: "rules", items: [
                             ["Performance (band, dance, theatre, orchestra, vocal)", "Performance hall and stage; residents use it for small concerts and film screenings"],
                             ["Sports (football, basketball, badminton, jump rope)", "Indoor and outdoor sports centre; residents use it for community sports programs"],
@@ -229,60 +268,86 @@ const projectsData = {
                             ["Nature and life (gardening, eco volunteering, dog club, cooking)", "Urban garden; residents use it as an intergenerational community garden"]
                         ] },
                         { kind: "text", body: "Halls at this scale could not be kept for students only, around the clock. They were planned from the start to be shared with the people who live there." },
-                        { kind: "image", url: "assets-web/SDV-program.webp", caption: "School clubs grouped into four themes, each tied to a large hall and to a resident use." }
+                        { kind: "gallery", images: [
+                            { url: "assets-web/SDV-program.webp", caption: "School clubs grouped into four themes, each tied to a large hall and to a resident use." },
+                            { url: "assets-web/SDV-layers.webp", caption: "Section diagram: outdoor, public hall, semi-public intermediate space, private housing." }
+                        ] }
                     ]
                 },
                 {
-                    id: "boundary",
-                    label: "Boundary",
-                    lead: "The halls meant to blur the boundary ended up creating a new one, so we reorganized the scheme.",
+                    id: "layout",
+                    label: "Site Layout",
+                    lead: "The halls meant to blur the boundary ended up creating a new one, so the layout was rebuilt in layers.",
                     blocks: [
-                        { kind: "text", body: "Once the halls were combined with the housing, we saw a problem. A strong, fully open hall sat directly against very private homes. We wanted to blur boundaries, but two very different kinds of space placed side by side had made another boundary." },
+                        { kind: "text", body: "Once the halls were combined with the housing, a fully open hall sat directly against very private homes, and two very different kinds of space side by side made another boundary. The site layout was developed step by step to put a semi-public layer between them." },
                         { kind: "steps", items: [
-                            "Mid-April: we introduced a public / semi-public / semi-private / private layering. Critique asked for a floor where semi-public meets public, and a clearer relationship between semi-public space and housing.",
-                            "Late April: breaking boundaries and adding semi-private zones started to contradict each other, so we set the semi-private idea aside for a while.",
-                            "Late May: we revised and fixed the program and concept.",
-                            "Early June: we developed semi-public spaces for each building and fixed the in-between spaces for each housing type."
+                            "Sunken passage: a route at basement level links the Yangjae stream to the far side of the site without crossing the road.",
+                            "Community masses on the north and south ends lead people down into the sunken passage.",
+                            "Masses on the ground level draw people in from the streets on both sides.",
+                            "Large halls (exhibition hall, gym, open restaurant, performance hall) are placed along the sunken street.",
+                            "A smaller semi-public intermediate space sits on each hall, using the hall's roof as its terrace.",
+                            "Housing goes on top, kept apart from the halls by the intermediate layer."
                         ] },
-                        { kind: "text", body: "In the final scheme the halls (exhibition hall, gym, open restaurant, performance hall) sit on a sunken street that can be reached from both the stream and the ground level. Each hall is extended outward into an outdoor exhibition, sports or busking space. Above each hall is a smaller semi-public 'intermediate space': a resident art school, sports centre or culture centre whose terrace uses the hall's roof. Housing sits on top of that. The intermediate layer is where students, residents and visitors share the same activity, and it separates the hall from the homes instead of pressing them together." },
                         { kind: "gallery", images: [
-                            { url: "assets-web/SDV-layers.webp", caption: "Section diagram: outdoor, public hall, semi-public intermediate space, private housing." },
-                            { url: "assets-web/SDV-halls.webp", caption: "Placement of the large halls." },
-                            { url: "assets-web/SDV-intermediate.webp", caption: "Placement of the intermediate spaces above the halls." }
+                            { url: "assets-web/SDV-layout-1.webp", caption: "Sunken passage" },
+                            { url: "assets-web/SDV-layout-2.webp", caption: "Community masses leading into the sunken passage" },
+                            { url: "assets-web/SDV-layout-3.webp", caption: "Entrances from the ground level" }
+                        ] },
+                        { kind: "gallery", images: [
+                            { url: "assets-web/SDV-layout-4.webp", caption: "Large halls" },
+                            { url: "assets-web/SDV-layout-5.webp", caption: "Intermediate spaces" },
+                            { url: "assets-web/SDV-layout-6.webp", caption: "Housing" }
+                        ] }
+                    ]
+                },
+                {
+                    id: "units",
+                    label: "Housing Units",
+                    lead: "Blurring the boundary among residents: the corridor is widened differently for each household type.",
+                    blocks: [
+                        { kind: "text", body: "Families: the second living room and kitchen of each unit open onto the corridor, and a lowered pocket space in the corridor in front of them becomes a play area that parents can watch from inside." },
+                        { kind: "gallery", images: [
+                            { url: "assets-web/SDV-family-plan.webp", caption: "Family housing plan: living room and kitchen facing the pocket space" },
+                            { url: "assets-web/SDV-family-section.webp", caption: "Family housing section" }
+                        ] },
+                        { kind: "text", body: "Young one- and two-person households: they need several small rooms more than one large one, so a shared kitchen, shared office, multipurpose room and party room are hung between the two wings on different levels." },
+                        { kind: "gallery", images: [
+                            { url: "assets-web/SDV-youth-plan.webp", caption: "Youth housing plan: shared rooms between the two wings" },
+                            { url: "assets-web/SDV-youth-section.webp", caption: "Youth housing section" }
+                        ] },
+                        { kind: "text", body: "Older residents: demand will grow with an ageing society, and older residents look after one another best when they see each other often. Units ring a shared yard that works as a senior centre, with a long terrace in front, and the slabs are linked around voids so neighbours stay in sight across floors." },
+                        { kind: "gallery", images: [
+                            { url: "assets-web/SDV-senior-plan.webp", caption: "Senior housing plan: units around the shared yard and terrace" },
+                            { url: "assets-web/SDV-senior-section.webp", caption: "Senior housing section" }
                         ] }
                     ]
                 },
                 {
                     id: "drawings",
                     label: "Drawings",
-                    lead: "Blurring the boundary vertically, between residents and outsiders, and horizontally, among residents.",
+                    lead: "Blurring the boundary vertically, between residents and outsiders.",
                     blocks: [
-                        { kind: "text", body: "Vertically, a sunken passage at stream level lets people enter from the Yangjae stream without crossing the six-lane road. Community masses on the north and south lead people down into it, and a community hub and retail draw them in from ground level. Existing five-storey wall-structure blocks are kept and converted to retail by adding columns and slabs in front of the stair cores. Horizontally, the corridor is widened differently for three household types: a lowered pocket space that parents can watch from a second living room (families), small shared rooms on several levels (young one- and two-person households), and linked slabs with voids and terraces so neighbours stay in sight of each other (older residents)." },
+                        { kind: "text", body: "A sunken passage at stream level lets people enter from the Yangjae stream without crossing the six-lane road. Community masses on the north and south lead people down into it, and a community hub and retail draw them in from ground level. Existing five-storey wall-structure blocks are kept and converted to retail by adding columns and slabs in front of the stair cores." },
                         { kind: "gallery", images: [
                             { url: "assets-web/4-1siteplan.webp", caption: "Site plan" },
                             { url: "assets-web/4-1basementfloorplan.webp", caption: "Basement floor plan: sunken street and halls" },
                             { url: "assets-web/4-1firstfloorplan.webp", caption: "1st floor plan" },
                             { url: "assets-web/4-1fourthfloorplan.webp", caption: "4th floor plan" },
                             { url: "assets-web/4-1typicalfloorplan.webp", caption: "Typical housing floor plan" }
-                        ] },
-                        { kind: "gallery", images: [
-                            { url: "assets-web/4-1sectionperspective1.webp", caption: "Section perspective" },
-                            { url: "assets-web/4-1sectionperspective2.webp", caption: "Section perspective" },
-                            { url: "assets-web/4-1sectionperspective3.webp", caption: "Section perspective" }
-                        ] },
-                        { kind: "gallery", images: [
-                            { url: "assets-web/4-1render1.webp", caption: "Street and bridge view" },
-                            { url: "assets-web/4-1render2.webp", caption: "Ground-level plaza" },
-                            { url: "assets-web/4-1render3.webp", caption: "Entrance from the street" },
-                            { url: "assets-web/4-1render4.webp", caption: "View from across the stream" }
                         ] }
                     ]
                 },
                 {
                     id: "model",
-                    label: "Model",
-                    lead: "A site model for the whole complex and cut models showing how the corridors open up.",
+                    label: "Render&Model",
+                    lead: "Renders of the finished complex, a site model for the whole scheme and cut models showing how the corridors open up.",
                     blocks: [
+                        { kind: "gallery", images: [
+                            { url: "assets-web/4-1render1.webp", caption: "Street and bridge view" },
+                            { url: "assets-web/4-1render2.webp", caption: "Ground-level plaza" },
+                            { url: "assets-web/4-1render3.webp", caption: "Entrance from the street" },
+                            { url: "assets-web/4-1render4.webp", caption: "View from across the stream" }
+                        ] },
                         { kind: "text", body: "The site model shows the new housing next to the kept blocks and the stream edge. The cut models open the housing masses to show the widened corridors and in-between spaces." },
                         { kind: "gallery", images: [
                             { url: "assets-web/4-1model1.webp", caption: "Site model, 1:500" },
@@ -310,11 +375,11 @@ const projectsData = {
             category: "Architecture / Studio",
             role: "Designer",
             timeline: "2023.09 - 2023.12",
-            cover: "assets-web/LF-panel.webp",
+            cover: "assets-web/LF-cover.webp",
             chapters: [
                 {
                     id: "site",
-                    label: "Site",
+                    label: "Context",
                     lead: "A closed technical high school in one of Seoul's busiest trend districts.",
                     blocks: [
                         { kind: "text", body: "School closures caused by low birth rates are no longer only a rural problem. Seongsu Technical High School closed after enrolment fell and applicants moved to specialised high schools. The brief was to reuse a closed school as a productive local space." },
@@ -326,8 +391,27 @@ const projectsData = {
                             ["Site area", "13,800 ㎡"],
                             ["Coverage / FAR", "60% / 400%"],
                             ["Parking", "62 required, 80 planned"]
+                        ] }
+                    ]
+                },
+                {
+                    id: "moves",
+                    label: "Concept",
+                    lead: "Six decisions for a site shared by pets and people.",
+                    blocks: [
+                        { kind: "rules", items: [
+                            ["No sharp corners", "Masses, terraces and paths are rounded so pets can move safely"],
+                            ["Paths that connect", "Winding paths meet and continue in every direction, so no route ends in a dead end and each visitor explores in their own way"],
+                            ["Long routes", "The walk is kept long so the landscape keeps changing along it"],
+                            ["Face the residents", "The old school opened to the northwest; the new mass turns toward the neighbourhood"],
+                            ["Planters, not railings", "Terrace edges are planter boxes, so every walk runs beside greenery"],
+                            ["Reuse the school", "Keep part of the existing building and remove the rest (see Reuse)"]
                         ] },
-                        { kind: "image", url: "assets-web/LF-site.webp", caption: "Site and surroundings" }
+                        { kind: "image", url: "assets-web/LF-mass.webp", caption: "Before and after: mass orientation and the route in from the main road" },
+                        { kind: "gallery", images: [
+                            { url: "assets-web/LF-concept.webp", caption: "Rounded terraces and parks" },
+                            { url: "assets-web/LF-jungle.webp", caption: "A small jungle in the city" }
+                        ] }
                     ]
                 },
                 {
@@ -346,31 +430,7 @@ const projectsData = {
                             "With pets: play (large- and small-dog runs, agility, pool, bathing, walking paths), education (training, behaviour classes), hotel (rooms, café and restaurant), care (animal hospital and rehabilitation, grooming, counselling, shop).",
                             "Without pets: exhibition, community rooms, multipurpose hall, offices, parking."
                         ] },
-                        { kind: "gallery", images: [
-                            { url: "assets-web/LF-market.webp", caption: "Pet market data and existing pet theme parks in Korea" },
-                            { url: "assets-web/LF-program.webp", caption: "Program diagram: with pets above the line, without pets below" }
-                        ] }
-                    ]
-                },
-                {
-                    id: "moves",
-                    label: "Design Moves",
-                    lead: "Six decisions for a site shared by pets and people.",
-                    blocks: [
-                        { kind: "rules", items: [
-                            ["No sharp corners", "Masses, terraces and paths are rounded so pets can move safely"],
-                            ["Paths that connect", "Winding paths meet and continue in every direction, so no route ends in a dead end and each visitor explores in their own way"],
-                            ["Long routes", "The walk is kept long so the landscape keeps changing along it"],
-                            ["Face the residents", "The old school opened to the northwest; the new mass turns toward the neighbourhood"],
-                            ["Planters, not railings", "Terrace edges are planter boxes, so every walk runs beside greenery"],
-                            ["Reuse the school", "Keep part of the existing building and remove the rest (see Reuse)"]
-                        ] },
-                        { kind: "image", url: "assets-web/LF-mass.webp", caption: "Before and after: mass orientation and the route in from the main road" },
-                        { kind: "gallery", images: [
-                            { url: "assets-web/LF-concept.webp", caption: "Rounded terraces and parks" },
-                            { url: "assets-web/LF-path.webp", caption: "A walking path lined with planters" },
-                            { url: "assets-web/LF-detail.webp", caption: "Section detail, 1:50: planter boxes form the terrace edge; roof walkway and roof planting" }
-                        ] }
+                        { kind: "image", url: "assets-web/LF-program.webp", caption: "Program diagram: with pets above the line, without pets below" }
                     ]
                 },
                 {
@@ -385,16 +445,49 @@ const projectsData = {
                 },
                 {
                     id: "drawings",
-                    label: "Drawings & Model",
+                    label: "Drawings",
                     lead: "Parks at ground level, a care and hotel wing above, green edges throughout.",
                     blocks: [
                         { kind: "text", body: "The ground floor holds the exhibition, lockers and showers, a pool, pet showers, a greenhouse garden, a shop, a café, and separate large- and small-dog runs. The second floor has rehabilitation, recovery, emergency, CT, clinic and surgery rooms, grooming and counselling. Hotel rooms sit above, agility is on the top floor, and parking and a water tank are below ground." },
-                        { kind: "image", url: "assets-web/LF-plan-1f.webp", caption: "Ground floor plan" },
-                        { kind: "image", url: "assets-web/LF-section.webp", caption: "Section perspective" },
                         { kind: "gallery", images: [
+                            { url: "assets-web/LF-plan-1f.webp", caption: "Ground floor plan" },
+                            { url: "assets-web/LF-plan-2f.webp", caption: "2nd floor plan" },
+                            { url: "assets-web/LF-plan-3f.webp", caption: "3rd floor plan" }
+                        ] },
+                        { kind: "gallery", images: [
+                            { url: "assets-web/LF-plan-4f.webp", caption: "4th floor plan" },
+                            { url: "assets-web/LF-plan-5f.webp", caption: "5th floor plan" },
+                            { url: "assets-web/LF-plan-roof.webp", caption: "Roof plan" }
+                        ] },
+                        { kind: "gallery", images: [
+                            { url: "assets-web/LF-section-drawing.webp", caption: "Section, 1:200" },
+                            { url: "assets-web/LF-section-detail.webp", caption: "Section detail, 1:50: planter boxes form the terrace edge" }
+                        ] }
+                    ]
+                },
+                {
+                    id: "model",
+                    label: "Render&Model",
+                    lead: "The terraces from the lawn and the street, and a model of the planted edges.",
+                    blocks: [
+                        { kind: "gallery", images: [
+                            { url: "assets-web/LF-render-snow.webp", caption: "From the lawn in winter" },
+                            { url: "assets-web/LF-render-street.webp", caption: "From the street" }
+                        ] },
+                        { kind: "gallery", images: [
+                            { url: "assets-web/LF-elevation-south.webp", caption: "South elevation" },
+                            { url: "assets-web/LF-elevation-right.webp", caption: "Side elevation" }
+                        ] },
+                        { kind: "gallery", images: [
+                            { url: "assets-web/LF-model-4.webp" },
                             { url: "assets-web/LF-model-1.webp", caption: "Model from above" },
+                            { url: "assets-web/LF-model-6.webp" }
+                        ] },
+                        { kind: "gallery", images: [
                             { url: "assets-web/LF-model-2.webp", caption: "Stacked planted terraces" },
-                            { url: "assets-web/LF-model-3.webp", caption: "Terrace edge close-up" }
+                            { url: "assets-web/LF-model-5.webp" },
+                            { url: "assets-web/LF-model-3.webp", caption: "Terrace edge close-up" },
+                            { url: "assets-web/LF-model-7.webp" }
                         ] }
                     ]
                 }
@@ -412,7 +505,7 @@ const projectsData = {
             category: "Architecture / Studio",
             role: "Designer",
             timeline: "2023.03 - 2023.06",
-            cover: "assets-web/CI-panel.webp",
+            cover: "assets-web/CI-cover.webp",
             chapters: [
                 {
                     id: "context",
@@ -420,7 +513,9 @@ const projectsData = {
                     lead: "A historic craft district that is being rebuilt as offices.",
                     blocks: [
                         { kind: "text", body: "The site is in Euljiro 3-ga, one minute from Euljiro 3-ga Station (Lines 2 and 3), with Sewoon Sangga to the east and Cheonggyecheon to the north. Since the late Joseon period the area grew into themed streets for tiles, tools, printing, ceramics, glass, wood and metal work." },
-                        { kind: "text", body: "Office redevelopment is moving in from the west. The site sits inside an urban environment improvement district, so the nearby workshops and the Nogari alley to the north are expected to disappear. There is no green space within 500 m. Restoring an old waterway that once crossed the site earns FAR relief, and the project uses that waterway as the base of its green strategy." },
+                        { kind: "text", body: "Office redevelopment is moving in from the west. The site sits inside an urban environment improvement district, so the nearby workshops and the Nogari alley to the north are expected to disappear. There is no green space within 500 m." },
+                        { kind: "text", body: "An old waterway, Ijeondongcheon (이전동천), once ran across the site toward Cheonggyecheon. Restoring it earns FAR relief, and the project takes it as the base of its green strategy: the Green Fall and the riverside section both start from this line." },
+                        { kind: "image", url: "assets-web/CI-waterway.webp", width: "55%", caption: "Ijeondongcheon, the old waterway (green line) running through the site (dark box)" },
                         { kind: "rules", items: [
                             ["Location", "65-13 Euljiro 3-ga, Jung-gu, Seoul"],
                             ["Zoning", "General commercial zone, fire prevention district, historic downtown (inside the four gates), redevelopment district"],
@@ -428,8 +523,22 @@ const projectsData = {
                             ["Coverage", "60% max; 69% for the podium (up to 5 floors / 20 m)"],
                             ["FAR", "600% base, 780% allowed, 1,004% upper limit with incentives"],
                             ["Scale", "B5 / 17F, about 70 m, GFA about 23,000 ㎡, reinforced concrete"]
+                        ] }
+                    ]
+                },
+                {
+                    id: "concept",
+                    label: "Concept",
+                    lead: "What Euljiro needs is cultural succession: a building that carries the district's craft forward as its symbol.",
+                    blocks: [
+                        { kind: "text", body: "The name splits CLASSIC, the classic of Euljiro, into two parts. CLASS is the one-day class, where the workshops teach their craft to visitors. IC is the Inter-Change (나들목), the lounges and rest spaces where workshop owners, class visitors and office workers cross paths." },
+                        { kind: "rules", items: [
+                            ["CLASSIC", "Classic of Euljiro: the craft studios, and nature brought back along the old waterway"],
+                            ["CLASS", "One-day Class: classrooms and meeting rooms"],
+                            ["IC", "Inter-Change: lounges and rest"]
                         ] },
-                        { kind: "image", url: "assets-web/CI-site.webp", caption: "Land use and redevelopment districts around the site, the old waterway, and the lack of green space within 500 m" }
+                        { kind: "image", url: "assets-web/CI-classic.webp", width: "75%", caption: "CLASSIC splits into CLASS and IC" },
+                        { kind: "image", url: "assets-web/CI-mass.webp", width: "75%", caption: "Mass diagram: mass and core, Green Fall, separate, program and openings, material" }
                     ]
                 },
                 {
@@ -443,9 +552,7 @@ const projectsData = {
                             ["Development", "Public meeting rooms for reading, painting, dance, music, film, parties and photography"],
                             ["IC (Inter-Change)", "Public lounge and terraces linking the workshops to the office floors"],
                             ["Office", "Shared office on the upper floors"]
-                        ] },
-                        { kind: "image", url: "assets-web/CI-mass-flow.webp", caption: "Mass process and the one-day class route through the six workshop floors" },
-                        { kind: "image", url: "assets-web/CI-plans.webp", caption: "1F, 5F and 16F plans with the class circulation diagram" }
+                        ] }
                     ]
                 },
                 {
@@ -463,9 +570,9 @@ const projectsData = {
                         ] },
                         { kind: "gallery", images: [
                             { url: "assets-web/CI-concept.webp", caption: "Split floor on the lower levels, vertical lounge on the office levels" },
-                            { url: "assets-web/CI-section.webp", caption: "Section A–A′: split-level workshops and lounges up to about +38 m, offices above" },
                             { url: "assets-web/CI-interior.webp", caption: "Office floor beside the Green Fall" }
-                        ] }
+                        ] },
+                        { kind: "image", url: "assets-web/CI-section.webp", caption: "Section A–A′: split-level workshops and lounges up to about +38 m, offices above" }
                     ]
                 },
                 {
@@ -493,15 +600,15 @@ const projectsData = {
                 },
                 {
                     id: "form",
-                    label: "Form & Model",
-                    lead: "Each stacked block wears the material of a workshop street.",
+                    label: "Model",
                     blocks: [
-                        { kind: "text", body: "The facade uses wood, metal and glass to stand for the workshop streets the building gathers. The masses are stacked and shifted by program, which leaves planted terraces between them." },
-                        { kind: "image", url: "assets-web/CI-elevation.webp", caption: "Elevation" },
                         { kind: "gallery", images: [
                             { url: "assets-web/CI-model-1.webp", caption: "Model in its urban context" },
                             { url: "assets-web/CI-model-2.webp", caption: "Louvred facade and planted terrace" },
-                            { url: "assets-web/CI-model-3.webp", caption: "Stacked masses from above" }
+                            { url: "assets-web/CI-model-3.webp", caption: "Stacked masses from above" },
+                            { url: "assets-web/CI-model-4.webp", caption: "Front view in the Euljiro block" },
+                            { url: "assets-web/CI-model-5.webp", caption: "Planted terrace between the stacked blocks" },
+                            { url: "assets-web/CI-model-6.webp", caption: "Stacked blocks from above" }
                         ] }
                     ]
                 }
