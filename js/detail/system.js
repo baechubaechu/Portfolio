@@ -374,7 +374,9 @@ function sunDossierHTML(project) {
         ${quote ? `<p class="sys-dock__quote">${esc(quote)}</p>` : ""}
         ${rows.length ? `<dl class="sys-dock__meta">${rows.map(([k, v]) =>
             `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>` : ""}
-        ${img ? `<figure class="sys-dock__figure"><img src="${esc(img)}" alt="${esc(project.title)}"></figure>` : ""}
+        ${project.coverVideo
+            ? blockHTML({ kind: "video", url: project.coverVideo, title: project.title })
+            : img ? `<figure class="sys-dock__figure"><img src="${esc(img)}" alt="${esc(project.title)}"></figure>` : ""}
         ${thesis ? `<p class="sys-dock__thesis">${esc(thesis)}</p>` : ""}
         ${links.length ? blockHTML({ kind: "links", items: links }) : ""}
     `;
@@ -434,6 +436,11 @@ function blockHTML(b) {
             </figure>`;
         case "image":
             return `<figure class="sys-dock__figure"><img src="${esc(b.url)}" alt="${esc(b.caption || "")}" loading="lazy">${b.caption ? `<figcaption>${esc(b.caption)}</figcaption>` : ""}</figure>`;
+        case "video": {
+            const id = String(b.url).match(/(?:watch\?v=|youtu\.be\/|embed\/)([\w-]{6,})/)?.[1];
+            const src = id ? `https://www.youtube.com/embed/${id}?rel=0&modestbranding=1` : b.url;
+            return `<figure class="sys-dock__figure sys-dock__video"><iframe src="${esc(src)}" title="${esc(b.title || "Project video")}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>${b.caption ? `<figcaption>${esc(b.caption)}</figcaption>` : ""}</figure>`;
+        }
         case "gallery": {
             const n = b.images.length;
             const perRow = n <= 3 ? n : n === 4 ? 2 : 3;

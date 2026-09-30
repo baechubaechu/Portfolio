@@ -553,6 +553,21 @@ body.is-system:not(.is-arriving) .sys__dust {
     margin: 0 0 22px;
 }
 
+/* Runs out through the dock's side padding to its edges. */
+.sys-dock__video {
+    margin-inline: calc(-1 * clamp(28px, 4vw, 64px));
+}
+
+.sys-dock__video iframe {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: 0;
+    outline: 1px solid var(--sys-hair);
+    outline-offset: -1px;
+    background: #000;
+}
+
 .sys-dock__figure img {
     display: block;
     width: 100%;
@@ -875,6 +890,8 @@ body.is-system:not(.is-arriving) .sys__dust {
     }
 
     .sys-dock.is-open { transform: none; }
+
+    .sys-dock__video { margin-inline: -18px; }
 
     .sys-dock__figure img {
         max-height: 18vh;

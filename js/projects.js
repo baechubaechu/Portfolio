@@ -296,55 +296,6 @@ const projectsData = {
                         ] }
                     ]
                 }
-            ],
-            sections: [
-                {
-                    type: "arch-concept",
-                    spine: ["research", "phenomenology"],
-                    leadText: "Student as a Social Medium for Intergenerational Harmony",
-                    description: "This project addresses the social isolation inherent in Gated Communities of reconstructed apartment complexes in Gwacheon. We propose a new Open Community platform that utilizes the city’s high density of students as a primary social medium.",
-                    image: "assets-web/4-1concept.webp"
-                },
-                {
-                    type: "arch-plans",
-                    spine: ["structure"],
-                    columns: 2,
-                    plans: [
-                        { url: "assets-web/4-1siteplan.webp", title: "Site Plan" },
-                        { url: "assets-web/4-1firstfloorplan.webp", title: "1st Floor Plan" },
-                        { url: "assets-web/4-1fourthfloorplan.webp", title: "4th Floor Plan" },
-                        { url: "assets-web/4-1basementfloorplan.webp", title: "Basement Floor Plan" },
-                        { url: "assets-web/4-1typicalfloorplan.webp", title: "Typical Floor Plan" },
-                        { url: "assets-web/4-1sectionperspective1.webp", title: "Detail Section" },
-                        { url: "assets-web/4-1sectionperspective2.webp", title: "Detail Section" },
-                        { url: "assets-web/4-1sectionperspective3.webp", title: "Detail Section" },
-                    ]
-                },
-                {
-                    type: "arch-renders",
-                    columns: 2,
-                    images: [
-                        { url: "assets-web/4-1render1.webp", title: "OVERALL VIEW" },
-                        { url: "assets-web/4-1render2.webp", title: "ENTRANCE PERSPECTIVE" },
-                        { url: "assets-web/4-1render3.webp", title: "INTERIOR ATRIUM" },
-                        { url: "assets-web/4-1render4.webp", title: "NIGHT VISUALIZATION" }
-                    ]
-                },
-                {
-                    type: "arch-models",
-                    spine: ["physical-model", "fabrication"],
-                    columns: 2,
-                    images: [
-                        { url: "assets-web/4-1model1.webp", title: "SITE MODEL 1:500" },
-                        { url: "assets-web/4-1model2.webp", title: "EXPLODED AXONOMETRIC MODEL" },
-                        { url: "assets-web/4-1model3.webp", title: "EXPLODED AXONOMETRIC MODEL" },
-                        { url: "assets-web/4-1model4.webp", title: "EXPLODED AXONOMETRIC MODEL" },
-                        { url: "assets-web/4-1model5.webp", title: "EXPLODED AXONOMETRIC MODEL" },
-                        { url: "assets-web/4-1model6.webp", title: "EXPLODED AXONOMETRIC MODEL" },
-                        { url: "assets-web/4-1model7.webp", title: "EXPLODED AXONOMETRIC MODEL" },
-                        { url: "assets-web/4-1model8.webp", title: "EXPLODED AXONOMETRIC MODEL" },
-                    ]
-                }
             ]
         },
         {
@@ -566,13 +517,13 @@ const projectsData = {
             thumbnail: "assets-web/KF-thumbnail.webp",
             tags: ["Competition Pavilion", "Jeju Marine Debris", "3.6 m", "Bamboo Frame", "Sea Glass"],
             kind: "Pavilion",
-            thesis: "Kitsch Fish is a 2023 competition pavilion about marine debris off Jeju: you look for fish and find garbage. Bamboo poles act as fishing rods, and pieces of sea glass and plastic hang on fishing line where the fish should be. The 2023 Grasshopper definitions placed and hung those pieces but never checked spacing, clearance or load, and this page records exactly what they left unchecked.",
+            thesis: "Kitsch Fish is a 2023 competition pavilion about marine debris off Jeju: you look for fish and find garbage. Bamboo poles act as fishing rods, and pieces of sea glass and plastic hang on fishing line where the fish should be. The 2023 Grasshopper definition hung those pieces but never checked spacing, clearance or load, and this page records exactly what they left unchecked.",
             subtitle: "Fishing for garbage instead of fish",
             category: "Pavilion / Competition",
-            role: "Designer (3-person team)",
+            role: "Team Leader (3-person team)",
             timeline: "2023.05",
             team: "Team 곡란 (Goklan): 김기태 (Suwon Univ.), 최하영 (Seoul Institute of the Arts), 박지훈 (Hongik Univ.)",
-            cover: "assets-web/KF-plan.webp",
+            cover: "assets-web/KF-thumbnail.webp",
             chapters: [
                 {
                     id: "problem",
@@ -580,29 +531,61 @@ const projectsData = {
                     lead: "Where there should be fish, there is garbage.",
                     blocks: [
                         { kind: "text", body: "The brief asked for a pavilion of up to 3.6 × 3.6 × 3.6 m at Tamna Cultural Plaza in Jeju City, carrying a message about protecting Jeju's sea. It also asked for the joint materials at each structural part and the installation method, all in an A3 PDF of no more than 10 pages." },
-                        { kind: "text", body: "Our idea: go fishing and catch garbage. Bamboo poles lean in like fishing rods, and pieces of debris hang from them on fishing line where a school of fish should be. From a distance it reads as fish; up close it is sea glass and plastic." },
+                        { kind: "text", body: "Korea collected 138,362 t of marine debris in 2020. Coastal debris alone more than doubled in two years, from 48,000 t in 2018 to 112,000 t in 2020, and debris washed in by heavy rain and typhoons tripled over the same period. Jeju's own sea has yielded more than 20,000 t a year since 2021, at a collection cost of about 10 billion won a year, and it does not go down however much is picked up." },
                         { kind: "rules", items: [
-                            ["Bamboo, plastic-coated (Ø40 × 3200 mm)", "Poles, used as the fishing rods"],
-                            ["Sea glass (about Ø60 × 40 mm)", "Fish pieces"],
-                            ["Ground plastic granules (5–15 mm)", "Fish pieces"],
-                            ["Fishing line", "Hangs the pieces from the frame"]
+                            ["Coastal debris", "111,592 t"],
+                            ["Seabed debris", "18,212 t"],
+                            ["Floating debris", "8,558 t"],
+                            ["Total, 2020", "138,362 t"]
                         ] },
-                        { kind: "gallery", images: [
-                            { url: "assets-web/KF-thumbnail.webp", caption: "Cover render at Tamna Cultural Plaza" },
-                            { url: "assets-web/KF-process.webp", caption: "Design process: poles, debris caught on them, adjusting type, size and count, forming a fish" },
-                            { url: "assets-web/KF-materials.webp", caption: "Main materials" }
-                        ] }
+                        { kind: "image", url: "assets-web/KF-background.webp", caption: "Background board: the sea that should hold fish, meeting a shore of garbage." }
+                    ]
+                },
+                {
+                    id: "idea",
+                    label: "Design Idea",
+                    lead: "Go fishing, and catch garbage.",
+                    blocks: [
+                        { kind: "text", body: "The pavilion turns the act of fishing into the message. Bamboo poles lean in like fishing rods, and pieces of debris hang from them on fishing line where a school of fish should be. From a distance it reads as fish; up close it is sea glass and plastic." },
+                        { kind: "image", url: "assets-web/KF-idea.webp", caption: "The catch is garbage, and the garbage becomes the fish: sea glass stands in for scales." },
+                        { kind: "steps", items: [
+                            "Rods: the fishing rod is abstracted into plastic-coated bamboo poles.",
+                            "Catch: marine debris is hung on the poles, as if caught on the line.",
+                            "Tuning: the type, size and number of pieces are adjusted.",
+                            "School: the pieces are arranged until their cloud reads as a fish."
+                        ] },
+                        { kind: "image", url: "assets-web/KF-process.webp", caption: "Design process board, from poles to a fish made of debris." },
+                        { kind: "rules", items: [
+                            ["Bamboo, plastic-coated (Ø40 × 3200 mm)", "The fishing rods. Bamboo is used in fishing and aquaculture gear."],
+                            ["Sea glass (about Ø60 × 40 mm)", "Fish pieces. Glass broken and worn smooth by the sea, which takes about a million years to break down."],
+                            ["Ground plastic granules (5–15 mm)", "Fish pieces. Plastic ground into grains, about 500 years to break down."],
+                            ["Fishing line", "Hangs the pieces from the frame. Transparent, about 600 years to break down."]
+                        ] },
+                        { kind: "image", url: "assets-web/KF-materials.webp", caption: "Main materials board." }
+                    ]
+                },
+                {
+                    id: "plan",
+                    label: "Plan & Detail",
+                    lead: "Poles lean in from a 3.6 m square to a grid overhead, and the school hangs beneath it.",
+                    blocks: [
+                        { kind: "text", body: "The base is a 3,600 × 3,600 mm platform. The poles stand 3,200 mm tall on 360 mm footings around its edge and lean inward to a lattice about 3,400 mm across at the top. The debris cloud hangs from that lattice over the middle of the platform, while loungers ring the edge so visitors can sit or lie under the school and look up." },
+                        { kind: "image", url: "assets-web/KF-plan.webp", caption: "Section and plan (mm): poles lean in to the top grid; the cloud of pieces hangs over the open centre." },
+                        { kind: "rules", items: [
+                            ["Pole to ground", "Each bamboo pole sits in a socket cast into a round concrete footing."],
+                            ["Line to pole", "Fishing line is tied to the pole and drops straight down to the pieces."]
+                        ] },
+                        { kind: "image", url: "assets-web/KF-detail.webp", caption: "Joint details from the entry: pole to concrete footing, and fishing line to pole." },
+                        { kind: "image", url: "assets-web/KF-aerial.webp", caption: "Modeling: the pavilion on Tamna Cultural Plaza." }
                     ]
                 },
                 {
                     id: "original",
                     label: "Original Definition",
-                    lead: "Two small 2023 Grasshopper files: one scatters pieces in a volume, the other hangs them from the ceiling plane.",
+                    lead: "A small 2023 Grasshopper file that hangs the pieces from the ceiling plane.",
                     blocks: [
-                        { kind: "text", body: "The first, smaller file fills a box region with random points (Populate 3D, 200 points, fixed seed), scales the cloud toward the box centre (factor 0.6), and puts a placeholder sphere on each point. A Collision One|Many component then reports whether one referenced object hits any of the spheres. It only reports; nothing is moved when there is a hit." },
-                        { kind: "text", body: "The second file starts from 125 pieces referenced from Rhino. For each piece it takes the area centroid and draws a vertical line up to a referenced ceiling surface (Line SDL, then Line | Plane). The line from the centroid to that intersection is the hanging line, shown as a thin pipe. A template object is copied onto every centroid (Pufferfish Move To Point) and offset in X and Y. Each copy is then rotated about the vertical axis by angles from a Discover 'Continuous' parameter (250 values between 0° and 360°) and previewed with a transparent material (Human)." },
-                        { kind: "code", filename: "unnamed.gh (component graph, transcribed)", language: "text", code: "Brep (125 referenced pieces) -> Area -> centroid C\nLine SDL(start C, dir +Z, fixed length) -> Line | Plane(ceiling Brep) -> hang point H\nLine(C, H) -> Pipe(small radius)                 # fishing line\nMove To Point(template, from own centroid, to C) -> Move(+X), Move(+Y) -> Merge\nRotate 3D(angle = Discover Continuous 0..360 deg, center = centroid, axis = Z)\n-> Custom Preview Materials(colour, transparency 0.2)", caption: "Read from the saved file. The two files share no link, and neither contains a script component." },
-                        { kind: "image", url: "assets-web/KF-aerial.webp", caption: "Rendered result: the cloud of pieces under the grid at the top of the poles." }
+                        { kind: "text", body: "The file starts from 125 pieces referenced from Rhino. For each piece it takes the area centroid and draws a vertical line up to a referenced ceiling surface (Line SDL, then Line | Plane). The line from the centroid to that intersection is the hanging line, shown as a thin pipe. A template object is copied onto every centroid (Pufferfish Move To Point) and offset in X and Y. Each copy is then rotated about the vertical axis by angles from a Discover 'Continuous' parameter (250 values between 0° and 360°) and previewed with a transparent material (Human)." },
+                        { kind: "code", filename: "unnamed.gh (component graph, transcribed)", language: "text", code: "Brep (125 referenced pieces) -> Area -> centroid C\nLine SDL(start C, dir +Z, fixed length) -> Line | Plane(ceiling Brep) -> hang point H\nLine(C, H) -> Pipe(small radius)                 # fishing line\nMove To Point(template, from own centroid, to C) -> Move(+X), Move(+Y) -> Merge\nRotate 3D(angle = Discover Continuous 0..360 deg, center = centroid, axis = Z)\n-> Custom Preview Materials(colour, transparency 0.2)", caption: "Read from the saved file. It contains no script component." }
                     ]
                 },
                 {
@@ -611,14 +594,13 @@ const projectsData = {
                     lead: "The 2023 logic placed and hung pieces, but it did not check whether the result could be built.",
                     blocks: [
                         { kind: "list", items: [
-                            "In the saved files, pieces were never checked against each other. The only collision test compared one object with the spheres, and it only reported the result.",
+                            "Pieces were never checked against each other, so two pieces could overlap without anything flagging it.",
                             "Hanging points came from projecting straight up to a plane, so they land wherever the centroid is, not on the grid nodes or poles that would carry them.",
-                            "Line length, load per hanging point, and clear height above visitors were not computed anywhere in the files.",
+                            "Line length, load per hanging point, and clear height above visitors were not computed anywhere in the file.",
                             "Placement depended on a random seed and hand-set sliders. There was no record of why one layout was chosen over another."
                         ] },
                         { kind: "text", body: "Three questions follow from this: do any two pieces clash, does every line end on a real support, and is the head height underneath clear?" },
-                        { kind: "note", body: "Next: rebuilding the placement logic so these three questions become explicit rules checked in code (planned, 2026)." },
-                        { kind: "image", url: "assets-web/KF-detail.webp", caption: "Joint details from the entry: pole to concrete footing, and fishing line to pole." }
+                        { kind: "note", body: "Next: rebuilding the placement logic so these three questions become explicit rules checked in code (planned, 2026)." }
                     ]
                 }
             ]
@@ -765,6 +747,7 @@ const projectsData = {
             tags: ["AI Diary App", "Guided Interview", "Writes Only From Your Answers", "Live Web App"],
             githubLink: "https://github.com/baechubaechu/Deary",
             visitLink: "https://deary1.pages.dev/",
+            coverVideo: "https://www.youtube.com/watch?v=GRwoxY0-ZwM",
             kind: "Code",
             thesis: "A blank page is the hardest part of keeping a diary. Deary replaces it with a short interview: it asks concrete questions about today, digs one level deeper only when an answer is thin, checks that there is enough to write from, and then writes the entry strictly from what you said.",
             subtitle: "Dear Day, Daily You.",
@@ -858,24 +841,6 @@ if (answerLength < 10) {
                     ]
                 },
                 {
-                    id: "system",
-                    label: "System",
-                    lead: "Designed in Figma, built with a coding agent.",
-                    blocks: [
-                        { kind: "techs", items: [
-                            { name: "React 18", note: "UI" },
-                            { name: "TypeScript", note: "93%" },
-                            { name: "Vite" },
-                            { name: "Supabase", note: "Edge Functions · Auth · KV" },
-                            { name: "Gemini 2.5 Flash", note: "JSON mode" },
-                            { name: "Tailwind v4" },
-                            { name: "Cloudflare Pages" },
-                            { name: "Cursor", note: "coding agent" }
-                        ] },
-                        { kind: "text", body: "The API key lives only in the Edge Function environment; the client never sees it. Built solo from Figma design to deployment in February 2026." }
-                    ]
-                },
-                {
                     id: "interface",
                     label: "Interface",
                     lead: "Question, answer, entry.",
@@ -892,89 +857,8 @@ if (answerLength < 10) {
                         ] }
                     ]
                 }
-            ],
-            sections: [
-                {
-                    type: "dev-tech-stack",
-                    spine: ["code", "ai"],
-                    label: "TECH STACK",
-                    techs: [
-                        { name: "TypeScript", note: "93.2% of codebase" },
-                        { name: "React 18", note: "Frontend" },
-                        { name: "Vite", note: "Build Tool" },
-                        { name: "Supabase", note: "BaaS" },
-                        { name: "Gemini 2.5 Flash", note: "AI Core" },
-                        { name: "Tailwind CSS v4", note: "Styling" },
-                        { name: "Radix UI", note: "Component Primitives" },
-                        { name: "Lucide React", note: "Icons" },
-                        { name: "CloudFlare", note: "Deployment" }
-                    ]
-                },
-                {
-                    type: "split-content",
-                    spine: ["interaction"],
-                    title: "The Vision",
-                    leadText: "Making journaling effortless.",
-                    description: "Deary is an AI-assisted diary app that helps you reflect on your day through warm, guided questions generated by Gemini. Instead of staring at a blank page, Deary asks you questions — then turns your answers into a coherent, reflective diary entry. The goal was to remove the friction between experience and expression.",
-                    media: { type: "image", url: "assets-web/deary_logo.webp" },
-                    booklets: [
-                        {
-                            title: "Project Booklet",
-                            url: "assets/placeholder.pdf",
-                            thumbnail: "assets-web/deary_logo.webp"
-                        }
-                    ]
-                },
-                {
-                    type: "dev-code-preview",
-                    spine: ["code", "ai"],
-                    label: "CODE PREVIEW",
-                    filename: "ai.ts",
-                    language: "TypeScript (Supabase Edge Function)",
-                    caption: "Gemini is given structured rules to ensure the diary reads naturally — no hallucination, diary-style wording, and fact-based writing",
-                    code: `// System prompt passed to Gemini 2.5 Flash
-const prompt =
-  "You are an 'honest recorder' who summarizes the user's day.\\n\\n" +
-  "[Rules]\\n" +
-  "1. Style: Use past tense. (e.g., ate, was happy, felt tired)\\n" +
-  "2. Fact-based: Never invent info the user didn't mention.\\n" +
-  "3. Simple: Use easy words. No abstract or academic phrases.\\n" +
-  "4. Flow: Connect answers in a natural time order.\\n" +
-  "5. Emotion: Reflect feelings and experiences vividly.\\n\\n" +
-  "User answers:\\n" + answersText + "\\n\\nWrite the diary body only:";
-
-// Call Gemini 2.5 Flash via Supabase Edge Function
-const response = await fetch(GEMINI_API_URL + "?key=" + GEMINI_API_KEY, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    contents: [{ parts: [{ text: prompt }] }],
-    generationConfig: { temperature: 0.7, maxOutputTokens: 2000 },
-  }),
-});
-
-const data = await response.json();
-return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? "";`
-                },
-                {
-                    type: "dev-frontend-gallery",
-                    spine: ["interaction"],
-                    label: "INTERFACE",
-                    screenshots: [
-                        { url: "assets-web/deary0.webp", caption: "Home screen" },
-                        { url: "assets-web/deary2.webp", caption: "Daily questions" },
-                        { url: "assets-web/deary1.webp", caption: "Generated diary entry" }
-                    ]
-                },
-                {
-                    type: "dev-video",
-                    label: "VIDEO",
-                    url: "https://www.youtube.com/watch?v=GRwoxY0-ZwM",
-                    caption: "Promo video for Deary"
-                }
             ]
-        }
-        ,
+        },
         {
             id: "emotional-architecture",
             aliases: ["emotional-architect"],
@@ -1116,93 +1000,6 @@ return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? "";`
                             { label: "GitHub", url: "https://github.com/baechubaechu/emotion_sphere" }
                         ] }
                     ]
-                }
-            ],
-            sections: [
-                {
-                    type: "dev-tech-stack",
-                    spine: ["ai", "code", "parametric"],
-                    label: "TECH STACK",
-                    techs: [
-                        { name: "Google Vision API", note: "Emotion Detection" },
-                        { name: "Kaggle EEG dataset", note: "Neural Signals" },
-                        { name: "Python & Flask", note: "Data Processing" },
-                        { name: "Three.js", note: "Live 3D Sphere" },
-                        { name: "Rhino & Grasshopper", note: "Spatial Geometry" },
-                        { name: "ComfyUI", note: "AI Image Pipeline" },
-                        { name: "Google Cloud Storage", note: "Emotion Archive" }
-                    ]
-                },
-                {
-                    type: "split-content",
-                    spine: ["research", "phenomenology", "interaction"],
-                    title: "The Concept",
-                    leadText: "The lost dimension of emotion.",
-                    description: "In a digital society where genuine emotional expression is flattened by social media, this project asks: can a machine not only detect but spatialize human emotion? Visitors stand before a webcam — their facial expressions are captured in real time and converted into geometric deformation of a 3D sphere, while EEG emotion data from a public dataset shapes corridor spaces that are rendered into architectural atmospheres.",
-                    media: { type: "image", url: "assets-web/EAconcept.webp" },
-                    booklets: [
-                        {
-                            title: "Project Booklet",
-                            url: "assets/emotional_architect_booklet.pdf",
-                            thumbnail: ""
-                        }
-                    ]
-                },
-                {
-                    type: "dev-code-preview",
-                    spine: ["code", "ai"],
-                    label: "CODE PREVIEW",
-                    filename: "emotion_sphere / index.html",
-                    language: "JavaScript — Three.js",
-                    caption: "The emotion score from Google Vision API drives real-time vertex displacement on the Three.js sphere",
-                    code: `// Emotion score (0.0–1.0) received from Python/Flask backend
-// via real-time WebSocket — maps facial expression to geometry
-
-function deformSphere(emotionScore) {
-  const positions = geometry.attributes.position;
-  const baseRadius = SPHERE_BASE_RADIUS;
-
-  for (let i = 0; i < positions.count; i++) {
-    const v = new THREE.Vector3();
-    v.fromBufferAttribute(positions, i).normalize();
-
-    // Simplex noise layered with emotion intensity
-    const turbulence = noise3D(
-      v.x + clock.elapsedTime * 0.3,
-      v.y + clock.elapsedTime * 0.3,
-      v.z + clock.elapsedTime * 0.3
-    );
-
-    // "Form follows Data" — emotion sculpts the surface
-    const r = baseRadius + turbulence * emotionScore * 0.4;
-    positions.setXYZ(i, v.x * r, v.y * r, v.z * r);
-  }
-
-  positions.needsUpdate = true;
-  geometry.computeVertexNormals();
-}`
-                },
-                {
-                    type: "dev-frontend-gallery",
-                    spine: ["interaction"],
-                    label: "INTERFACE",
-                    screenshots: [
-                        { url: "assets-web/EAscreen1.webp" },
-                        { url: "assets-web/EAscreen1.webp" },
-                        { url: "assets-web/EAscreen1.webp" },
-                    ]
-                },
-                {
-                    type: "dev-exhibition",
-                    spine: ["interaction"],
-                    label: "EXHIBITION & DOCUMENT",
-                    photos: [
-                        { url: "assets-web/EApic4.webp" },
-                        { url: "assets-web/EApic1.webp" },
-                        { url: "assets-web/EApic3.webp" },
-                        { url: "assets-web/EApic2.webp" }
-                    ],
-                    booklets: []
                 }
             ]
         }
