@@ -680,7 +680,9 @@ export async function mountConstellation(root, portfolio) {
     function updateCursorForHover() {
         if (!cursor) return;
         if (!hoveredId) { cursor.setState("default"); return; }
-        cursor.setState("node");
+        const n = graph.byId.get(hoveredId);
+        cursor.setState("node", n?.type === "project" && n.data?.href ? "Click to warp" : "");
+        cursor.el.classList.toggle("is-label-above", n?.side === "below");
     }
 
     function setHover(id) {
@@ -829,7 +831,7 @@ export async function mountConstellation(root, portfolio) {
         // Touch has no hover, so the first tap shows the figure and the second opens it.
         const previewFirst = e.pointerType === "touch" && selectedId !== id;
         if (node?.type === "project" && node.data?.href && !previewFirst) {
-            openProject(node, { skipWarp: !!e.target.closest?.(".c-node__label") });
+            openProject(node);
             return;
         }
         setHover(id);
@@ -1006,6 +1008,7 @@ export async function mountConstellation(root, portfolio) {
         if (warpEl) warpEl.style.opacity = "";
         try {
             for (const k of ["c-dwell-lock", "c-dwell-lock-at", "c-skip-dwell"]) sessionStorage.removeItem(k);
+            if (sessionStorage.getItem("c-seen-project")) document.documentElement.classList.add("c-seen-project");
         } catch { /* private mode */ }
         kick();
     };

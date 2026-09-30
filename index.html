@@ -11,7 +11,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css?v=4.5">
     <meta name="theme-color" content="#0a0a0a">
-    <link rel="stylesheet" href="css/constellation.css?v=3.23">
+    <link rel="stylesheet" href="css/constellation.css?v=3.34">
+    <script>
+        try {
+            if (sessionStorage.getItem("c-seen-project")) {
+                document.documentElement.classList.add("c-seen-project");
+            }
+        } catch (e) { /* private mode */ }
+    </script>
 </head>
 
 <body>
@@ -100,7 +107,7 @@
 
     <script src="js/projects.js?v=4.0"></script>
     <script src="js/script.js?v=3.9"></script>
-    <script type="module" src="js/constellation/index.js?v=5.34"></script>
+    <script type="module" src="js/constellation/index.js?v=5.39"></script>
 </body>
 
 </html>

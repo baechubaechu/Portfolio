@@ -604,6 +604,16 @@
     text-align: right;
     text-decoration: none;
     pointer-events: auto;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 600ms var(--c-ease), visibility 0s linear 600ms;
+}
+
+/* Shown only once a project page has been visited in this session */
+.c-seen-project .c-manifesto--hint {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 600ms var(--c-ease);
 }
 
 .c-manifesto--hint .c-manifesto__core {
@@ -785,22 +795,36 @@
 
 .c-cursor__label {
     position: absolute;
-    left: 18px;
-    top: -7px;
+    left: 14px;
+    top: 14px;
     white-space: nowrap;
     font-family: var(--c-font-mono);
-    font-size: 10px;
+    font-size: 13px;
+    font-weight: 500;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--c-ink);
+    color: #ffc47a;
+    padding: 5px 10px;
+    border: 1px solid rgba(255, 196, 122, 0.45);
+    border-radius: 999px;
+    background: rgba(40, 24, 8, 0.82);
+    box-shadow: 0 0 14px rgba(255, 170, 80, 0.25);
     opacity: 0;
     transform: translateX(-4px);
     transition: opacity 220ms var(--c-ease), transform 220ms var(--c-ease);
 }
 
+.c-cursor.is-label-above .c-cursor__label { top: -40px; }
+
 .c-cursor.has-label .c-cursor__label {
     opacity: 1;
     transform: none;
+    animation: c-cursor-blink 2s ease-in-out infinite;
+}
+
+@keyframes c-cursor-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.2; }
 }
 
 /* ── Leaving (→ detail page) ───────────────────────────────────────────── */
