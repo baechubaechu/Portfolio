@@ -9,7 +9,7 @@
  * the real pixel length.
  */
 
-import { svgEl } from "../lib/utils.js";
+import { svgEl } from "../lib/utils.js?v=2.0";
 
 export function createEdgeView(edge) {
     const el = svgEl("g", { class: "c-edge", "data-id": edge.id });
@@ -21,6 +21,8 @@ export function createEdgeView(edge) {
     el.append(preview, line, pulse);
 
     let fromId = edge.source;
+    let lastShow = "";
+    let lastPos = "";
 
     return {
         edge,
@@ -32,10 +34,14 @@ export function createEdgeView(edge) {
             const a = fromId === sourceNode.id ? sourceNode : targetNode;
             const b = a === sourceNode ? targetNode : sourceNode;
             const show = a.rVisible !== false && b.rVisible !== false;
-            el.setAttribute("opacity", show ? "1" : "0");
+            const opacity = show ? "1" : "0";
+            if (opacity !== lastShow) el.setAttribute("opacity", (lastShow = opacity));
             if (!show) return;
             const x1 = a.rx.toFixed(2), y1 = a.ry.toFixed(2);
             const x2 = b.rx.toFixed(2), y2 = b.ry.toFixed(2);
+            const pos = `${x1} ${y1} ${x2} ${y2}`;
+            if (pos === lastPos) return;
+            lastPos = pos;
             for (const l of [preview, line, pulse]) {
                 l.setAttribute("x1", x1); l.setAttribute("y1", y1);
                 l.setAttribute("x2", x2); l.setAttribute("y2", y2);

@@ -1,3 +1,15 @@
+/**
+ * Project content for the cards (index.html) and the detail pages (project-detail.html).
+ *
+ *   id           slug, the same as the project's id in js/constellation/data/portfolio.js
+ *                and the ?id= of its detail page
+ *   aliases      optional older ids that still resolve (old links keep working)
+ *   title, description, thumbnail, tags     home cards
+ *   kind, thesis, subtitle, category, role, timeline, team, organizer, cover
+ *                the opening plate of the detail page
+ *   chapters     the detail page body: [{ id, label, title, lead, blocks: [...] }]
+ *   sections     legacy block list, only rendered for a project that is not on the home sky
+ */
 const projectsData = {
     schoolWorks: [
         {
@@ -9,10 +21,11 @@ const projectsData = {
             kind: "Architecture",
             thesis: "Geumjeong Station is a transfer hub people only pass through. X-tra Space stacks transfer, promenade, urban and auxiliary circulation layers so they cross, and the crossings become new public space. An AI operating layer then manages that space, switching light, sound and display modes from what it senses, and a working version ran live at the graduation show.",
             githubLink: "https://github.com/baechubaechu/Spatial-Environment-Agent",
-            sections: [
-                { type: "hero-meta", subtitle: "Transfer and promenade, fast and slow, moving and staying. Where they cross, an extra space appears.", category: "Architecture / Graduation Project", role: "Designer · Developer (solo)", timeline: "2025.09 - 2026.06" },
-                { type: "arch-panel", image: "assets/XS-cover.jpg" }
-            ],
+            subtitle: "Transfer and promenade, fast and slow, moving and staying. Where they cross, an extra space appears.",
+            category: "Architecture / Graduation Project",
+            role: "Designer · Developer (solo)",
+            timeline: "2025.09 - 2026.06",
+            cover: "assets/XS-cover.jpg",
             chapters: [
                 {
                     id: "site",
@@ -174,13 +187,19 @@ const projectsData = {
             ]
         },
         {
-            id: "Student Driven Village",
+            id: "student-driven-village",
+            aliases: ["Student Driven Village"],
             title: "Student Driven Village",
             description: "A Multi-layered Residential Complex Mediated by Student Initiatives.",
             thumbnail: "assets/4-1 thumbnail.png",
             tags: ["Housing Complex", "Gwacheon Jugong Reconstruction", "Shared Halls for 5 Schools", "Semi-public Layer", "Yangjae Stream"],
             kind: "Architecture",
             thesis: "Gwacheon's Jugong reconstruction is bringing in more families with school-age children, but the new complexes stay gated. We proposed a housing complex that uses those students as the link: club rooms and large shared halls for five nearby schools, set under the housing and open to residents too. Midway we saw that the halls had created a new boundary next to private homes, and we reorganized the scheme around a semi-public layer between them.",
+            subtitle: "Gwacheon, a village changed by students: a neighbourhood platform built around student clubs",
+            category: "Architecture / Studio",
+            role: "Designer (2-person team)",
+            timeline: "2025.03 - 2025.06",
+            cover: "assets/4-1concept.png",
             chapters: [
                 {
                     id: "context",
@@ -280,13 +299,6 @@ const projectsData = {
             ],
             sections: [
                 {
-                    type: "hero-meta",
-                    subtitle: "Gwacheon, a village changed by students: a neighbourhood platform built around student clubs",
-                    category: "Architecture / Studio",
-                    role: "Designer (2-person team)",
-                    timeline: "2025.03 - 2025.06"
-                },
-                {
                     type: "arch-concept",
                     spine: ["research", "phenomenology"],
                     leadText: "Student as a Social Medium for Intergenerational Harmony",
@@ -343,10 +355,11 @@ const projectsData = {
             tags: ["Closed School Remodel", "Pet Theme Park", "Seongsu-dong, Seoul", "Site 13,800 ㎡", "Rounded Terraces"],
             kind: "Architecture",
             thesis: "Seongsu Technical High School closed as student numbers fell. Little Forest turns it into a pet theme park for residents who want hands-on programs and for young visitors drawn to Seongsu. Rounded edges, winding paths that always connect, and planters instead of railings let pets and people walk the whole site safely.",
-            sections: [
-                { type: "hero-meta", subtitle: "A small jungle in the city", category: "Architecture / Studio", role: "Designer", timeline: "2023.09 - 2023.12" },
-                { type: "arch-panel", image: "assets/LF-panel.jpg" }
-            ],
+            subtitle: "A small jungle in the city",
+            category: "Architecture / Studio",
+            role: "Designer",
+            timeline: "2023.09 - 2023.12",
+            cover: "assets/LF-panel.jpg",
             chapters: [
                 {
                     id: "site",
@@ -444,10 +457,11 @@ const projectsData = {
             tags: ["Shared Office Tower", "Euljiro Craft Workshops", "B5 / 17F", "GFA 23,000 ㎡", "One-day Classes"],
             kind: "Architecture",
             thesis: "Redevelopment in Euljiro is replacing its workshop streets with office blocks. Class.IC keeps the workshops by stacking them in one building: craft studios and one-day classes on the lower floors, a shared office above, and lounges where shop owners, office workers and class visitors meet. The name joins one-day Class with IC (Inter-Change, 나들목).",
-            sections: [
-                { type: "hero-meta", subtitle: "Euljiro's workshop streets, stacked into one building", category: "Architecture / Studio", role: "Designer", timeline: "2023.03 - 2023.06" },
-                { type: "arch-panel", image: "assets/CI-panel.jpg" }
-            ],
+            subtitle: "Euljiro's workshop streets, stacked into one building",
+            category: "Architecture / Studio",
+            role: "Designer",
+            timeline: "2023.03 - 2023.06",
+            cover: "assets/CI-panel.jpg",
             chapters: [
                 {
                     id: "context",
@@ -545,32 +559,20 @@ const projectsData = {
     ],
     competitions: [
         {
-            id: "sangsangblue",
+            id: "kitch-fish",
+            aliases: ["sangsangblue"],
             title: "Kitsch Fish",
             description: "A 3.6 m competition pavilion for Jeju where sea glass and plastic pieces hang like a school of fish from a frame of bamboo poles, and an honest look at what its 2023 placement logic never checked.",
             thumbnail: "assets/KF-thumbnail.jpg",
             tags: ["Competition Pavilion", "Jeju Marine Debris", "3.6 m", "Bamboo Frame", "Sea Glass"],
             kind: "Pavilion",
             thesis: "Kitsch Fish is a 2023 competition pavilion about marine debris off Jeju: you look for fish and find garbage. Bamboo poles act as fishing rods, and pieces of sea glass and plastic hang on fishing line where the fish should be. The 2023 Grasshopper definitions placed and hung those pieces but never checked spacing, clearance or load, and this page records exactly what they left unchecked.",
-            sections: [
-                {
-                    type: "hero-meta",
-                    subtitle: "Fishing for garbage instead of fish",
-                    category: "Pavilion / Competition",
-                    role: "Designer (3-person team)",
-                    timeline: "2023.05"
-                },
-                {
-                    type: "arch-competition-info",
-                    year: "2023",
-                    team: "Team 곡란 (Goklan): 김기태 (Suwon Univ.), 최하영 (Seoul Institute of the Arts), 박지훈 (Hongik Univ.)",
-                    location: "Tamna Cultural Plaza, Jeju"
-                },
-                {
-                    type: "arch-panel",
-                    image: "assets/KF-plan.jpg"
-                }
-            ],
+            subtitle: "Fishing for garbage instead of fish",
+            category: "Pavilion / Competition",
+            role: "Designer (3-person team)",
+            timeline: "2023.05",
+            team: "Team 곡란 (Goklan): 김기태 (Suwon Univ.), 최하영 (Seoul Institute of the Arts), 박지훈 (Hongik Univ.)",
+            cover: "assets/KF-plan.jpg",
             chapters: [
                 {
                     id: "problem",
@@ -632,19 +634,11 @@ const projectsData = {
             githubLink: "https://github.com/baechubaechu/Sida",
             kind: "Code · In progress",
             thesis: "Most AI tools in architecture generate one thing at a time: an image, a text, a summary. Design is not one generation task. Sida (시다, the Korean word for a studio assistant) splits design reasoning into twelve narrow experts coordinated by a Conductor. It keeps a project memory the designer approves, answers regulation questions only from retrieved text, and can model in Rhino. It is a working v0.1 prototype and still in development.",
-            sections: [
-                {
-                    type: "hero-meta",
-                    subtitle: "An assistant for design reasoning, not a designer",
-                    category: "AI Tool / CLI Platform",
-                    role: "Developer (solo)",
-                    timeline: "2026.07 - in progress"
-                },
-                {
-                    type: "arch-panel",
-                    image: "assets/SIDA-flow.jpg"
-                }
-            ],
+            subtitle: "An assistant for design reasoning, not a designer",
+            category: "AI Tool / CLI Platform",
+            role: "Developer (solo)",
+            timeline: "2026.07 - in progress",
+            cover: "assets/SIDA-flow.jpg",
             chapters: [
                 {
                     id: "problem",
@@ -771,6 +765,11 @@ const projectsData = {
             visitLink: "https://deary1.pages.dev/",
             kind: "Code",
             thesis: "A blank page is the hardest part of keeping a diary. Deary replaces it with a short interview: it asks concrete questions about today, digs one level deeper only when an answer is thin, checks that there is enough to write from, and then writes the entry strictly from what you said.",
+            subtitle: "Dear Day, Daily You.",
+            category: "Personal Project",
+            role: "UI/UX Designer / Developer",
+            timeline: "2026.02~",
+            cover: "assets/deary_logo.png",
             chapters: [
                 {
                     id: "problem",
@@ -894,13 +893,6 @@ if (answerLength < 10) {
             ],
             sections: [
                 {
-                    type: "hero-meta",
-                    subtitle: "Dear Day, Daily You.",
-                    category: "Personal Project",
-                    role: "UI/UX Designer<br>Developer",
-                    timeline: "2026.02~"
-                },
-                {
                     type: "dev-tech-stack",
                     spine: ["code", "ai"],
                     label: "TECH STACK",
@@ -982,7 +974,8 @@ return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? "";`
         }
         ,
         {
-            id: "emotional-architect",
+            id: "emotional-architecture",
+            aliases: ["emotional-architect"],
             title: "Emotional Architecture (with A.I.)",
             description: "Can A.I. understand human emotions? A computational experiment that converts real-time facial expressions and public EEG emotion data into living 3D geometry and AI-rendered architectural space.",
             thumbnail: "assets/EAthumbnail.png",
@@ -991,6 +984,11 @@ return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? "";`
             visitLink: "https://emotion-sphere.vercel.app",
             kind: "Code",
             thesis: "If AI reads emotion as probability vectors, can those vectors become architecture? A webcam feeds a live pipeline where facial emotion drives a Three.js sphere in the browser, while positive and negative EEG samples from a public Kaggle dataset drive a Rhino script that inflates or erodes a corridor. Exhibited at Culture Stockpile Base, Seoul, January 2026.",
+            subtitle: "Form follows Data.",
+            category: "Computational Side Project / Interactive Installation",
+            role: "Developer / Computational Designer",
+            timeline: "January 2026",
+            cover: "assets/EAconcept.png",
             chapters: [
                 {
                     id: "question",
@@ -1109,13 +1107,6 @@ return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? "";`
                 }
             ],
             sections: [
-                {
-                    type: "hero-meta",
-                    subtitle: "Form follows Data.",
-                    category: "Computational Side Project / Interactive Installation",
-                    role: "Developer<br>Computational Designer",
-                    timeline: "January 2026"
-                },
                 {
                     type: "dev-tech-stack",
                     spine: ["ai", "code", "parametric"],

@@ -3,7 +3,7 @@
  * Pure presentation — state is applied through CSS classes.
  */
 
-import { svgEl } from "../lib/utils.js";
+import { svgEl } from "../lib/utils.js?v=2.0";
 
 export function createNodeView(node, cfg) {
     const isProject = node.type === "project";
@@ -72,9 +72,13 @@ export function createNodeView(node, cfg) {
             label.setAttribute("y", y.toFixed(1));
             label.setAttribute("text-anchor", anchor);
             el.dataset.side = side;
+            // The hitbox only depends on the side and the metrics (a metrics change resets `side`).
+            layoutHitbox();
         }
-        layoutHitbox();
     }
+
+    let lastTransform = "";
+    let lastDepth = "";
 
     return {
         node,
@@ -88,8 +92,10 @@ export function createNodeView(node, cfg) {
         },
         /** Move the whole group. `scale` is perspective; `fade` is limb falloff. */
         update(x, y, scale = 1, fade = 1) {
-            el.setAttribute("transform", `translate(${x.toFixed(2)} ${y.toFixed(2)}) scale(${scale.toFixed(3)})`);
-            el.style.setProperty("--c-depth", fade.toFixed(3));
+            const transform = `translate(${x.toFixed(2)} ${y.toFixed(2)}) scale(${scale.toFixed(3)})`;
+            if (transform !== lastTransform) el.setAttribute("transform", (lastTransform = transform));
+            const depth = fade.toFixed(3);
+            if (depth !== lastDepth) el.style.setProperty("--c-depth", (lastDepth = depth));
             applySide(node.side);
         },
         setClass(name, on) {

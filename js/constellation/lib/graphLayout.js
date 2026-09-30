@@ -27,7 +27,7 @@
  * It never touches the DOM.
  */
 
-import { clamp, hashString, mulberry32 } from "./utils.js";
+import { clamp, hashString, mulberry32 } from "./utils.js?v=2.0";
 
 /**
  * @param {import('./graph.js').buildGraph extends (...a:any)=>infer R ? R : never} graph

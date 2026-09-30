@@ -14,8 +14,8 @@
  *   open        click a project star → detail page
  */
 
-import { buildGraph } from "../lib/graph.js";
-import { createLayout } from "../lib/graphLayout.js?v=2.7";
+import { buildGraph } from "../lib/graph.js?v=1.1";
+import { createLayout } from "../lib/graphLayout.js?v=2.8";
 import { buildAsterisms } from "../lib/asterism.js?v=2.1";
 import { resolveConfig } from "../config.js?v=3.8";
 import { toSphere, project as projectSky, resolveCamera, createSkyDust, createBandDust, bandToWorld } from "../lib/sky.js?v=2.9";
@@ -23,9 +23,9 @@ import {
     createTextMeasurer, debounce, hasFinePointer, mulberry32, hashString,
     prefersReducedMotion, svgEl, waitForFonts,
 } from "../lib/utils.js?v=2.0";
-import { createNodeView } from "./Node.js?v=3.2";
-import { createEdgeView } from "./Edge.js?v=2.4";
-import { createProjectInfo } from "./ProjectInfo.js?v=3.0";
+import { createNodeView } from "./Node.js?v=3.3";
+import { createEdgeView } from "./Edge.js?v=2.5";
+import { createProjectInfo } from "./ProjectInfo.js?v=3.1";
 import { createCursor } from "./Cursor.js?v=2.3";
 import { createIdlePulse } from "./IdlePulse.js?v=1.8";
 
@@ -218,8 +218,8 @@ export async function mountConstellation(root, portfolio) {
             onSelect: (id) => select(id),
             onOpen: (id, e) => {
                 const node = graph.byId.get(id);
-                if (node?.data?.detailId) {
-                    try { localStorage.setItem("currentProjectId", node.data.detailId); } catch { /* private mode */ }
+                if (node?.data?.href) {
+                    try { localStorage.setItem("currentProjectId", node.data.id); } catch { /* private mode */ }
                 }
                 // Let the <a href> navigate natively. Do not preventDefault.
             },
@@ -649,9 +649,7 @@ export async function mountConstellation(root, portfolio) {
         const p = node?.data;
         if (!p?.href || opening) return;
         opening = true;
-        if (p.detailId) {
-            try { localStorage.setItem("currentProjectId", p.detailId); } catch { /* private mode */ }
-        }
+        try { localStorage.setItem("currentProjectId", p.id); } catch { /* private mode */ }
         if (skipWarp) {
             window.location.href = p.href;
             return;
@@ -706,8 +704,13 @@ export async function mountConstellation(root, portfolio) {
     let yaw = 0, pitch = 0, yawT = 0, pitchT = 0;
     let pointerOn = false;
 
+    // Same inputs → same camera; it is asked for several times per frame and per pointer move.
+    let camMemo = null, camCfg = null, camW = 0, camH = 0;
     function cameraCfg() {
-        return resolveCamera(cfg, size);
+        if (camMemo && camCfg === cfg && camW === size.width && camH === size.height) return camMemo;
+        camCfg = cfg; camW = size.width; camH = size.height;
+        camMemo = resolveCamera(cfg, size);
+        return camMemo;
     }
 
     function setLookTarget(nx, ny) {
@@ -850,6 +853,16 @@ export async function mountConstellation(root, portfolio) {
     /* ───────────── render loop ───────────── */
     let raf = 0;
     let lastSkyKey = "";
+    let depthOrder = [];
+    // Nothing on the sky needs to move while the hero is scrolled out of view.
+    let onScreen = true;
+    const heroIo = typeof IntersectionObserver !== "undefined"
+        ? new IntersectionObserver(([entry]) => {
+            onScreen = entry.isIntersecting;
+            if (onScreen) kick();
+        })
+        : null;
+    heroIo?.observe(root);
 
     function frame(now) {
         raf = 0;
@@ -879,7 +892,10 @@ export async function mountConstellation(root, portfolio) {
         }
 
         const byDepth = [...graph.nodes].sort((a, b) => b.rDepth - a.rDepth);
-        for (const n of byDepth) nodesLayer.append(nodeViews.get(n.id).el);
+        if (byDepth.some((n, i) => n !== depthOrder[i])) {
+            depthOrder = byDepth;
+            for (const n of byDepth) nodesLayer.append(nodeViews.get(n.id).el);
+        }
 
         for (const e of visualEdges) edgeViews.get(e.id).update(e.sourceNode, e.targetNode);
 
@@ -923,10 +939,10 @@ export async function mountConstellation(root, portfolio) {
         if (panelId) panel?.place(graph.byId.get(panelId));
 
         const looking = Math.abs(yawT - yaw) > 0.0004 || Math.abs(pitchT - pitch) > 0.0004;
-        if (active || driftOn || looking || pointerOn) raf = requestAnimationFrame(frame);
+        if (onScreen && (active || driftOn || looking || pointerOn)) raf = requestAnimationFrame(frame);
     }
 
-    function kick() { if (!raf) raf = requestAnimationFrame(frame); }
+    function kick() { if (!raf && onScreen) raf = requestAnimationFrame(frame); }
 
     /* ───────────── resize ───────────── */
     function relayout() {
@@ -1005,6 +1021,7 @@ export async function mountConstellation(root, portfolio) {
             idlePulse.destroy();
             stopWarpField();
             cancelAnimationFrame(raf);
+            heroIo?.disconnect();
             window.removeEventListener("resize", onResize);
             window.removeEventListener("pageshow", onPageShow);
             window.removeEventListener("pagehide", onPageHide);

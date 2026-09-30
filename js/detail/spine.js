@@ -15,7 +15,7 @@
  * Hovering a section's imagery lights its local constellation.
  */
 
-import { portfolio } from "../constellation/data/portfolio.js?v=2.8";
+import { portfolio } from "../constellation/data/portfolio.js?v=2.9";
 import { svgEl, esc, clamp, prefersReducedMotion } from "../constellation/lib/utils.js?v=2.0";
 
 const RAIL_X = 40;          // px from the container's left edge
@@ -36,7 +36,7 @@ function init(project) {
     if (!main || main.dataset.spine) return;
     main.dataset.spine = "on";
 
-    const cproj = portfolio.projects.find((q) => q.detailId === project.id || q.id === project.id) ?? null;
+    const cproj = portfolio.projects.find((q) => q.id === project.id) ?? null;
     const attrOf = new Map(portfolio.attributes.map((a) => [a.id, a]));
     const has = (id) => !!cproj?.attributes.some((a) => a.id === id);
     const weightOf = (id) => cproj?.attributes.find((a) => a.id === id)?.weight ?? 0.5;
