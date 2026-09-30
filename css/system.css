@@ -418,11 +418,6 @@ body.is-system:not(.is-arriving) .sys__dust {
     pointer-events: none;
 }
 
-body.is-reading-sun .btn-back {
-    visibility: hidden;
-    pointer-events: none;
-}
-
 .sys-dock {
     --sys-mark: var(--sys-hair-strong);
     position: fixed;
@@ -744,7 +739,7 @@ body.is-reading-sun .btn-back {
 .sys-lightbox {
     position: fixed;
     inset: 0;
-    z-index: 50;
+    z-index: 300; /* above the fixed navbar (200) */
     display: grid;
     grid-template-columns: 64px 1fr 64px;
     align-items: center;

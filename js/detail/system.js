@@ -771,6 +771,20 @@ function init(project) {
         return d + "Z";
     }
 
+    const textCtx = document.createElement("canvas").getContext("2d");
+    let sunLabelFit = cproj.title.toUpperCase();
+    // Width of a TOC label as drawn in reading mode: 12px mono with 0.1em tracking.
+    function readingLabelW(text) {
+        textCtx.font = `400 12px ${getComputedStyle(planetEls[0]?.label ?? sunLabel).fontFamily}`;
+        return textCtx.measureText(text).width + text.length * 1.2;
+    }
+    function fitLabel(text, prefix, maxW) {
+        if (readingLabelW(prefix + text) <= maxW) return text;
+        let s = text;
+        while (s.length > 1 && readingLabelW(`${prefix}${s}…`) > maxW) s = s.slice(0, -1);
+        return `${s.trimEnd()}…`;
+    }
+
     function measure() {
         W = stage.clientWidth || window.innerWidth;
         H = stage.clientHeight || window.innerHeight;
@@ -793,7 +807,18 @@ function init(project) {
         if (W >= 720) {
             // Past DOCK_MAX the box stops growing and centres in the space right of the TOC,
             // so wide screens don't leave an empty strip inside it.
-            const left0 = Math.max(300, toc.x + toc.n * toc.gap + 72);
+            // Keep the box clear of the widest reading label; the focused planet is drawn at HILITE
+            // scale. Past 42% of the width the box stops yielding and long labels get an ellipsis.
+            const prefix = "00\u2003";
+            const sunX = 24;
+            const planetX = 24 * HILITE;
+            let need = toc.x + sunX + readingLabelW(prefix + cproj.title.toUpperCase());
+            for (const p of planetEls) need = Math.max(need, toc.x + planetX + readingLabelW(prefix + p.label0) * HILITE);
+            const left0 = Math.max(300, toc.x + toc.n * toc.gap + 72, Math.min(need + 32, W * 0.42));
+            const room = left0 - 32 - toc.x;
+            sunLabelFit = fitLabel(cproj.title.toUpperCase(), prefix, room - sunX);
+            for (const p of planetEls) p.labelFit = fitLabel(p.label0, prefix, (room - planetX) / HILITE);
+            if (reading) numberLabels(true);
             const avail = W - left0 - DOCK_EDGE;
             const width = Math.min(avail, DOCK_MAX);
             const left = Math.round(left0 + (avail - width) / 2);
@@ -802,6 +827,9 @@ function init(project) {
         } else {
             dock.style.left = "";
             dock.style.right = "";
+            sunLabelFit = cproj.title.toUpperCase();
+            for (const p of planetEls) p.labelFit = null;
+            if (reading) numberLabels(true);
         }
         applyFraming();
     }
@@ -928,8 +956,8 @@ function init(project) {
 
     function numberLabels(on) {
         const tag = (i) => (on ? `${String(i + 1).padStart(2, "0")}\u2003` : "");
-        sunLabel.textContent = tag(0) + cproj.title.toUpperCase();
-        for (const [i, p] of planetEls.entries()) p.label.textContent = tag(i + 1) + p.label0;
+        sunLabel.textContent = tag(0) + (on ? sunLabelFit : cproj.title.toUpperCase());
+        for (const [i, p] of planetEls.entries()) p.label.textContent = tag(i + 1) + (on ? p.labelFit ?? p.label0 : p.label0);
     }
 
     function openSun() {
@@ -1315,6 +1343,7 @@ function init(project) {
 
     measure();
     window.addEventListener("resize", measure);
+    document.fonts?.ready.then(measure);
     raf = requestAnimationFrame(frame);
 
     if (arriving && !reduce) {

@@ -649,6 +649,7 @@ export async function mountConstellation(root, portfolio) {
         const p = node?.data;
         if (!p?.href || opening) return;
         opening = true;
+        updateCursorForHover();
         try { localStorage.setItem("currentProjectId", p.id); } catch { /* private mode */ }
         if (skipWarp) {
             window.location.href = p.href;
@@ -679,7 +680,7 @@ export async function mountConstellation(root, portfolio) {
 
     function updateCursorForHover() {
         if (!cursor) return;
-        if (!hoveredId) { cursor.setState("default"); return; }
+        if (!hoveredId || opening) { cursor.setState("default"); return; }
         const n = graph.byId.get(hoveredId);
         cursor.setState("node", n?.type === "project" && n.data?.href ? "Click to warp" : "");
         cursor.el.classList.toggle("is-label-above", n?.side === "below");
