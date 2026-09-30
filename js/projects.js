@@ -633,8 +633,8 @@ const projectsData = {
             tags: ["AI Design Assistant", "12 Expert Agents", "Regulation Q&A", "Models in Rhino", "CLI · v0.1"],
             githubLink: "https://github.com/baechubaechu/Sida",
             kind: "Code · In progress",
-            thesis: "Most AI tools in architecture generate one thing at a time: an image, a text, a summary. Design is not one generation task. Sida (시다, the Korean word for a studio assistant) splits design reasoning into twelve narrow experts coordinated by a Conductor. It keeps a project memory the designer approves, answers regulation questions only from retrieved text, and can model in Rhino. It is a working v0.1 prototype and still in development.",
-            subtitle: "An assistant for design reasoning, not a designer",
+            thesis: "The AI tools architects use today each cover one moment of a project: a render, a quick question, a massing study. None of them follows the project from one stage to the next, so the designer carries the context between tools by hand. Sida (시다, the Korean word for a studio assistant) is an attempt at one assistant for the whole design process: twelve narrow experts from site reading to the final review, coordinated by a Conductor and sharing a project memory the designer approves. It answers regulation questions only from retrieved text and can model in Rhino. It is a working v0.1 prototype and still in development.",
+            subtitle: "One assistant for the whole design process, not a designer",
             category: "AI Tool / CLI Platform",
             role: "Developer (solo)",
             timeline: "2026.07 - in progress",
@@ -643,10 +643,12 @@ const projectsData = {
                 {
                     id: "problem",
                     label: "Problem",
-                    lead: "How can an LLM support design reasoning without pretending to design the building?",
+                    lead: "A design moves through many stages, but today's AI tools each help with only one.",
                     blocks: [
-                        { kind: "text", body: "A studio project is not a single prompt. It means reading the site, sorting constraints, testing an intention, taking critique and deciding what to draw. A general chatbot mixes all of that into one answer and happily invents numbers and precedents." },
-                        { kind: "text", body: "Sida treats the model as a set of narrow lenses instead of one generator. Its output is structured Markdown that clarifies site issues, program demands, regulation agenda, the concept's claims, open problems and what to represent. It is never a finished design." },
+                        { kind: "text", strong: true, body: "Sida's aim is one integrated program that stays with the project through the whole process as an assistant." },
+                        { kind: "text", body: "A studio project runs from reading the site and the brief, through regulations, precedents and a concept, to spatial review, drawings and the final crit. Each stage has its own sources and tools, and what is decided in one stage shapes the next." },
+                        { kind: "text", body: "The AI tools in common use cover single moments of that process. Image generators make concept renders, general chatbots answer one question at a time, and massing tools test feasibility. None of them remembers what was decided last week, so the designer re-explains the project every time. A general chatbot also blends site, program and regulation into one fluent answer, and readily invents code numbers and precedents." },
+                        { kind: "text", body: "Sida helps the designer reason at each stage and keeps the decisions connected from one stage to the next, while design judgement stays with the designer." },
                         { kind: "rules", items: [
                             ["Does", "Reads the brief, asks focused questions, runs one expert at a time, keeps decisions and open questions in a project file"],
                             ["Does not", "Draw the building, fix numbers it has not retrieved, or claim that AI designed the project"]
@@ -982,51 +984,61 @@ return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? "";`
             tags: ["Emotion → Geometry", "Live Facial Expression", "EEG-driven Corridor", "Exhibited 2026, Seoul"],
             githubLink: "https://github.com/baechubaechu/emotion_sphere",
             visitLink: "https://emotion-sphere.vercel.app",
+            bookletLink: "booklet.html",
             kind: "Code",
             thesis: "If AI reads emotion as probability vectors, can those vectors become architecture? A webcam feeds a live pipeline where facial emotion drives a Three.js sphere in the browser, while positive and negative EEG samples from a public Kaggle dataset drive a Rhino script that inflates or erodes a corridor. Exhibited at Culture Stockpile Base, Seoul, January 2026.",
             subtitle: "Form follows Data.",
             category: "Computational Side Project / Interactive Installation",
             role: "Developer / Computational Designer",
             timeline: "January 2026",
-            cover: "assets-web/EAconcept.webp",
+            cover: "assets-web/EAcover.webp",
             chapters: [
                 {
                     id: "question",
                     label: "Question",
-                    lead: "Can code capture the warmth of a smile? If so, how do we observe it?",
+                    lead: "How far can AI read a human emotion, and can a space built from that reading still feel like it?",
                     blocks: [
-                        { kind: "text", body: "Neuroarchitecture leans on visual hierarchy; architectural phenomenology tends to prescribe the mood a space should create. Both decide the emotion for the visitor." },
-                        { kind: "text", body: "This experiment reverses the direction: measure the visitor first, then let the measurement shape the space. The rule is 'form follows data'." },
-                        { kind: "image", url: "assets-web/EAconcept.webp" }
+                        { kind: "text", body: "Architecture usually decides the emotion for the visitor, and AI emotion tools stop at a label and a probability. This project joins the two: it reads the visitor first and lets that reading shape the space. Form follows data." },
+                        { kind: "rules", strong: true, items: [
+                            ["Reading", "Does the AI understand the emotion, or only imitate its surface?"],
+                            ["Translation", "Does the space built from that reading still meet the emotion it came from?"]
+                        ] },
+                        { kind: "note", body: "Both stay open. The exhibition put them in front of visitors rather than answering them." }
                     ]
                 },
                 {
                     id: "pipeline",
                     label: "Pipeline",
-                    lead: "Input → analysis → translation → form.",
+                    lead: "Two linked experiments, one pipeline each: first read the emotion, then build with it.",
                     blocks: [
+                        { kind: "text", body: "The first experiment asks what the AI actually sees when it reads a face. It showed that the model handles emotion as probability vectors, not as feelings. The second takes those vectors as a building material and maps them onto the scale, light and texture of a corridor." },
+                        { kind: "text", strong: true, body: "01 · Emotional Sphere: reading emotion live" },
                         { kind: "steps", items: [
-                            "Input: live webcam frames on a tablet, plus positive / negative EEG samples from a public Kaggle emotion dataset.",
-                            "Analysis: Google Vision API returns emotion likelihoods (joy, sorrow, anger, surprise), head pose and face box. Latency under 100 ms.",
-                            "Translation: a Python/Flask server on Google Cloud Run normalises the raw values and returns them as JSON.",
-                            "Form: Three.js deforms a particle sphere in real time; Rhino + Python turns the dataset's EEG sequences into corridor geometry; ComfyUI renders the atmosphere.",
-                            "Archive: every frame and its vector are stored in Google Cloud Storage for later study."
+                            "Input: a webcam on a tablet captures the visitor's face frame by frame.",
+                            "Analysis: Google Vision API detects facial landmarks and returns emotion likelihoods (joy, sorrow, anger, surprise), head pose and the face box.",
+                            "Translation: a Python/Flask server normalises the raw values and streams them as JSON, under 100 ms per frame.",
+                            "Visualisation: Three.js renders a particle sphere whose vertex displacement follows emotional intensity.",
+                            "Archive: each original frame and its vector are saved to Google Cloud Storage."
                         ] },
                         { kind: "techs", items: [
-                            { name: "Google Vision API" }, { name: "Kaggle EEG dataset", note: "EEG" },
-                            { name: "Python · Flask" }, { name: "Three.js" },
-                            { name: "Rhino · Python 3" }, { name: "ComfyUI" }, { name: "GCS" }
+                            { name: "Google Vision API" }, { name: "Python · Flask" }, { name: "Three.js" }, { name: "GCS" }
                         ] },
-                        { kind: "rules", items: [
-                            ["First prototype · Rhino", "Before any web version: local DeepFace (RetinaFace) watching an image folder and writing JSON for Grasshopper. Softmax at temperature 0.85, a 50% confidence cutoff, entropy as an uncertainty score, plus tension and openness indices."],
-                            ["Exhibited version · Web", "Moved to the browser: Google Vision behind a Flask API, called frame by frame, so the loop runs live instead of file by file."]
+                        { kind: "text", strong: true, body: "02 · Emotional Space: building with the reading" },
+                        { kind: "steps", items: [
+                            "Input: positive and negative samples from a public Kaggle EEG emotion dataset; selected frequency bands seed the geometry.",
+                            "Script: Python reads the EEG float values and maps them to geometric parameters.",
+                            "Geometry: Rhino 8 displaces the corridor mesh, split into wall, ceiling and floor elements.",
+                            "AI render: ComfyUI (Z-Image Turbo) with ControlNet adds photoreal textures without changing the computed form.",
+                            "Combine: the separately rendered elements are composited in Photoshop."
                         ] },
-                        { kind: "note", body: "The sphere front end was prototyped in parallel with two models (GPT and Gemini versions kept side by side) before merging." }
+                        { kind: "techs", items: [
+                            { name: "Kaggle EEG dataset" }, { name: "Rhino 8 · Python 3" }, { name: "ComfyUI · ControlNet" }, { name: "Photoshop" }
+                        ] }
                     ]
                 },
                 {
                     id: "mapping",
-                    label: "Mapping Rules",
+                    label: "Sphere Mapping Rules",
                     lead: "Turning labels into numbers the geometry can use.",
                     blocks: [
                         { kind: "rules", items: [
@@ -1052,7 +1064,7 @@ return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? "";`
                 },
                 {
                     id: "divergence",
-                    label: "Algorithm",
+                    label: "Space Algorithm",
                     lead: "One framework, two opposite operations on the same corridor mesh.",
                     blocks: [
                         { kind: "rules", items: [
@@ -1099,7 +1111,7 @@ return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? "";`
                             { url: "assets-web/EApic3.webp" }, { url: "assets-web/EApic2.webp" }
                         ] },
                         { kind: "links", items: [
-                            { label: "Booklet", url: "assets/emotional_architect_booklet.pdf" },
+                            { label: "Booklet", url: "booklet.html" },
                             { label: "Live sphere", url: "https://emotion-sphere.vercel.app" },
                             { label: "GitHub", url: "https://github.com/baechubaechu/emotion_sphere" }
                         ] }

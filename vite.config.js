@@ -16,6 +16,7 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, "index.html"),
         detail: resolve(__dirname, "project-detail.html"),
+        booklet: resolve(__dirname, "booklet.html"),
       },
     },
   },

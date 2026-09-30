@@ -337,7 +337,7 @@ function firstImage(section) {
     return typeof first === "string" ? first : (first.url || "");
 }
 
-function sunDossierHTML(project, total) {
+function sunDossierHTML(project) {
     const sections = project.sections ?? [];
     const meta = sections.find((s) => s.type === "hero-meta") ?? {};
     const comp = sections.find((s) => s.type === "arch-competition-info") ?? {};
@@ -349,15 +349,15 @@ function sunDossierHTML(project, total) {
     // Project-level fields first; the section lookups only cover older data.
     const quote = project.subtitle || meta.subtitle || split.leadText || "";
     const thesis = project.thesis || lastParagraph(narrative.content) || split.description || concept.description || project.description || "";
-    const of = String(Math.max(1, total || 1)).padStart(2, "0");
     const kind = project.kind || "Project";
     const category = project.category || meta.category || "";
     const timeline = project.timeline || meta.timeline || "";
     const kindShown = category.toLowerCase().startsWith(kind.toLowerCase()) ? null : kind;
-    const kicker = [`01 / ${of}`, kindShown, category, timeline].filter(Boolean).join("  ·  ");
+    const kicker = ["01", kindShown, category, timeline].filter(Boolean).join("  ·  ");
     const links = [
         project.githubLink && { label: "GitHub", url: project.githubLink },
         project.visitLink && { label: "Live", url: project.visitLink },
+        project.bookletLink && { label: "Booklet", url: project.bookletLink },
     ].filter(Boolean);
     const role = project.role || meta.role;
     const organizer = project.organizer || comp.organizer;
@@ -380,7 +380,7 @@ function sunDossierHTML(project, total) {
     `;
 }
 
-function planetDossierHTML(project, planet, attr, idx, total) {
+function planetDossierHTML(project, planet, attr, idx) {
     const cited = (project.sections ?? []).filter((s) => (s.spine ?? []).includes(planet.id));
     const concept = cited.find((s) => s.type === "arch-concept");
     const pick = concept
@@ -389,8 +389,7 @@ function planetDossierHTML(project, planet, attr, idx, total) {
     const narrative = cited.find((s) => s.type === "text-full");
     const name = attr?.label || planet.label;
     const n = String((idx ?? 0) + 2).padStart(2, "0");
-    const of = String(total || 2).padStart(2, "0");
-    const kicker = `${n} / ${of}  ·  ${name}`;
+    const kicker = `${n}  ·  ${name}`;
     const lead = pick.leadText || pick.title || pick.label || "";
     let thesis = pick.description || pick.caption || "";
     if (!thesis && pick.techs) {
@@ -416,13 +415,13 @@ function planetDossierHTML(project, planet, attr, idx, total) {
 function blockHTML(b) {
     switch (b.kind) {
         case "text":
-            return `<p class="sys-dock__thesis">${esc(b.body)}</p>`;
+            return `<p class="sys-dock__thesis${b.strong ? " sys-dock__thesis--strong" : ""}">${esc(b.body)}</p>`;
         case "list":
             return `<ul class="sys-dock__list">${b.items.map((it) => `<li>${esc(it)}</li>`).join("")}</ul>`;
         case "steps":
             return `<ol class="sys-dock__list sys-dock__list--steps">${b.items.map((it) => `<li>${esc(it)}</li>`).join("")}</ol>`;
         case "rules":
-            return `<dl class="sys-dock__rules">${b.items.map(([k, v]) =>
+            return `<dl class="sys-dock__rules${b.strong ? " sys-dock__rules--strong" : ""}">${b.items.map(([k, v]) =>
                 `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>`;
         case "techs":
             return `<ul class="sys-dock__techs">${b.items.map((t) =>
@@ -453,11 +452,10 @@ function blockHTML(b) {
     }
 }
 
-function chapterDossierHTML(chapter, idx, total) {
+function chapterDossierHTML(chapter, idx) {
     const n = String(idx + 2).padStart(2, "0");
-    const of = String(total || 2).padStart(2, "0");
     return `
-        <p class="sys-dock__kicker">${esc(`${n} / ${of}  ·  ${chapter.label}`)}</p>
+        <p class="sys-dock__kicker">${esc(`${n}  ·  ${chapter.label}`)}</p>
         <h2 class="sys-dock__title">${esc(String(chapter.title || chapter.label).toUpperCase())}</h2>
         ${chapter.lead ? `<p class="sys-dock__quote">${esc(chapter.lead)}</p>` : ""}
         ${(chapter.blocks ?? []).map(blockHTML).join("")}
@@ -651,13 +649,12 @@ function init(project) {
     dock.inert = true;
     // Story runs 0 → 1 (free system → TOC); the chapters themselves are one continuous scroll.
     const storyMax = 1;
-    const total = 1 + planets.length;
     const plateHTML = (id, body) => `<section class="sys-dock__plate" data-plate="${esc(id)}">${body}</section>`;
     dock.innerHTML = [
-        plateHTML("sun", sunDossierHTML(project, total)),
+        plateHTML("sun", sunDossierHTML(project)),
         ...planets.map((p, i) => plateHTML(p.id, chapters.length
-            ? chapterDossierHTML(chapters[i], i, total)
-            : planetDossierHTML(project, p, attrOf.get(p.id), i, total))),
+            ? chapterDossierHTML(chapters[i], i)
+            : planetDossierHTML(project, p, attrOf.get(p.id), i))),
     ].join("");
     document.body.append(dock);
     // Gallery rows split their width by each image's aspect ratio, so every image in a row

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emotional Architecture Booklet | Jihun Park</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        html, body { margin: 0; background: #0b0b0d; color: #e8e6e1; font-family: "IBM Plex Mono", monospace; }
+        header {
+            position: sticky; top: 0; z-index: 1;
+            display: flex; justify-content: space-between; align-items: center; gap: 16px;
+            padding: 14px 24px; background: rgba(11, 11, 13, .9); backdrop-filter: blur(6px);
+            font-size: 13px; letter-spacing: .04em;
+        }
+        header a { color: #e8e6e1; text-decoration: none; opacity: .75; }
+        header a:hover { opacity: 1; }
+        main { display: flex; flex-direction: column; align-items: center; gap: 24px; padding: 24px 16px 64px; }
+        main img { display: block; width: min(820px, 100%); height: auto; aspect-ratio: 1414 / 2000; background: #16161a; }
+    </style>
+</head>
+
+<body>
+    <header>
+        <a href="project-detail.html?id=emotional-architecture">← Back to project</a>
+        <span>Emotional Architecture · Booklet</span>
+        <a href="assets/emotional_architect_booklet.pdf" download>PDF ↓</a>
+    </header>
+    <main id="pages"></main>
+    <script>
+        const main = document.getElementById("pages");
+        for (let i = 1; i <= 16; i++) {
+            const img = document.createElement("img");
+            img.src = `assets-web/ea-booklet/p${String(i).padStart(2, "0")}.webp`;
+            img.alt = `Booklet page ${i}`;
+            img.loading = i <= 2 ? "eager" : "lazy";
+            main.appendChild(img);
+        }
+    </script>
+</body>
+
+</html>

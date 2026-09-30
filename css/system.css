@@ -570,6 +570,11 @@ body.is-system:not(.is-arriving) .sys__dust {
     color: var(--sys-ink-2);
 }
 
+.sys-dock__thesis--strong {
+    font-weight: 600;
+    color: var(--sys-ink);
+}
+
 .sys-dock__thesis + *,
 .sys-dock__list + *,
 .sys-dock__rules + *,
@@ -592,7 +597,8 @@ body.is-system:not(.is-arriving) .sys__dust {
     border-top: 1px solid var(--sys-hair);
 }
 
-.sys-dock__plate:last-child {
+/* A short chapter still fills the dock, so the next one never peeks in below it. */
+.sys-dock__plate {
     min-height: 100%;
 }
 
@@ -655,6 +661,15 @@ body.is-system:not(.is-arriving) .sys__dust {
     font-size: clamp(14px, 1vw, 15.5px);
     line-height: 1.5;
     color: var(--sys-ink-2);
+}
+
+.sys-dock__thesis + .sys-dock__rules--strong {
+    margin-top: 54px;
+}
+
+.sys-dock__rules--strong dd {
+    font-weight: 600;
+    color: var(--sys-ink);
 }
 
 .sys-dock__techs {
