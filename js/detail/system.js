@@ -6,7 +6,7 @@
  * drawn in perspective (a slightly elevated look, not a floor-plan).
  */
 
-import { portfolio } from "../constellation/data/portfolio.js?v=2.8";
+import { portfolio } from "../constellation/data/portfolio.js?v=2.9";
 import {
     svgEl, htmlEl, mulberry32, hashString, prefersReducedMotion, esc, clamp,
 } from "../constellation/lib/utils.js?v=2.0";
@@ -303,22 +303,28 @@ function sunDossierHTML(project, total) {
     const split = sections.find((s) => s.type === "split-content") ?? {};
     const gallery = sections.find((s) => s.type === "dev-frontend-gallery" || s.type === "arch-renders") ?? {};
     const narrative = sections.find((s) => s.type === "text-full") ?? {};
-    const quote = meta.subtitle || split.leadText || "";
+    // Project-level fields first; the section lookups only cover older data.
+    const quote = project.subtitle || meta.subtitle || split.leadText || "";
     const thesis = project.thesis || lastParagraph(narrative.content) || split.description || concept.description || project.description || "";
     const of = String(Math.max(1, total || 1)).padStart(2, "0");
     const kind = project.kind || "Project";
-    const kindShown = String(meta.category || "").toLowerCase().startsWith(kind.toLowerCase()) ? null : kind;
-    const kicker = [`01 / ${of}`, kindShown, meta.category, meta.timeline].filter(Boolean).join("  ·  ");
+    const category = project.category || meta.category || "";
+    const timeline = project.timeline || meta.timeline || "";
+    const kindShown = category.toLowerCase().startsWith(kind.toLowerCase()) ? null : kind;
+    const kicker = [`01 / ${of}`, kindShown, category, timeline].filter(Boolean).join("  ·  ");
     const links = [
         project.githubLink && { label: "GitHub", url: project.githubLink },
         project.visitLink && { label: "Live", url: project.visitLink },
     ].filter(Boolean);
+    const role = project.role || meta.role;
+    const organizer = project.organizer || comp.organizer;
+    const team = project.team || comp.team;
     const rows = [
-        meta.role && ["Role", plain(meta.role)],
-        comp.organizer && ["Organizer", comp.organizer],
-        comp.team && ["Team", comp.team],
+        role && ["Role", plain(role)],
+        organizer && ["Organizer", organizer],
+        team && ["Team", team],
     ].filter(Boolean);
-    const img = panel.image || firstImage(concept) || firstImage(split) || firstImage(gallery) || project.thumbnail || "";
+    const img = project.cover || panel.image || firstImage(concept) || firstImage(split) || firstImage(gallery) || project.thumbnail || "";
     return `
         <p class="sys-dock__kicker">${esc(kicker)}</p>
         <h2 class="sys-dock__title">${esc(project.title)}</h2>
@@ -415,10 +421,8 @@ function chapterDossierHTML(chapter, idx, total) {
     `;
 }
 
-window.__systemHref = (id) => {
-    const q = portfolio.projects.find((p) => p.detailId === id || p.id === id);
-    return q?.href || null;
-};
+// js/detail.js asks this before rendering: projects on the home sky open as a system.
+window.__systemHref = (id) => portfolio.projects.find((p) => p.id === id)?.href || null;
 
 function boot() {
     if (window.__detailProject) init(window.__detailProject);
@@ -427,7 +431,7 @@ function boot() {
 
 function init(project) {
     if (document.querySelector("[data-system]")) return;
-    const cproj = portfolio.projects.find((q) => q.detailId === project.id || q.id === project.id);
+    const cproj = portfolio.projects.find((q) => q.id === project.id);
     if (!cproj) return;
 
     const attrOf = new Map(portfolio.attributes.map((a) => [a.id, a]));

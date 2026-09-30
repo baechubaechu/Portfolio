@@ -200,8 +200,8 @@ export async function mountConstellation(root, portfolio) {
             onSelect: (id) => select(id),
             onOpen: (id, e) => {
                 const node = graph.byId.get(id);
-                if (node?.data?.detailId) {
-                    try { localStorage.setItem("currentProjectId", node.data.detailId); } catch { /* private mode */ }
+                if (node?.data?.href) {
+                    try { localStorage.setItem("currentProjectId", node.data.id); } catch { /* private mode */ }
                 }
                 // Let the <a href> navigate natively. Do not preventDefault.
             },
@@ -631,9 +631,7 @@ export async function mountConstellation(root, portfolio) {
         const p = node?.data;
         if (!p?.href || opening) return;
         opening = true;
-        if (p.detailId) {
-            try { localStorage.setItem("currentProjectId", p.detailId); } catch { /* private mode */ }
-        }
+        try { localStorage.setItem("currentProjectId", p.id); } catch { /* private mode */ }
         if (skipWarp) {
             window.location.href = p.href;
             return;

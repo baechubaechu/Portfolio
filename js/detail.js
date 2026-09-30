@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Fallback to localStorage if the URL parameter was stripped by a server redirect
     if (!projectId) {
-        projectId = localStorage.getItem('currentProjectId');
+        try { projectId = localStorage.getItem('currentProjectId'); } catch { /* private mode */ }
     }
 
     if (!projectId) {
@@ -12,27 +12,37 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // Find the project in projectsData
-    let project = null;
-    for (const category in projectsData) {
-        project = projectsData[category].find(p => p.id === projectId);
-        if (project) break;
-    }
-
+    const project = findProject(projectId);
     if (!project) {
         showError("Project ID '" + projectId + "' not found.");
         return;
     }
 
+    // Old links (?id=sangsangblue, ?id=Student%20Driven%20Village) keep working;
+    // the address bar settles on the canonical slug.
+    if (urlParams.get('id') !== project.id) {
+        urlParams.set('id', project.id);
+        history.replaceState(history.state, '', `${location.pathname}?${urlParams}${location.hash}`);
+    }
+
     renderModularProject(project);
 });
+
+function findProject(id) {
+    for (const list of Object.values(projectsData)) {
+        const hit = list.find((p) => p.id === id || p.aliases?.includes(id));
+        if (hit) return hit;
+    }
+    return null;
+}
 
 function renderModularProject(project) {
     const container = document.getElementById('detail-card-container');
     if (!container) return;
 
-    // Constellation destinations land in the system, not the written spine.
-    if (project.sections?.length && window.__systemHref?.(project.id)) {
+    // Projects on the home sky open as their own system (js/detail/system.js),
+    // built from project fields and `chapters`. `sections` is only the fallback below.
+    if (window.__systemHref?.(project.id)) {
         container.innerHTML = "";
         window.__detailProject = project;
         document.body.classList.add("is-system");
@@ -43,12 +53,17 @@ function renderModularProject(project) {
     // Clear loading state
     container.innerHTML = '';
 
-    if (!project.sections || project.sections.length === 0) {
+    const sections = project.sections ?? [];
+    if (sections.length === 0) {
         showError("This project has no detailed content blocks defined.");
         return;
     }
 
-    project.sections.forEach((section, index) => {
+    // Header facts live on the project itself; legacy data may still carry a hero-meta block.
+    const hasHeader = sections.some((s) => s.type === 'hero-meta');
+    if (!hasHeader) container.insertAdjacentHTML('beforeend', createSectionHTML({ type: 'hero-meta' }, project, -1));
+
+    sections.forEach((section, index) => {
         const sectionHTML = createSectionHTML(section, project, index);
         if (sectionHTML) {
             container.insertAdjacentHTML('beforeend', sectionHTML);
@@ -187,12 +202,12 @@ function createSectionHTML(section, project, index) {
                     <div class="project-title-group">
                         <span class="mono-tag">// ARCHIVE_ID: ${project.id.toUpperCase()}</span>
                         <h1>${project.title}</h1>
-                        <p class="project-subtitle">${section.subtitle || ''}</p>
+                        <p class="project-subtitle">${section.subtitle || project.subtitle || ''}</p>
                     </div>
                     <div class="project-meta-grid">
-                        <div class="meta-item"><h4>Category</h4><p>${section.category || '-'}</p></div>
-                        <div class="meta-item"><h4>Role</h4><p>${section.role || '-'}</p></div>
-                        <div class="meta-item"><h4>Timeline</h4><p>${section.timeline || '-'}</p></div>
+                        <div class="meta-item"><h4>Category</h4><p>${section.category || project.category || '-'}</p></div>
+                        <div class="meta-item"><h4>Role</h4><p>${section.role || project.role || '-'}</p></div>
+                        <div class="meta-item"><h4>Timeline</h4><p>${section.timeline || project.timeline || '-'}</p></div>
                         <div class="meta-item">
                             <h4>Execution</h4>
                             <div class="meta-links">

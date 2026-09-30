@@ -12,7 +12,8 @@
  *   label  display name
  *
  * ─ Project ─────────────────────────────────────────────────
- *   id          unique slug (must not collide with an attribute id)
+ *   id          unique slug (must not collide with an attribute id). Also the
+ *               project id in js/projects.js and the ?id= of its detail page.
  *   title       display name (kept short: it is drawn on the map)
  *   domain      "school" | "other": which side of the sky the project
  *               settles on, matching the School Works / Other Works
@@ -20,8 +21,6 @@
  *   year        number
  *   category    short label shown in the info panel
  *   href        detail page URL. `null` → shown as "in progress" (no link)
- *   detailId    optional: id inside js/projects.js (used for the
- *               localStorage fallback that project-detail.html expects)
  *   attributes  [{ id, weight }]  weight ∈ [0, 1]
  *               higher weight → shorter, stronger, more opaque link
  *   asterism    optional figure drawn on select:
@@ -59,7 +58,6 @@ export const projects = [
         title: "X-tra Space",
         year: 2026,
         category: "Graduation project",
-        detailId: "xtra-space",
         href: "project-detail.html?id=xtra-space",
         attributes: [
             { id: "ai", weight: 0.9 },
@@ -93,8 +91,7 @@ export const projects = [
         title: "Student Driven Village",
         year: 2025,
         category: "School work",
-        detailId: "Student Driven Village",
-        href: "project-detail.html?id=Student%20Driven%20Village",
+        href: "project-detail.html?id=student-driven-village",
         attributes: [
             { id: "physical-model", weight: 0.9 },
             { id: "research", weight: 0.8 },
@@ -128,8 +125,7 @@ export const projects = [
         title: "Kitsch Fish",
         year: 2026,
         category: "Competition",
-        detailId: "sangsangblue",
-        href: "project-detail.html?id=sangsangblue",
+        href: "project-detail.html?id=kitch-fish",
         panelSlot: "top-left",
         attributes: [
             { id: "parametric", weight: 0.9 },
@@ -164,7 +160,6 @@ export const projects = [
         title: "Little Forest",
         year: 2023,
         category: "School work",
-        detailId: "little-forest",
         href: "project-detail.html?id=little-forest",
         attributes: [
             { id: "research", weight: 0.8 },
@@ -192,7 +187,6 @@ export const projects = [
         title: "Class.IC",
         year: 2023,
         category: "School work",
-        detailId: "class-ic",
         href: "project-detail.html?id=class-ic",
         attributes: [
             { id: "structure", weight: 0.8 },
@@ -221,8 +215,7 @@ export const projects = [
         title: "Emotional Architecture",
         year: 2026,
         category: "Interactive installation",
-        detailId: "emotional-architect",
-        href: "project-detail.html?id=emotional-architect",
+        href: "project-detail.html?id=emotional-architecture",
         attributes: [
             { id: "ai", weight: 0.9 },
             { id: "interaction", weight: 0.9 },
@@ -261,7 +254,6 @@ export const projects = [
         year: 2026,
         category: "AI tool · in progress",
         bias: [0.62, 0.2],
-        detailId: "sida",
         href: "project-detail.html?id=sida",
         attributes: [
             { id: "ai", weight: 0.95 },
@@ -293,7 +285,6 @@ export const projects = [
         year: 2026,
         category: "Personal project",
         bias: [0.86, 0.72],
-        detailId: "deary",
         href: "project-detail.html?id=deary",
         attributes: [
             { id: "code", weight: 0.9 },
