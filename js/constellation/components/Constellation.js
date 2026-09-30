@@ -16,7 +16,7 @@
 
 import { buildGraph } from "../lib/graph.js";
 import { createLayout } from "../lib/graphLayout.js?v=2.7";
-import { buildAsterisms } from "../lib/asterism.js?v=2.0";
+import { buildAsterisms } from "../lib/asterism.js?v=2.1";
 import { resolveConfig } from "../config.js?v=3.8";
 import { toSphere, project as projectSky, resolveCamera, createSkyDust, createBandDust, bandToWorld } from "../lib/sky.js?v=2.9";
 import {
@@ -41,7 +41,6 @@ export async function mountConstellation(root, portfolio) {
 
     /* ───────────── graph ───────────── */
     const graph = buildGraph(portfolio);
-    const asterisms = buildAsterisms(graph, portfolio.projects);
     for (const n of graph.nodes) n.labelText = n.label.toUpperCase();
 
     if (figEl) {
@@ -89,6 +88,8 @@ export async function mountConstellation(root, portfolio) {
     layout.setStage(size.width, size.height);
     layout.setObstacles(collectObstacles());
     layout.settle();
+    // Figures are read off the settled sky, so they follow the real star positions.
+    const asterisms = buildAsterisms(graph, portfolio.projects, { geometric: true });
 
     /* ───────────── views ───────────── */
     const dustLayer = svgEl("g", { class: "c-layer c-layer--dust", "aria-hidden": "true" });
@@ -129,12 +130,29 @@ export async function mountConstellation(root, portfolio) {
 
     const edgeViews = new Map();
     const visualEdges = [...layout.edges];
-    for (const fig of asterisms.byProject.values()) visualEdges.push(...fig.edges);
-    for (const e of visualEdges) {
+    function addEdgeView(e) {
         const view = createEdgeView(e);
         if (e.kind === "asterism") view.el.classList.add("c-edge--asterism");
         edgeViews.set(e.id, view);
         edgesLayer.append(view.el);
+    }
+    for (const e of visualEdges) addEdgeView(e);
+    for (const e of asterisms.allEdges()) { visualEdges.push(e); addEdgeView(e); }
+
+    /** After the layout moves, swap asterism edge views for the re-read figures. */
+    function syncAsterismViews() {
+        const next = asterisms.allEdges();
+        const keep = new Set(next.map((e) => e.id));
+        for (const e of visualEdges) {
+            if (e.kind !== "asterism" || keep.has(e.id)) continue;
+            edgeViews.get(e.id)?.el.remove();
+            edgeViews.delete(e.id);
+        }
+        visualEdges.length = layout.edges.length;
+        for (const e of next) {
+            visualEdges.push(e);
+            if (!edgeViews.has(e.id)) addEdgeView(e);
+        }
     }
 
     const nodeViews = new Map();
@@ -930,6 +948,9 @@ export async function mountConstellation(root, portfolio) {
         layout.run(120);
         layout.placeLabels();
         layout.run(40);
+        asterisms.refresh();
+        syncAsterismViews();
+        applyState();
         kick();
     }
     const onResize = debounce(relayout, 160);
