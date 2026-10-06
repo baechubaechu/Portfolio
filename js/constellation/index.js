@@ -6,7 +6,6 @@
  * To restyle, edit css/constellation.css.
  */
 
-import "../analytics.js";
 import { portfolio } from "./data/portfolio.js?v=3.0";
 import { mountConstellation } from "./components/Constellation.js?v=5.36";
 
