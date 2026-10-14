@@ -15,19 +15,19 @@
  */
 
 import { buildGraph } from "../lib/graph.js?v=1.1";
-import { createLayout } from "../lib/graphLayout.js?v=2.8";
+import { createLayout } from "../lib/graphLayout.js?v=2.9";
 import { buildAsterisms } from "../lib/asterism.js?v=2.2";
-import { resolveConfig } from "../config.js?v=3.8";
+import { resolveConfig, visualOf } from "../config.js?v=3.9";
 import { toSphere, project as projectSky, resolveCamera, createSkyDust, createBandDust, bandToWorld } from "../lib/sky.js?v=2.9";
 import {
     createTextMeasurer, debounce, hasFinePointer, mulberry32, hashString,
     prefersReducedMotion, svgEl, waitForFonts,
 } from "../lib/utils.js?v=2.0";
-import { createNodeView } from "./Node.js?v=3.3";
+import { createNodeView } from "./Node.js?v=3.4";
 import { createEdgeView } from "./Edge.js?v=2.5";
 import { createProjectInfo } from "./ProjectInfo.js?v=3.1";
 import { createCursor } from "./Cursor.js?v=2.3";
-import { createIdlePulse } from "./IdlePulse.js?v=1.8";
+import { createIdlePulse } from "./IdlePulse.js?v=1.9";
 
 export async function mountConstellation(root, portfolio) {
     const stageEl = root.querySelector("[data-c-stage]");
@@ -51,11 +51,11 @@ export async function mountConstellation(root, portfolio) {
     let cfg = resolveConfig(stageEl.clientWidth || window.innerWidth);
     const measure = createTextMeasurer();
 
-    await waitForFonts([cfg.visual.project.labelFont, cfg.visual.attribute.labelFont]);
+    await waitForFonts([cfg.visual.project.labelFont, cfg.visual.featured.labelFont, cfg.visual.attribute.labelFont]);
 
     function applyMetrics() {
         for (const n of graph.nodes) {
-            const v = n.type === "project" ? cfg.visual.project : cfg.visual.attribute;
+            const v = visualOf(n, cfg);
             n.r = v.r;
             n.labelGap = v.labelGap;
             n.labelH = v.labelH;

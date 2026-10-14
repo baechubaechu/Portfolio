@@ -23,6 +23,14 @@ export const CONFIG = {
             labelGap: 9,
             labelH: 13,
         },
+        /** Lead works (`featured: true` in the data): a larger star and name. */
+        featured: {
+            r: 5.4,
+            labelFont: '600 13px Inter, "Segoe UI", sans-serif',
+            letterSpacing: 0.08, // em
+            labelGap: 12,
+            labelH: 16,
+        },
         attribute: {
             r: 2.4,
             labelFont: '400 10px "IBM Plex Mono", Consolas, monospace',
@@ -104,6 +112,7 @@ export const CONFIG = {
         charge: {
             project: -1950,
             attribute: -1080,
+            featured: 1.6,        // lead works push harder, keeping some sky around them
             distanceMin: 12,
             distanceMax: 840,
         },
@@ -162,6 +171,7 @@ export const CONFIG = {
     compact: {
         visual: {
             project: { r: 3.2, labelFont: '500 10px Inter, "Segoe UI", sans-serif', labelGap: 7, labelH: 12 },
+            featured: { r: 4.4, labelFont: '600 11px Inter, "Segoe UI", sans-serif', labelGap: 9, labelH: 13 },
             attribute: { r: 2.2, labelFont: '400 9px "IBM Plex Mono", Consolas, monospace', labelGap: 6, labelH: 11 },
             ringR: 9,
         },
@@ -198,6 +208,12 @@ export function mergeConfig(base, patch) {
             : p;
     }
     return out;
+}
+
+/** Node geometry & label metrics for a graph node. */
+export function visualOf(node, cfg) {
+    if (node.type !== "project") return cfg.visual.attribute;
+    return node.data?.featured ? cfg.visual.featured : cfg.visual.project;
 }
 
 /** Resolve the config for a given stage width. */

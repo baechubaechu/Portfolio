@@ -30,6 +30,9 @@
  *               (not a hub). Omitted → a count-based template is used.
  *   panelSlot   optional card corner: "top-left" | "top-right" |
  *               "bottom-left" | "bottom-right". Omitted → auto.
+ *   featured    optional: a lead work. Drawn as a brighter, larger star
+ *               with a larger name and a little more sky around it, so
+ *               it is where the eye (and hand) goes first.
  *   bias        optional [fx, fy] (0…1 of the stage): pulls the project
  *               toward that spot on wide screens, to untangle neighbours.
  *
@@ -55,6 +58,8 @@ export const projects = [
     {
         id: "xtra-space",
         domain: "school",
+        featured: true,
+        bias: [0.26, 0.52],
         title: "X-tra Space",
         year: 2026,
         category: "Graduation project",
@@ -89,6 +94,7 @@ export const projects = [
     {
         id: "student-driven-village",
         domain: "school",
+        bias: [0.42, 0.93],
         title: "Student Driven Village",
         year: 2025,
         category: "School work",
@@ -214,6 +220,8 @@ export const projects = [
     {
         id: "emotional-architecture",
         domain: "other",
+        featured: true,
+        bias: [0.71, 0.29],
         title: "Emotional Architecture",
         year: 2026,
         category: "Interactive installation",
@@ -255,7 +263,7 @@ export const projects = [
         title: "Sida",
         year: 2026,
         category: "AI tool · in progress",
-        bias: [0.62, 0.2],
+        bias: [0.61, 0.09],
         href: "project-detail.html?id=sida",
         attributes: [
             { id: "ai", weight: 0.95 },

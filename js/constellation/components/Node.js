@@ -3,14 +3,16 @@
  * Pure presentation — state is applied through CSS classes.
  */
 
-import { svgEl } from "../lib/utils.js?v=2.0";
+import { hashString, svgEl } from "../lib/utils.js?v=2.0";
+import { visualOf } from "../config.js?v=3.9";
 
 export function createNodeView(node, cfg) {
     const isProject = node.type === "project";
-    let v = isProject ? cfg.visual.project : cfg.visual.attribute;
+    const isFeatured = isProject && !!node.data?.featured;
+    let v = visualOf(node, cfg);
 
     const el = svgEl("g", {
-        class: `c-node c-node--${node.type}`,
+        class: `c-node c-node--${node.type}${isFeatured ? " c-node--featured" : ""}`,
         "data-id": node.id,
         tabindex: 0,
         role: "button",
@@ -18,18 +20,21 @@ export function createNodeView(node, cfg) {
     });
 
     const hitbox = svgEl("rect", { class: "c-node__hitbox" });
-    const hit = svgEl("circle", { class: "c-node__hit", r: isProject ? 22 : 16 });
+    const hit = svgEl("circle", { class: "c-node__hit", r: isFeatured ? 28 : isProject ? 22 : 16 });
 
-    const ring = isProject
-        ? svgEl("circle", { class: "c-node__ring", r: cfg.visual.ringR, pathLength: 1 })
-        : svgEl("circle", { class: "c-node__ring", r: cfg.visual.ringR - 2, pathLength: 1 });
+    const ringR = (c) => isFeatured ? c.visual.ringR + 4 : isProject ? c.visual.ringR : c.visual.ringR - 2;
+    const ring = svgEl("circle", { class: "c-node__ring", r: ringR(cfg), pathLength: 1 });
+
+    // Lead works send a slow ring outward now and then: an invitation, not an alarm.
+    const beacon = isFeatured ? svgEl("circle", { class: "c-node__beacon", r: v.r + 3, "aria-hidden": "true" }) : null;
+    if (beacon) el.style.setProperty("--c-beacon-delay", `${-(hashString(node.id) % 5600)}ms`);
 
     const dot = svgEl("circle", { class: "c-node__dot", r: v.r });
 
     const label = svgEl("text", { class: "c-node__label" });
     label.textContent = node.labelText;
 
-    el.append(hitbox, hit, ring, dot, label);
+    el.append(hitbox, hit, ring, ...(beacon ? [beacon] : []), dot, label);
 
     let side = null;
 
@@ -37,7 +42,7 @@ export function createNodeView(node, cfg) {
         const lw = node.labelW || 48;
         const lh = v.labelH;
         const gap = node.r + v.labelGap;
-        const disc = isProject ? 18 : 14;
+        const disc = isFeatured ? 24 : isProject ? 18 : 14;
         let lx = gap, ly = -lh / 2;
         switch (side) {
             case "left": lx = -gap - lw; ly = -lh / 2; break;
@@ -85,9 +90,10 @@ export function createNodeView(node, cfg) {
         el,
         /** Re-read geometry after the config changed (e.g. compact ↔ desktop). */
         applyConfig(next) {
-            v = isProject ? next.visual.project : next.visual.attribute;
+            v = visualOf(node, next);
             dot.setAttribute("r", v.r);
-            ring.setAttribute("r", isProject ? next.visual.ringR : next.visual.ringR - 2);
+            ring.setAttribute("r", ringR(next));
+            beacon?.setAttribute("r", v.r + 3);
             side = null; // force label offsets to be recomputed
         },
         /** Move the whole group. `scale` is perspective; `fade` is limb falloff. */

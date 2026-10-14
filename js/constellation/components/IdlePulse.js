@@ -6,7 +6,10 @@ export function createIdlePulse({ root, graph, nodeViews, edgeViews, asterisms, 
     const glowMs = 600;
     const restMs = 3000;
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const projects = graph.projects.filter(p => graph.neighborsOf(p.id).length);
+    // Lead works open the cycle, so the first hint lands on them.
+    const projects = graph.projects
+        .filter(p => graph.neighborsOf(p.id).length)
+        .sort((a, b) => (b.data?.featured ? 1 : 0) - (a.data?.featured ? 1 : 0));
     let timer = 0, index = 0, ready = false, busy = false, visible = false, destroyed = false;
     const active = new Set();
 

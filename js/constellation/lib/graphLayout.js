@@ -174,13 +174,14 @@ export function createLayout(graph, config) {
         const f = cfg.forces.charge;
         const min2 = f.distanceMin * f.distanceMin;
         const max2 = f.distanceMax * f.distanceMax * k;
-        const qp = f.project * k, qa = f.attribute * k;
+        const qp = f.project * k, qa = f.attribute * k, qf = qp * (f.featured ?? 1);
+        const q = (n) => n.type !== "project" ? qa : n.data?.featured ? qf : qp;
         for (let i = 0; i < nodes.length; i++) {
             const n = nodes[i];
-            const sn = n.type === "project" ? qp : qa;
+            const sn = q(n);
             for (let j = i + 1; j < nodes.length; j++) {
                 const m = nodes[j];
-                const sm = m.type === "project" ? qp : qa;
+                const sm = q(m);
                 let dx = m.x - n.x, dy = m.y - n.y;
                 let d2 = dx * dx + dy * dy;
                 if (d2 > max2) continue;

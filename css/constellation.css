@@ -270,6 +270,40 @@
     stroke-width: 1;
 }
 
+/* lead works: a brighter star with a soft glow, and a slow outward ring */
+.c-node--featured .c-node__dot {
+    filter:
+        drop-shadow(0 0 3px color-mix(in srgb, var(--c-ink) 60%, transparent))
+        drop-shadow(0 0 10px color-mix(in srgb, var(--c-ink) 22%, transparent));
+}
+
+.c-node__beacon {
+    fill: none;
+    stroke: var(--c-ink);
+    stroke-width: 0.8;
+    vector-effect: non-scaling-stroke;
+    opacity: 0;
+    pointer-events: none;
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: c-beacon 5600ms var(--c-ease) var(--c-beacon-delay, 0ms) infinite;
+}
+
+@keyframes c-beacon {
+    0%        { transform: scale(1);   opacity: 0; }
+    10%       { opacity: 0.45; }
+    62%, 100% { transform: scale(3.2); opacity: 0; }
+}
+
+/* the ring only invites while nothing is chosen */
+.c-hero__stage.has-selection .c-node__beacon,
+.c-hero.is-reduced-motion .c-node__beacon,
+.c-hero.is-warp-prep .c-node__beacon,
+.c-hero.is-warping .c-node__beacon {
+    animation: none;
+    opacity: 0;
+}
+
 /* activated attributes fill in */
 .c-node--attribute.is-linked .c-node__dot,
 .c-node--attribute.is-focus .c-node__dot {
@@ -355,6 +389,13 @@
     letter-spacing: 0.09em;
     opacity: 0.92;
     cursor: pointer;
+}
+
+.c-node--project.c-node--featured .c-node__label {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    opacity: 1;
 }
 
 .c-node--attribute .c-node__label {
@@ -1000,6 +1041,7 @@
     /* smaller, slightly quieter type on the map */
     .c-hero { --c-label-idle-attribute: 0.36; }
     .c-node--project .c-node__label { font-size: 10px; }
+    .c-node--project.c-node--featured .c-node__label { font-size: 11px; }
     .c-node--attribute .c-node__label { font-size: 9px; }
 }
 
