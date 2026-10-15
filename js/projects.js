@@ -33,8 +33,12 @@ const projectsData = {
                     title: "A station people only pass through",
                     lead: "Geumjeong Station is transfer infrastructure planned for speed, and it cuts the city and its green axis in two.",
                     blocks: [
-                        { kind: "text", body: "Modern stations are planned around fast movement, clear guidance and transfer efficiency. In the process the station becomes a pass-through device. People rarely stop, notice the space, or stay. I chose a transfer hub because it is the most everyday and most functional public space there is." },
-                        { kind: "text", body: "I compared bed-town stations served by GTX and three or more lines: Daegok, Bupyeong and Geumjeong. Geumjeong, in Gunpo, a bed town that depends on Seoul and Anyang, had the most severance: the rail corridor splits the city, and Sanbon Stream, covered in 1995, is cut along with it. The project builds on the plan to reopen the stream." },
+                        { kind: "heading", body: "The station as a pass-through device" },
+                        { kind: "text", body: "Modern stations are planned around fast movement, clear guidance and transfer efficiency. In the process the station becomes a pass-through device." },
+                        { kind: "text", body: "People rarely stop, notice the space, or stay. I chose a transfer hub because it is the most everyday and most functional public space there is." },
+                        { kind: "heading", body: "Why Geumjeong" },
+                        { kind: "text", body: "I compared bed-town stations served by GTX and three or more lines: Daegok, Bupyeong and Geumjeong." },
+                        { kind: "text", body: "Geumjeong, in Gunpo, a bed town that depends on Seoul and Anyang, had the most severance: the rail corridor splits the city, and Sanbon Stream, covered in 1995, is cut along with it. The project builds on the plan to reopen the stream." },
                         { kind: "rules", items: [
                             ["Location", "Geumjeong Station, Gunpo, Gyeonggi-do"],
                             ["Lines", "Seoul Subway Lines 1 and 4, with GTX-C planned"],

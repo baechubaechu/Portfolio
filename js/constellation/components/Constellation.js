@@ -17,7 +17,7 @@
 import { buildGraph } from "../lib/graph.js?v=1.1";
 import { createLayout } from "../lib/graphLayout.js?v=2.9";
 import { buildAsterisms } from "../lib/asterism.js?v=2.2";
-import { resolveConfig, visualOf } from "../config.js?v=3.9";
+import { resolveConfig, visualOf } from "../config.js?v=3.10";
 import { toSphere, project as projectSky, resolveCamera, createSkyDust, createBandDust, bandToWorld } from "../lib/sky.js?v=2.9";
 import {
     createTextMeasurer, debounce, hasFinePointer, mulberry32, hashString,
@@ -34,6 +34,7 @@ export async function mountConstellation(root, portfolio) {
     const svg = root.querySelector("[data-c-svg]");
     const panelEl = root.querySelector("[data-c-panel]");
     const figEl = root.querySelector("[data-c-fig]");
+    const motionButton = root.querySelector("[data-c-motion]");
     if (!stageEl || !svg) throw new Error("[constellation] missing stage / svg elements");
 
     const reduceMotion = prefersReducedMotion();
@@ -706,6 +707,170 @@ export async function mountConstellation(root, portfolio) {
     /* ───────────── celestial look ───────────── */
     let yaw = 0, pitch = 0, yawT = 0, pitchT = 0;
     let pointerOn = false;
+    const SENSOR_LIMIT_DEG = 30;
+    const SENSOR_LIMIT_RAD = Math.PI / 6;
+    let sensorActive = false;
+    let sensorCalibrated = false;
+    let sensorBaseYaw = 0;
+    let sensorBasePitch = 0;
+    let sensorGazeId = null;
+    let sensorStartTimer = 0;
+    let motionIntroTimer = 0;
+    let motionIntroHideTimer = 0;
+
+    const wrapDegrees = (value) => ((value + 540) % 360) - 180;
+    const clampSensor = (value) => Math.max(-SENSOR_LIMIT_DEG, Math.min(SENSOR_LIMIT_DEG, value));
+
+    function setMotionStatus(message) {
+        motionButton?.setAttribute("aria-label", message);
+    }
+
+    function orientationYaw(e) {
+        if (Number.isFinite(e.webkitCompassHeading)) return e.webkitCompassHeading;
+        return Number.isFinite(e.alpha) ? e.alpha : null;
+    }
+
+    function onDeviceOrientation(e) {
+        if (!sensorActive || reduceMotion) return;
+        const rawYaw = orientationYaw(e);
+        const rawPitch = Number.isFinite(e.beta) ? e.beta : null;
+        if (rawYaw == null || rawPitch == null) return;
+        if (!sensorCalibrated) {
+            sensorBaseYaw = rawYaw;
+            sensorBasePitch = rawPitch;
+            sensorCalibrated = true;
+            window.clearTimeout(sensorStartTimer);
+            setMotionStatus("CENTERED · ±30°");
+            return;
+        }
+
+        const yawDeg = clampSensor(wrapDegrees(rawYaw - sensorBaseYaw));
+        const pitchDeg = clampSensor(rawPitch - sensorBasePitch);
+        const nextYaw = -(yawDeg / SENSOR_LIMIT_DEG) * SENSOR_LIMIT_RAD;
+        const nextPitch = -(pitchDeg / SENSOR_LIMIT_DEG) * SENSOR_LIMIT_RAD;
+        yawT += (nextYaw - yawT) * 0.2;
+        pitchT += (nextPitch - pitchT) * 0.2;
+        pointerOn = true;
+        kick();
+    }
+
+    async function enableMotion() {
+        if (reduceMotion) {
+            setMotionStatus("REDUCED MOTION ON");
+            return;
+        }
+        if (typeof window.DeviceOrientationEvent === "undefined") {
+            setMotionStatus("SENSOR UNAVAILABLE · DRAG TO EXPLORE");
+            root.classList.add("is-motion-fallback");
+            motionButton.textContent = "DRAG TO EXPLORE";
+            return;
+        }
+        try {
+            if (typeof window.DeviceOrientationEvent.requestPermission === "function") {
+                const permission = await window.DeviceOrientationEvent.requestPermission();
+                if (permission !== "granted") {
+                    setMotionStatus("SENSOR DENIED · TOUCH TO EXPLORE");
+                    root.classList.add("is-motion-fallback");
+                    motionButton.textContent = "TOUCH TO EXPLORE";
+                    return;
+                }
+            }
+            window.addEventListener("deviceorientation", onDeviceOrientation, true);
+            sensorActive = true;
+            sensorCalibrated = false;
+            root.classList.add("is-motion-active");
+            motionButton.textContent = "RECENTER";
+            setMotionStatus("HOLD STILL · CALIBRATING");
+            window.clearTimeout(sensorStartTimer);
+            sensorStartTimer = window.setTimeout(() => {
+                if (sensorCalibrated) return;
+                window.removeEventListener("deviceorientation", onDeviceOrientation, true);
+                sensorActive = false;
+                pointerOn = false;
+                root.classList.remove("is-motion-active");
+                root.classList.add("is-motion-fallback");
+                motionButton.textContent = "DRAG TO EXPLORE";
+                setMotionStatus("NO SENSOR SIGNAL · DRAG TO EXPLORE");
+                setHover(null);
+                kick();
+            }, 3000);
+        } catch {
+            setMotionStatus("SENSOR UNAVAILABLE · TOUCH TO EXPLORE");
+            root.classList.add("is-motion-fallback");
+            motionButton.textContent = "TOUCH TO EXPLORE";
+        }
+    }
+
+    motionButton?.addEventListener("pointerdown", (e) => e.stopPropagation());
+    motionButton?.addEventListener("click", (e) => {
+        e.stopPropagation();
+        dismissMotionIntro();
+        if (sensorActive) {
+            sensorCalibrated = false;
+            yawT = 0;
+            pitchT = 0;
+            setMotionStatus("HOLD STILL · RECENTERING");
+            return;
+        }
+        enableMotion();
+    });
+
+    function dismissMotionIntro() {
+        if (!motionButton || motionButton.hidden) return;
+        window.clearTimeout(motionIntroTimer);
+        motionButton.classList.remove("is-visible");
+        window.clearTimeout(motionIntroHideTimer);
+        motionIntroHideTimer = window.setTimeout(() => {
+            motionButton.hidden = true;
+        }, 450);
+    }
+
+    function showMotionIntroOnce() {
+        if (!motionButton || size.width >= 720 || reduceMotion) return;
+        motionButton.hidden = false;
+        requestAnimationFrame(() => motionButton.classList.add("is-visible"));
+        motionIntroTimer = window.setTimeout(dismissMotionIntro, 3600);
+    }
+
+    showMotionIntroOnce();
+
+    let touchLooking = false;
+    let touchLookX = 0;
+    let touchLookY = 0;
+    let touchLookYaw = 0;
+    let touchLookPitch = 0;
+
+    stageEl.addEventListener("pointerdown", (e) => {
+        if (sensorActive || size.width >= 720 || e.pointerType !== "touch") return;
+        if (e.target.closest?.("button, a, .c-node")) return;
+        touchLooking = true;
+        touchLookX = e.clientX;
+        touchLookY = e.clientY;
+        touchLookYaw = yawT;
+        touchLookPitch = pitchT;
+        pointerOn = true;
+        try { stageEl.setPointerCapture(e.pointerId); } catch { /* capture optional */ }
+    });
+
+    stageEl.addEventListener("pointermove", (e) => {
+        if (!touchLooking) return;
+        const dx = (e.clientX - touchLookX) / Math.max(1, size.width);
+        const dy = (e.clientY - touchLookY) / Math.max(1, size.height);
+        yawT = Math.max(-SENSOR_LIMIT_RAD, Math.min(SENSOR_LIMIT_RAD,
+            touchLookYaw - dx * SENSOR_LIMIT_RAD * 2));
+        pitchT = Math.max(-SENSOR_LIMIT_RAD, Math.min(SENSOR_LIMIT_RAD,
+            touchLookPitch + dy * SENSOR_LIMIT_RAD * 2));
+        e.preventDefault();
+        kick();
+    }, { passive: false });
+
+    const endTouchLook = (e) => {
+        if (!touchLooking) return;
+        touchLooking = false;
+        try { stageEl.releasePointerCapture(e.pointerId); } catch { /* already released */ }
+    };
+    stageEl.addEventListener("pointerup", endTouchLook);
+    stageEl.addEventListener("pointercancel", endTouchLook);
 
     // Same inputs → same camera; it is asked for several times per frame and per pointer move.
     let camMemo = null, camCfg = null, camW = 0, camH = 0;
@@ -784,14 +949,16 @@ export async function mountConstellation(root, portfolio) {
     function releaseLook() {
         overPanel = false;
         pointerOn = false;
-        yawT = 0;
-        pitchT = 0;
+        if (!sensorActive) {
+            yawT = 0;
+            pitchT = 0;
+        }
         setHover(null);
         kick();
     }
 
     stageEl.addEventListener("pointermove", (e) => {
-        if (!isHoverPointer(e) || opening) return;
+        if (!isHoverPointer(e) || opening || sensorActive) return;
         pointerOn = true;
         const { px, py, nx, ny } = pointerToStage(e);
         setLookTarget(nx, ny);
@@ -824,6 +991,7 @@ export async function mountConstellation(root, portfolio) {
     // Touch / click still focuses a node. Project names skip the warp
     // (temporary, for iterating the detail arrival).
     stageEl.addEventListener("pointerdown", (e) => {
+        if (e.target.closest?.("button, a")) return;
         if (e.button != null && e.button !== 0) return;
         const id = pickNode(e);
         if (!id) return;
@@ -838,6 +1006,7 @@ export async function mountConstellation(root, portfolio) {
         setHover(id);
     });
     stageEl.addEventListener("click", (e) => {
+        if (e.target.closest?.("button, a")) return;
         if (pickNode(e)) return;
         if (!hoveredId && selectedId) select(null);
     });
@@ -901,6 +1070,25 @@ export async function mountConstellation(root, portfolio) {
         }
 
         for (const e of visualEdges) edgeViews.get(e.id).update(e.sourceNode, e.targetNode);
+
+        if (sensorActive) {
+            let nextId = null;
+            let nearest = Math.min(size.width, size.height) * 0.3;
+            const cx = size.width / 2;
+            const cy = size.height / 2;
+            for (const n of graph.projects) {
+                if (n.rVisible === false) continue;
+                const distance = Math.hypot(n.rx - cx, n.ry - cy);
+                if (distance < nearest) {
+                    nearest = distance;
+                    nextId = n.id;
+                }
+            }
+            if (nextId !== sensorGazeId) {
+                sensorGazeId = nextId;
+                setHover(nextId);
+            }
+        }
 
         // Sky geometry only changes with the camera; when it rests, only the twinkle is written.
         const skyKey = `${yaw.toFixed(5)}|${pitch.toFixed(5)}|${size.width}x${size.height}`;
@@ -1029,6 +1217,10 @@ export async function mountConstellation(root, portfolio) {
             window.removeEventListener("resize", onResize);
             window.removeEventListener("pageshow", onPageShow);
             window.removeEventListener("pagehide", onPageHide);
+            window.removeEventListener("deviceorientation", onDeviceOrientation, true);
+            window.clearTimeout(sensorStartTimer);
+            window.clearTimeout(motionIntroTimer);
+            window.clearTimeout(motionIntroHideTimer);
             document.removeEventListener("keydown", onDocKey);
             ro?.disconnect();
             cursor?.destroy();

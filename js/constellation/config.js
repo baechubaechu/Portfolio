@@ -191,7 +191,7 @@ export const CONFIG = {
             padding: { top: 20, right: 18, bottom: 16, left: 18 },
         },
         motion: {
-            camera: { maxYaw: 0.32, maxPitch: 0.24, gazeRadius: 64, attributeRadius: 24, dust: 160, bandDust: 200, bandHaze: 12 },
+            camera: { maxYaw: 0.524, maxPitch: 0.524, gazeRadius: 64, attributeRadius: 24, dust: 160, bandDust: 200, bandHaze: 12 },
         },
     },
 };

@@ -96,6 +96,12 @@
         rgba(10, 10, 10, 0.28) 100%);
 }
 
+.c-mobile-observer,
+.c-mobile-intro,
+.c-mobile-reticle {
+    display: none;
+}
+
 .c-dust {
     fill: #e8eef6;
     pointer-events: none;
@@ -1043,6 +1049,117 @@
     .c-node--project .c-node__label { font-size: 10px; }
     .c-node--project.c-node--featured .c-node__label { font-size: 11px; }
     .c-node--attribute .c-node__label { font-size: 9px; }
+
+    .c-mobile-observer {
+        position: absolute;
+        bottom: 22px;
+        left: 50%;
+        z-index: 30;
+        display: grid;
+        justify-items: center;
+        width: max-content;
+        max-width: calc(100% - 32px);
+        transform: translateX(-50%);
+    }
+
+    .c-mobile-observer__button {
+        display: block;
+        padding: 8px 12px;
+        border: 1px solid var(--c-hair-strong);
+        background: rgba(10, 10, 10, 0.72);
+        color: var(--c-ink);
+        font-family: var(--c-font-mono);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        line-height: 1.2;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .c-mobile-intro {
+        position: absolute;
+        inset: 0;
+        z-index: 50;
+        display: grid;
+        align-content: center;
+        justify-items: center;
+        gap: 12px;
+        width: 100%;
+        padding: 24px;
+        border: 0;
+        background: rgba(10, 10, 10, 0.76);
+        color: var(--c-ink);
+        font-family: var(--c-font-mono);
+        opacity: 0;
+        cursor: pointer;
+        pointer-events: none;
+        transition: opacity 420ms var(--c-ease);
+    }
+
+    .c-mobile-intro[hidden] { display: none; }
+
+    .c-mobile-intro.is-visible {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .c-mobile-intro__title {
+        font-size: 15px;
+        letter-spacing: 0.18em;
+    }
+
+    .c-mobile-intro__hint {
+        color: var(--c-ink-2);
+        font-size: 9px;
+        letter-spacing: 0.1em;
+    }
+
+    .c-mobile-reticle {
+        position: absolute;
+        left: 50%;
+        top: 48%;
+        z-index: 12;
+        display: block;
+        width: 34px;
+        height: 34px;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+    }
+
+    .c-mobile-reticle::before,
+    .c-mobile-reticle::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        background: rgba(255, 255, 255, 0.45);
+        transform: translate(-50%, -50%);
+    }
+
+    .c-mobile-reticle::before { width: 46px; height: 1px; }
+    .c-mobile-reticle::after { width: 1px; height: 46px; }
+
+    .c-mobile-reticle span {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 3px;
+        height: 3px;
+        border-radius: 50%;
+        background: var(--c-ink);
+        transform: translate(-50%, -50%);
+    }
+
+    .c-manifesto,
+    .c-manifesto--hint {
+        display: none;
+    }
+
+    .c-hero__stage {
+        touch-action: none;
+    }
 }
 
 /* ── Reduced motion ────────────────────────────────────────────────────── */

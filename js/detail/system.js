@@ -416,6 +416,8 @@ function planetDossierHTML(project, planet, attr, idx) {
 
 function blockHTML(b) {
     switch (b.kind) {
+        case "heading":
+            return `<h3 class="sys-dock__subhead">${esc(b.body)}</h3>`;
         case "text":
             return `<p class="sys-dock__thesis${b.strong ? " sys-dock__thesis--strong" : ""}">${esc(b.body)}</p>`;
         case "list":
@@ -482,8 +484,13 @@ function init(project) {
     const cproj = portfolio.projects.find((q) => q.id === project.id);
     if (!cproj) return;
 
+    if (new URLSearchParams(window.location.search).get("debug") === "layout") {
+        document.body.classList.add("is-layout-debug");
+    }
+
     const attrOf = new Map(portfolio.attributes.map((a) => [a.id, a]));
     const reduce = prefersReducedMotion();
+    const mobile = window.matchMedia("(max-width: 719px)").matches;
 
     const chapters = project.chapters ?? [];
     const planets = chapters.length ? chapters.map((c, i, all) => ({
@@ -616,9 +623,10 @@ function init(project) {
     const hint = htmlEl("div", {
         class: "sys-scroll",
         role: "note",
-        "aria-label": "Scroll to read",
+        "aria-label": mobile ? "Swipe up to read" : "Scroll to read",
     });
-    hint.innerHTML = `<span class="sys-scroll__mouse" aria-hidden="true"><span class="sys-scroll__wheel"></span></span>`;
+    hint.innerHTML = `<span class="sys-scroll__mouse" aria-hidden="true"><span class="sys-scroll__wheel"></span></span>
+        <span class="sys-scroll__label" aria-hidden="true">SWIPE UP TO READ</span>`;
     const chapNav = htmlEl("ol", { class: "sys-chaps", "aria-label": "Chapters" });
     const chapBtns = [];
     const chapItems = [
@@ -638,6 +646,42 @@ function init(project) {
         chapBtns.push(btn);
     }
     chapBtns[0]?.classList.add("is-on");
+    const mobileChapNav = htmlEl("nav", {
+        class: "sys-mobile-chaps",
+        "aria-label": "Project chapters",
+    });
+    const mobileChapRail = htmlEl("div", { class: "sys-mobile-chaps__rail" });
+    const mobileChapItems = [null, ...chapItems, { id: "more-works", label: "MORE WORKS" }];
+    const mobileChapBtns = mobileChapItems.map((c, trackIndex) => {
+        if (!c) {
+            const blank = htmlEl("span", {
+                class: "sys-mobile-chaps__item is-blank",
+                "aria-hidden": "true",
+            });
+            mobileChapRail.append(blank);
+            return blank;
+        }
+        if (c.id === "more-works") {
+            const more = htmlEl("a", {
+                class: "sys-mobile-chaps__item is-more",
+                href: "index.html#school-works",
+                text: "MORE WORKS  →",
+            });
+            mobileChapRail.append(more);
+            return more;
+        }
+        const chapterIndex = chapItems.findIndex((item) => item.id === c.id);
+        const btn = htmlEl("button", {
+            type: "button",
+            class: `sys-mobile-chaps__item${trackIndex === 1 ? " is-on" : ""}`,
+            "data-chap": c.id,
+            text: `${String(chapterIndex + 1).padStart(2, "0")}  ${c.label}`,
+        });
+        btn.addEventListener("click", () => goPlate(c.id));
+        mobileChapRail.append(btn);
+        return btn;
+    });
+    mobileChapNav.append(mobileChapRail);
     function placeRow(k, x, y, gap) {
         const li = chapBtns[k]?.parentElement;
         if (li) setStyle(li, "transform", `translate(${(x - 14).toFixed(1)}px, ${(y - gap / 2).toFixed(1)}px)`);
@@ -663,7 +707,7 @@ function init(project) {
             ? chapterDossierHTML(chapters[i], i)
             : planetDossierHTML(project, p, attrOf.get(p.id), i))),
     ].join("");
-    document.body.append(dock);
+    document.body.append(dock, mobileChapNav);
     // Gallery rows split their width by each image's aspect ratio, so every image in a row
     // shares one height and the row fills the column without cropping.
     const fitRowImage = (img) => {
@@ -679,10 +723,27 @@ function init(project) {
     let plateId = "sun";
     let pendingPlate = null;
 
+    function syncMobileChapters(id) {
+        if (!mobile) return;
+        const index = Math.max(0, chapItems.findIndex((c) => c.id === id));
+        for (const [trackIndex, btn] of mobileChapBtns.entries()) {
+            btn.classList.toggle("is-on", trackIndex === index + 1);
+        }
+        const navWidth = mobileChapNav.clientWidth || window.innerWidth;
+        const slot = navWidth / 3;
+        for (const btn of mobileChapBtns) btn.style.width = `${slot}px`;
+        mobileChapRail.style.width = `${slot * mobileChapBtns.length}px`;
+        mobileChapRail.style.transform = `translate3d(${navWidth / 2 - slot * (index + 1.5)}px, 0, 0)`;
+    }
+
     function setPlate(id) {
-        if (id === plateId) return;
+        if (id === plateId) {
+            syncMobileChapters(id);
+            return;
+        }
         plateId = id;
         for (const b of chapBtns) b.classList.toggle("is-on", b.dataset.chap === id);
+        syncMobileChapters(id);
     }
 
     // The chapter whose top has passed a line 30% down the dock; the last one once the end is reached.
@@ -825,7 +886,9 @@ function init(project) {
             if (reading) numberLabels(true);
             const avail = W - left0 - DOCK_EDGE;
             const width = Math.min(avail, DOCK_MAX);
-            const left = Math.round(left0 + (avail - width) / 2);
+            const availableCenter = Math.round(left0 + (avail - width) / 2);
+            const viewportCenter = Math.round((W - width) / 2);
+            const left = viewportCenter >= left0 ? viewportCenter : availableCenter;
             dock.style.left = `${left}px`;
             dock.style.right = `${Math.round(W - left - width)}px`;
         } else {
@@ -834,6 +897,7 @@ function init(project) {
             sunLabelFit = cproj.title.toUpperCase();
             for (const p of planetEls) p.labelFit = null;
             if (reading) numberLabels(true);
+            syncMobileChapters(plateId);
         }
         applyFraming();
     }
@@ -875,6 +939,7 @@ function init(project) {
     let dragPx = 0;
     let lastX = 0;
     let lastY = 0;
+    let dragStartY = 0;
 
     let hoverIdx = -1;
     stage.addEventListener("pointerleave", () => { hoverIdx = -1; });
@@ -1125,6 +1190,7 @@ function init(project) {
         dragPx = 0;
         lastX = e.clientX;
         lastY = e.clientY;
+        dragStartY = e.clientY;
         try { stage.setPointerCapture(e.pointerId); } catch { /* capture optional */ }
     });
     stage.addEventListener("pointermove", (e) => {
@@ -1140,6 +1206,7 @@ function init(project) {
         lastX = e.clientX;
         lastY = e.clientY;
         if (dragPx < CLICK_PX) return;
+        if (mobile) return;
         stage.classList.add("is-orbiting");
         azim -= (dx / Math.max(1, W)) * Math.PI * 2.1;
         elev = clamp(elev + (dy / Math.max(1, H)) * Math.PI, 0.08, 1.48);
@@ -1149,6 +1216,11 @@ function init(project) {
         dragging = false;
         stage.classList.remove("is-orbiting");
         try { stage.releasePointerCapture(e.pointerId); } catch { /* already released */ }
+        if (mobile && storyTgt < STORY_OPEN && dragStartY - e.clientY > 36) {
+            dismissGuide();
+            goRead();
+            return;
+        }
         if (dragPx < CLICK_PX && storyTgt < STORY_OPEN) {
             const i = hitPlanet(e.clientX, e.clientY);
             if (i >= 0) goChapter(i);
@@ -1174,6 +1246,10 @@ function init(project) {
         }
         e.preventDefault();
         dismissGuide();
+        if (mobile && !reading && dy > 0) {
+            goRead();
+            return;
+        }
         if (storyTgt <= 0 && !camTween && (dy < 0 || zoomTgt < 1 || zoom < 0.99)) {
             zoomTgt = clamp(zoomTgt * Math.exp(dy * ZOOM_RATE), ZOOM_MIN, 1);
             return;
@@ -1240,7 +1316,7 @@ function init(project) {
             sunCanvas.width = px;
             sunCanvas.height = px;
         }
-        const spin = reduce ? 0.35 : -t * sunSpin;
+        const spin = reduce || mobile ? 0.35 : -t * sunSpin;
         if (!sunRas || sunRas.n !== px) sunRas = sunRaster(px, sunTex);
         const nextSunKey = `${px}|${spin}|${azim}|${elevView}`;
         if (nextSunKey !== sunKey) {
@@ -1271,7 +1347,7 @@ function init(project) {
             const p = planetEls[i];
             const L = layout.get(p.id);
             if (!L) continue;
-            const ang = p.ang0 + (reduce ? 0 : (now - t0) / L.period * Math.PI * 2);
+            const ang = p.ang0 + (reduce || mobile ? 0 : (now - t0) / L.period * Math.PI * 2);
             const pt = project3(Math.cos(ang) * L.orbitR, 0, Math.sin(ang) * L.orbitR);
             const R = (i + 1) * unit;
             // The ellipse only changes with the camera, the sun or the TOC blend.

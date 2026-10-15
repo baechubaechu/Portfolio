@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css?v=4.5">
     <meta name="theme-color" content="#0a0a0a">
-    <link rel="stylesheet" href="css/constellation.css?v=3.36">
+    <link rel="stylesheet" href="css/constellation.css?v=3.40">
     <script>
         try {
             if (sessionStorage.getItem("c-seen-project")) {
@@ -45,6 +45,16 @@
             <div class="c-hero__stage" data-c-stage>
                 <svg class="c-svg" data-c-svg xmlns="http://www.w3.org/2000/svg" role="group"
                     aria-label="Projects and attributes. Use Tab to move between nodes, Enter to select."></svg>
+                <button type="button" class="c-mobile-intro" data-c-motion hidden>
+                    <span class="c-mobile-intro__title">TILT TO EXPLORE</span>
+                    <span class="c-mobile-intro__hint">TAP TO ENABLE MOTION · DRAG ANYTIME</span>
+                </button>
+                <div class="c-mobile-observer" data-c-observer>
+                    <a class="c-mobile-observer__button" href="#school-works">VIEW ALL WORKS ↓</a>
+                </div>
+                <div class="c-mobile-reticle" aria-hidden="true">
+                    <span></span>
+                </div>
                 <div class="c-manifesto" data-c-obstacle>
                     <p class="c-manifesto__core">Part and Beyond</p>
                 </div>
@@ -105,9 +115,9 @@
         </div>
     </footer>
 
-    <script src="js/projects.js?v=10.0"></script>
+    <script src="js/projects.js?v=10.1"></script>
     <script src="js/script.js?v=3.9"></script>
-    <script type="module" src="js/constellation/index.js?v=5.45"></script>
+    <script type="module" src="js/constellation/index.js?v=5.51"></script>
     <!-- Vercel Web Analytics (script-tag form: this site is served without a build step) -->
     <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
     <script defer src="/_vercel/insights/script.js"></script>
