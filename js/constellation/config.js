@@ -178,12 +178,12 @@ export const CONFIG = {
         forces: {
             scale: { reference: [390, 700], min: 0.6, max: 1.4 },
             link: { distance: 147 },
-            charge: { project: -480, attribute: -255, distanceMax: 360 },
-            collide: { padding: 14 },
-            labels: { padding: 5 },
+            charge: { project: -480, attribute: -255, distanceMax: 520 },
+            collide: { padding: 18 },
+            labels: { padding: 8 },
             obstacles: { padding: 8 },
             boundary: { margin: 28, marginStrength: 0.03 },
-            spread: { strength: 0.012 },
+            spread: { strength: 0.02 },
             // Tall stage: the band runs across, school works above and other works below.
             zones: { tilt: -1.28, side: 0.3 },
         },
@@ -191,7 +191,9 @@ export const CONFIG = {
             padding: { top: 20, right: 18, bottom: 16, left: 18 },
         },
         motion: {
-            camera: { maxYaw: 0.524, maxPitch: 0.524, gazeRadius: 64, attributeRadius: 24, dust: 160, bandDust: 200, bandHaze: 12 },
+            // spanY: the base cap (0.57) is tuned for wide screens; on a tall phone stage it
+            // squeezed the figure into the middle 40% of the height. Let the window fit decide.
+            camera: { maxYaw: 0.524, maxPitch: 0.524, spanY: 1.2, gazeRadius: 64, attributeRadius: 24, dust: 160, bandDust: 200, bandHaze: 12 },
         },
     },
 };

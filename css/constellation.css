@@ -694,6 +694,40 @@
     color: var(--c-ink-2);
 }
 
+/* Who this is: a small plate in the top-left corner. The layout keeps it clear. */
+.c-identity {
+    position: absolute;
+    left: 28px;
+    top: 26px;
+    z-index: 5;
+    margin: 0;
+    pointer-events: none;
+    user-select: none;
+}
+
+.c-identity__name {
+    margin: 0 0 4px;
+    font-family: var(--c-font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.3;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--c-ink);
+}
+
+.c-identity__role {
+    margin: 0;
+    font-family: var(--c-font-sans);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.4;
+    letter-spacing: 0.02em;
+    color: var(--c-ink-2);
+}
+
+.c-hero.is-warping .c-identity,
+.c-hero.is-warp-prep .c-identity,
 .c-hero.is-warping .c-manifesto,
 .c-hero.is-warp-prep .c-manifesto {
     opacity: 0;
@@ -1156,6 +1190,16 @@
     .c-manifesto--hint {
         display: none;
     }
+
+    .c-identity {
+        left: 18px;
+        top: 18px;
+        right: 18px;
+        min-height: 38px;
+    }
+
+    .c-identity__name { font-size: 11px; }
+    .c-identity__role { font-size: 11px; }
 
     .c-hero__stage {
         touch-action: none;

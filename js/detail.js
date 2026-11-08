@@ -18,6 +18,15 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
+    // The tab, history and share previews name the project, not the template.
+    document.title = `${project.title} | Jihun Park`;
+    const summary = project.thesis || project.description;
+    if (summary) {
+        let meta = document.querySelector('meta[name="description"]');
+        if (!meta) { meta = document.createElement('meta'); meta.name = 'description'; document.head.appendChild(meta); }
+        meta.content = summary;
+    }
+
     // Old links (?id=sangsangblue, ?id=Student%20Driven%20Village) keep working;
     // the address bar settles on the canonical slug.
     if (urlParams.get('id') !== project.id) {
@@ -211,8 +220,8 @@ function createSectionHTML(section, project, index) {
                         <div class="meta-item">
                             <h4>Execution</h4>
                             <div class="meta-links">
-                                ${project.visitLink ? `<a href="${project.visitLink}" target="_blank">Visit Project</a>` : ''}
-                                ${project.githubLink ? `<a href="${project.githubLink}" target="_blank">Repository</a>` : ''}
+                                ${project.visitLink ? `<a href="${project.visitLink}" target="_blank" rel="noopener noreferrer">Visit Project</a>` : ''}
+                                ${project.githubLink ? `<a href="${project.githubLink}" target="_blank" rel="noopener noreferrer">Repository</a>` : ''}
                                 ${!project.visitLink && !project.githubLink ? '<p class="mono-text">Internal Archive</p>' : ''}
                             </div>
                         </div>
@@ -230,7 +239,7 @@ function createSectionHTML(section, project, index) {
                 }
             }
             const splitBooklets = (section.booklets || []).map(book => `
-                <a class="booklet-card split-booklet" href="${book.url}" target="_blank">
+                <a class="booklet-card split-booklet" href="${book.url}" target="_blank" rel="noopener noreferrer">
                     <div class="booklet-cover">
                         ${book.thumbnail ? `<img src="${book.thumbnail}" alt="${book.title || 'Booklet'}">` : '<div class="booklet-placeholder">📄</div>'}
                     </div>
@@ -336,14 +345,14 @@ function createSectionHTML(section, project, index) {
                             </div>
                             <div class="plan-info">
                                 ${plan.title ? `<h4 class="plan-title">${plan.title}</h4>` : ''}
-                                <a href="${plan.url}" target="_blank" class="pdf-overlay-link">View Original PDF</a>
+                                <a href="${plan.url}" target="_blank" rel="noopener noreferrer" class="pdf-overlay-link">View Original PDF</a>
                             </div>
                         </div>
                     `;
                 }
                 return `
                     <div class="arch-plan-item">
-                        <a href="${plan.url}" target="_blank" class="plan-image-link" title="Click to view full image">
+                        <a href="${plan.url}" target="_blank" rel="noopener noreferrer" class="plan-image-link" title="Click to view full image">
                             <img src="${plan.url}" alt="${plan.title || 'Architectural Plan'}" class="zoom-image">
                         </a>
                         ${plan.title ? `<div class="plan-info"><h4 class="plan-title">${plan.title}</h4></div>` : ''}
@@ -408,7 +417,7 @@ function createSectionHTML(section, project, index) {
                     <div class="arch-pdf-view">
                         <iframe src="${section.url}" width="100%" height="800px" style="border: none; border-radius: 8px;"></iframe>
                         <div class="pdf-fallback-link">
-                            <p>Can't see the PDF? <a href="${section.url}" target="_blank">View Original Document</a></p>
+                            <p>Can't see the PDF? <a href="${section.url}" target="_blank" rel="noopener noreferrer">View Original Document</a></p>
                         </div>
                     </div>
                 </section>
@@ -549,7 +558,7 @@ function createSectionHTML(section, project, index) {
                             ${screenshotItems}
                         </div>
                     </div>
-                    ${project.visitLink ? `<div style="text-align: center;"><a href="${project.visitLink}" target="_blank" class="dev-visit-gallery-btn">Visit Project ↗</a></div>` : ''}
+                    ${project.visitLink ? `<div style="text-align: center;"><a href="${project.visitLink}" target="_blank" rel="noopener noreferrer" class="dev-visit-gallery-btn">Visit Project ↗</a></div>` : ''}
                 </section>
             `;
 
@@ -565,7 +574,7 @@ function createSectionHTML(section, project, index) {
                 `;
             }).join('');
             const bookletItems = (section.booklets || []).map(book => `
-                <a class="booklet-card" href="${book.url}" target="_blank">
+                <a class="booklet-card" href="${book.url}" target="_blank" rel="noopener noreferrer">
                     <div class="booklet-cover">
                         ${book.thumbnail ? `<img src="${book.thumbnail}" alt="${book.title || 'Booklet'}">` : '<div class="booklet-placeholder">📄</div>'}
                     </div>
@@ -587,7 +596,7 @@ function createSectionHTML(section, project, index) {
 
         case 'dev-booklet':
             const bookletOnlyItems = (section.booklets || []).map(book => `
-                <a class="booklet-card" href="${book.url}" target="_blank">
+                <a class="booklet-card" href="${book.url}" target="_blank" rel="noopener noreferrer">
                     <div class="booklet-cover">
                         ${book.thumbnail ? `<img src="${book.thumbnail}" alt="${book.title || 'Booklet'}">` : '<div class="booklet-placeholder">📄</div>'}
                     </div>

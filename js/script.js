@@ -211,12 +211,12 @@ function renderProjects() {
             if (isCaseStudy) {
                 primaryLink = `<span class="link-btn">Case Study</span>`;
             } else if (project.visitLink) {
-                primaryLink = `<a href="${project.visitLink}" target="_blank" class="link-btn">Live Site</a>`;
+                primaryLink = `<a href="${project.visitLink}" target="_blank" rel="noopener noreferrer" class="link-btn">Live Site</a>`;
             }
 
             let githubLink = '';
             if (project.githubLink) {
-                githubLink = `<a href="${project.githubLink}" target="_blank" class="link-btn secondary">GitHub</a>`;
+                githubLink = `<a href="${project.githubLink}" target="_blank" rel="noopener noreferrer" class="link-btn secondary">GitHub</a>`;
             } else if (isCaseStudy) {
                 githubLink = `<span class="link-btn secondary">GitHub</span>`;
             }

@@ -14,12 +14,24 @@ function rotateX(x, y, z, a) {
     return { x, y: y * c - z * s, z: y * s + z * c };
 }
 
+/**
+ * Layout (u, v) in −1…1 → vault angles.
+ * At rest the vault is seen through a pinhole, so a point's screen offset is
+ * focal · tan(angle). Inverting that here means the settled 2D layout lands on
+ * screen exactly where the force layout computed it (its label and collision
+ * spacing hold), and the sphere only shows itself when the camera turns.
+ */
+function anglesOf(u, v, cam) {
+    const lon = Math.atan(u * cam.tanX);
+    const lat = -Math.atan(v * cam.tanY * Math.cos(lon));
+    return { lon, lat };
+}
+
 /** Map a settled 2D layout point onto the vault. */
 export function toSphere(n, stage, cam) {
     const u = (n.x / stage.width - 0.5) * 2;
     const v = (n.y / stage.height - 0.5) * 2;
-    const lon = u * cam.spanX;
-    const lat = -v * cam.spanY;
+    const { lon, lat } = anglesOf(u, v, cam);
     const R = n.type === "project" ? cam.rProject : cam.rAttribute;
     const cl = Math.cos(lat);
     return {
@@ -72,6 +84,9 @@ export function resolveCamera(cfg, stage) {
     const corner = Math.sqrt(Math.max(0.72, Math.cos(Math.min(spanX, 1.1))));
     c.spanX = Math.min(c.spanX ?? spanX, spanX);
     c.spanY = Math.min(c.spanY ?? spanY, spanY * corner);
+    // Screen-linear mapping constants: the padded layout edge still reaches span·edge.
+    c.tanX = Math.tan(c.spanX * uEdge) / uEdge;
+    c.tanY = Math.tan(c.spanY * vEdge) / vEdge;
     return c;
 }
 
@@ -116,8 +131,7 @@ export function bandToWorld(b, tilt, stage, cam) {
     const h = stage.height / 2;
     const x = stage.width / 2 + (b.s * Math.sin(tilt) + b.q * Math.cos(tilt)) * h;
     const y = stage.height / 2 + (b.s * Math.cos(tilt) - b.q * Math.sin(tilt)) * h;
-    const lon = (x / stage.width - 0.5) * 2 * cam.spanX;
-    const lat = -(y / stage.height - 0.5) * 2 * cam.spanY;
+    const { lon, lat } = anglesOf((x / stage.width - 0.5) * 2, (y / stage.height - 0.5) * 2, cam);
     const cl = Math.cos(lat);
     return {
         wx: Math.sin(lon) * cl * b.R,

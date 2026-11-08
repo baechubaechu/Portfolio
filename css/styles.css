@@ -108,6 +108,28 @@ body {
     }
 }
 
+/* Touch screens have no pointer to reach the top edge with: keep the bar in view. */
+@media (hover: none) {
+    .nav-shell .navbar {
+        transform: none;
+    }
+}
+
+/* On phones the home bar is only the Contact pill over the sky; the hero names the author. */
+@media (hover: none) and (max-width: 768px) {
+    .nav-shell .navbar {
+        justify-content: flex-end;
+        padding: 1rem 18px;
+        background: transparent;
+        border-bottom: 0;
+        backdrop-filter: none;
+    }
+
+    .nav-shell .navbar .logo {
+        display: none;
+    }
+}
+
 .logo {
     font-family: var(--font-mono);
     font-size: 1.2rem;
@@ -1357,7 +1379,8 @@ footer {
     margin-top: 2rem;
 }
 
-.footer-content {
+/* Scoped: unscoped, this card style also overrode the site footer's phone layout. */
+.project-footer .footer-content {
     display: flex;
     flex-direction: row;
     align-items: center;

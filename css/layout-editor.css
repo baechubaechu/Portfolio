@@ -1,0 +1,55 @@
+.le-panel, .le-launcher, .le-drop-line { box-sizing: border-box; }
+.le-panel {
+    position: fixed;
+    left: 18px;
+    bottom: 18px;
+    z-index: 10000;
+    width: 292px;
+    max-height: calc(100dvh - 100px);
+    overflow: auto;
+    padding: 16px;
+    background: #15181bf5;
+    border: 1px solid #545b63;
+    border-radius: 8px;
+    color: #eee;
+    font: 12px/1.55 Arial, sans-serif;
+    box-shadow: 0 8px 32px #0008;
+    text-shadow: none;
+}
+.le-panel header { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.le-panel h2 { margin: 0; font-size: 15px; }
+.le-panel p { margin: 10px 0; }
+.le-help { color: #aaa; font-size: 11px; }
+.le-name { border-top: 1px solid #383e45; padding-top: 10px; color: #a3dfff; overflow-wrap: anywhere; }
+.le-row { display: grid; grid-template-columns: 1fr 114px; gap: 8px; align-items: center; margin: 8px 0; }
+.le-panel input, .le-panel select, .le-panel button, .le-launcher {
+    box-sizing: border-box;
+    min-width: 0;
+    padding: 6px 8px;
+    border: 1px solid #555e68;
+    border-radius: 4px;
+    background: #262c32;
+    color: #eee;
+    font: inherit;
+    letter-spacing: normal;
+}
+.le-panel button, .le-launcher { cursor: pointer; }
+.le-panel button:hover, .le-launcher:hover { background: #39444d; }
+.le-panel button:disabled { opacity: .35; cursor: default; }
+.le-panel input:focus-visible, .le-panel select:focus-visible, .le-panel button:focus-visible, .le-launcher:focus-visible { outline: 2px solid #75d7ff; outline-offset: 2px; }
+.le-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.le-status { min-height: 18px; color: #96dcb3; }
+.le-launcher { position: fixed; bottom: 18px; left: 18px; z-index: 10000; padding: 10px 14px; font: 12px/1.5 Arial, sans-serif; }
+.le-panel[hidden], .le-launcher[hidden], .le-drop-line[hidden] { display: none; }
+.le-editing .le-target { cursor: grab; touch-action: none; }
+.le-editing.le-spacing-mode .le-target { cursor: ns-resize; }
+.le-editing .le-target:hover { outline: 1px dashed #75d7ff !important; }
+.le-editing .le-selected { outline: 2px solid #75d7ff !important; outline-offset: 4px; }
+.le-editing.le-hide-guides .le-target { outline: none !important; }
+.le-dragging, .le-dragging * { user-select: none !important; cursor: ns-resize !important; }
+.le-moving { opacity: .35; }
+.le-drop-line { position: fixed; z-index: 9999; height: 3px; background: #75d7ff; box-shadow: 0 0 10px #75d7ff; pointer-events: none; }
+@media (max-width: 719px) {
+    .le-panel { left: 10px; bottom: 10px; width: min(292px, calc(100vw - 20px)); max-height: 65dvh; }
+    .le-launcher { left: 10px; bottom: 10px; }
+}
