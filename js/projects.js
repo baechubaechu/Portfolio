@@ -522,7 +522,7 @@ const projectsData = {
             id: "class-ic",
             title: "Class.IC",
             description: "A shared office in Euljiro that gathers the district's scattered craft workshops into one tower, with one-day classes and lounges between them.",
-            thumbnail: "assets-web/CI-thumbnail.webp",
+            thumbnail: "assets-web/CI-thumbnail.v2.webp",
             tags: ["Shared Office Tower", "Euljiro Craft Workshops", "B5 / 17F", "GFA 23,000 ㎡", "One-day Classes"],
             kind: "Architecture",
             thesis: "Redevelopment in Euljiro is replacing its workshop streets with office blocks. Class.IC keeps the workshops by stacking them in one building: craft studios and one-day classes on the lower floors, a shared office above, and lounges where shop owners, office workers and class visitors meet. The name joins one-day Class with IC (Inter-Change, 나들목).",
@@ -539,7 +539,7 @@ const projectsData = {
                 ["Scale", "B5 / 17F, about 70 m, GFA about 23,000 ㎡, reinforced concrete"],
                 ["Parking", "231 spaces (230 required)"],
             ],
-            cover: "assets-web/CI-cover.webp",
+            cover: "assets-web/CI-cover.v2.webp",
             chapters: [
                 {
                     id: "context",
@@ -571,8 +571,8 @@ const projectsData = {
                             ["CLASS", "One-day Class: classrooms and meeting rooms"],
                             ["IC", "Inter-Change: lounges and rest"]
                         ] },
-                        { kind: "image", url: "assets-web/CI-classic.webp", width: "75%", caption: "CLASSIC splits into CLASS and IC" },
-                        { kind: "image", url: "assets-web/CI-mass.webp", width: "75%", caption: "Mass diagram: mass and core, Green Fall, separate, program and openings, material" }
+                        { kind: "image", url: "assets-web/CI-classic.v2.webp", width: "75%", caption: "CLASSIC splits into CLASS and IC" },
+                        { kind: "image", url: "assets-web/CI-mass.v2.webp", width: "75%", caption: "Mass diagram: mass and core, Green Fall, separate, program and openings, material" }
                     ]
                 },
                 {
@@ -603,8 +603,8 @@ const projectsData = {
                             "Below ground: exhibition on B1, parking on B2 to B5."
                         ] },
                         { kind: "gallery", images: [
-                            { url: "assets-web/CI-concept.webp", caption: "Split floor on the lower levels, vertical lounge on the office levels" },
-                            { url: "assets-web/CI-interior.webp", caption: "Office floor beside the Green Fall" }
+                            { url: "assets-web/CI-concept.v2.webp", caption: "Split floor on the lower levels, vertical lounge on the office levels" },
+                            { url: "assets-web/CI-interior.v2.webp", caption: "Office floor beside the Green Fall" }
                         ] },
                         { kind: "image", url: "assets-web/CI-section.webp", caption: "Section A–A′: split-level workshops and lounges up to about +38 m, offices above" }
                     ]
@@ -637,12 +637,12 @@ const projectsData = {
                     label: "Model",
                     blocks: [
                         { kind: "gallery", images: [
-                            { url: "assets-web/CI-model-1.webp", caption: "Model in its urban context" },
-                            { url: "assets-web/CI-model-2.webp", caption: "Louvred facade and planted terrace" },
-                            { url: "assets-web/CI-model-3.webp", caption: "Stacked masses from above" },
-                            { url: "assets-web/CI-model-4.webp", caption: "Front view in the Euljiro block" },
-                            { url: "assets-web/CI-model-5.webp", caption: "Planted terrace between the stacked blocks" },
-                            { url: "assets-web/CI-model-6.webp", caption: "Stacked blocks from above" }
+                            { url: "assets-web/CI-model-1.v2.webp", caption: "Model in its urban context" },
+                            { url: "assets-web/CI-model-2.v2.webp", caption: "Louvred facade and planted terrace" },
+                            { url: "assets-web/CI-model-3.v2.webp", caption: "Stacked masses from above" },
+                            { url: "assets-web/CI-model-4.v2.webp", caption: "Front view in the Euljiro block" },
+                            { url: "assets-web/CI-model-5.v2.webp", caption: "Planted terrace between the stacked blocks" },
+                            { url: "assets-web/CI-model-6.v2.webp", caption: "Stacked blocks from above" }
                         ] }
                     ]
                 }
