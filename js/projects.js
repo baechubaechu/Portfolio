@@ -694,7 +694,7 @@ const projectsData = {
                     lead: "Go fishing, and catch garbage.",
                     blocks: [
                         { kind: "text", body: "The pavilion turns the act of fishing into the message. Bamboo poles lean in like fishing rods, and pieces of debris hang from them on fishing line where a school of fish should be. From a distance it reads as fish; up close it is sea glass and plastic." },
-                        { kind: "image", url: "assets-web/KF-idea.v2.webp", caption: "The catch is garbage, and the garbage becomes the fish: sea glass stands in for scales." },
+                        { kind: "image", url: "assets-web/KF-idea.v3.webp", caption: "The catch is garbage, and the garbage becomes the fish: sea glass stands in for scales." },
                         { kind: "steps", items: [
                             "Rods: the fishing rod is abstracted into plastic-coated bamboo poles.",
                             "Catch: marine debris is hung on the poles, as if caught on the line.",
@@ -717,12 +717,12 @@ const projectsData = {
                     lead: "Poles lean in from a 3.6 m square to a grid overhead, and the school hangs beneath it.",
                     blocks: [
                         { kind: "text", body: "The base is a 3,600 × 3,600 mm platform. The poles stand 3,200 mm tall on 360 mm footings around its edge and lean inward to a lattice about 3,400 mm across at the top. The debris cloud hangs from that lattice over the middle of the platform, while loungers ring the edge so visitors can sit or lie under the school and look up." },
-                        { kind: "image", url: "assets-web/KF-plan.v2.webp", caption: "Section and plan (mm): poles lean in to the top grid; the cloud of pieces hangs over the open centre." },
+                        { kind: "image", url: "assets-web/KF-plan.v3.webp", caption: "Section and plan (mm): poles lean in to the top grid; the cloud of pieces hangs over the open centre." },
                         { kind: "rules", items: [
                             ["Pole to ground", "Each bamboo pole sits in a socket cast into a round concrete footing."],
                             ["Line to pole", "Fishing line is tied to the pole and drops straight down to the pieces."]
                         ] },
-                        { kind: "image", url: "assets-web/KF-detail.v2.webp", caption: "Joint details from the entry: pole to concrete footing, and fishing line to pole." },
+                        { kind: "image", url: "assets-web/KF-detail.v3.webp", caption: "Joint details from the entry: pole to concrete footing, and fishing line to pole." },
                         { kind: "image", url: "assets-web/KF-aerial.v2.webp", caption: "Modeling: the pavilion on Tamna Cultural Plaza." }
                     ]
                 },
