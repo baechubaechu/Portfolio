@@ -35,6 +35,14 @@
  *               it is where the eye (and hand) goes first.
  *   bias        optional [fx, fy] (0…1 of the stage): pulls the project
  *               toward that spot on wide screens, to untangle neighbours.
+ *   place       where the project sits on the home sky, by two rules:
+ *                 scale  0…1  the largest physical thing the project reads or
+ *                             shapes: a person 0 · a room · a building 0.5 ·
+ *                             a site · a block · the city 1
+ *                 code   0…1  how much of the work is building (0) or code (1)
+ *               Wide screens run scale left → right and building → code top →
+ *               bottom, with the milky way along the middle where the two meet;
+ *               tall screens turn it a quarter (config `forces.place`).
  *   symbol      the figure drawn on the home sky when the project is looked at:
  *               { name, origin: [x, y], stars: [{ id, label, at: [x, y],
  *               side: "left"|"right"|"above"|"below", minor? }],
@@ -74,6 +82,7 @@ export const projects = [
         year: 2026,
         category: "Graduation project",
         href: "project-detail.html?id=xtra-space",
+        place: { scale: 1.00, code: 0.50 },
         // A branching column under a ribbed roof: two flows meet at its foot, squeeze up the trunk, open at the fork, and reach the roof and the AI that runs it.
         symbol: {
             name: "The branching column",
@@ -124,10 +133,11 @@ export const projects = [
         year: 2025,
         category: "School work",
         href: "project-detail.html?id=student-driven-village",
+        place: { scale: 0.90, code: 0.14 },
         // A gated complex opened by its students: from five schools, through the clubs, across the threshold into the shared hall.
         symbol: {
             name: "The open gate",
-            art: { src: "assets-web/constellations/student-driven-village.svg", box: [0, 0, 300, 210] },
+            art: { src: "assets-web/constellations/student-driven-village.svg?v=2", box: [0, 0, 300, 210] },
             origin: [150, 166],
             stars: [
                 { id: "schools", label: "Five schools", at: [55, 120], side: "above" },
@@ -173,6 +183,7 @@ export const projects = [
         year: 2026,
         category: "Competition",
         href: "project-detail.html?id=kitch-fish",
+        place: { scale: 0.24, code: 0.40 },
         // A bamboo rod that lands sea glass and plastic instead of fish.
         symbol: {
             name: "The catch",
@@ -189,7 +200,6 @@ export const projects = [
             ],
             links: [["@", "line"], ["line", "bamboo"], ["@", "glass"], ["@", "plastic"], ["glass", "tail"], ["plastic", "tail"], ["tail", "debris"], ["tail", "jeju"]],
         },
-        panelSlot: "top-left",
         attributes: [
             { id: "parametric", weight: 0.9 },
             { id: "fabrication", weight: 0.7 },
@@ -224,6 +234,7 @@ export const projects = [
         year: 2023,
         category: "School work",
         href: "project-detail.html?id=little-forest",
+        place: { scale: 0.76, code: 0.02 },
         // A little dog, after Canis Minor: the park's design rules sit on its head, ear, back, tail and paws.
         symbol: {
             name: "The little dog",
@@ -267,6 +278,7 @@ export const projects = [
         year: 2023,
         category: "School work",
         href: "project-detail.html?id=class-ic",
+        place: { scale: 0.50, code: 0.04 },
         // A craftsman's hammer stood up as the tower: workshops up the handle, the lounge at the neck, offices in the head.
         symbol: {
             name: "The hammer",
@@ -313,6 +325,7 @@ export const projects = [
         year: 2026,
         category: "Interactive installation",
         href: "project-detail.html?id=emotional-architecture",
+        place: { scale: 0.33, code: 0.66 },
         // Two masks, comedy and tragedy: the face is read, and the reading inflates or erodes the space.
         symbol: {
             name: "The two masks",
@@ -366,6 +379,7 @@ export const projects = [
         category: "AI tool · in progress",
         bias: [0.61, 0.09],
         href: "project-detail.html?id=sida",
+        place: { scale: 0.66, code: 0.82 },
         // A drafting lamp clamped to the table: it lights the facts on the desk and leaves the drawing to the designer.
         symbol: {
             name: "The desk lamp",
@@ -412,6 +426,7 @@ export const projects = [
         category: "Personal project",
         bias: [0.86, 0.72],
         href: "project-detail.html?id=deary",
+        place: { scale: 0.00, code: 0.94 },
         // Questions and answers on one page, follow-ups and the entry on the other.
         symbol: {
             name: "The open book",
@@ -449,5 +464,15 @@ export const projects = [
     },
 ];
 
-export const portfolio = { projects, attributes };
+/** Marks along the scale axis of the home sky (see `place`). */
+export const scaleMarks = [
+    { at: 0.00, label: "A person" },
+    { at: 0.28, label: "A room" },
+    { at: 0.50, label: "A building" },
+    { at: 0.66, label: "A site" },
+    { at: 0.83, label: "A block" },
+    { at: 1.00, label: "The city" },
+];
+
+export const portfolio = { projects, attributes, scaleMarks };
 export default portfolio;

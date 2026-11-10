@@ -16,17 +16,17 @@
  */
 
 import { buildGraph } from "../lib/graph.js?v=1.2";
-import { createLayout } from "../lib/graphLayout.js?v=2.9";
+import { createLayout } from "../lib/graphLayout.js?v=3.0";
 import { buildAsterisms } from "../lib/asterism.js?v=2.2";
-import { resolveConfig, visualOf } from "../config.js?v=3.15";
-import { toSphere, project as projectSky, resolveCamera, createSkyDust, createBandDust, bandToWorld } from "../lib/sky.js?v=3.1";
+import { resolveConfig, visualOf } from "../config.js?v=3.17";
+import { toSphere, project as projectSky, resolveCamera, createSkyDust, createBandDust, bandToWorld } from "../lib/sky.js?v=3.2";
 import {
     createTextMeasurer, debounce, hasFinePointer, mulberry32, hashString,
     prefersReducedMotion, svgEl, waitForFonts,
 } from "../lib/utils.js?v=2.0";
 import { createNodeView } from "./Node.js?v=3.4";
 import { createEdgeView } from "./Edge.js?v=2.5";
-import { createProjectInfo } from "./ProjectInfo.js?v=3.3";
+import { createProjectInfo } from "./ProjectInfo.js?v=3.4";
 import { createCursor } from "./Cursor.js?v=2.3";
 import { createIdlePulse } from "./IdlePulse.js?v=1.9";
 import { createSymbols } from "./Symbol.js?v=1.6";
@@ -79,10 +79,28 @@ export async function mountConstellation(root, portfolio) {
 
     function collectObstacles() {
         const s = stageEl.getBoundingClientRect();
-        return [...root.querySelectorAll("[data-c-obstacle]")].map((el) => {
+        const fromDom = [...root.querySelectorAll("[data-c-obstacle]")].map((el) => {
             const r = el.getBoundingClientRect();
             if (r.width === 0 || r.height === 0) return null;
             return { x0: r.left - s.left, y0: r.top - s.top, x1: r.right - s.left, y1: r.bottom - s.top };
+        });
+        return [...fromDom, ...markObstacles()];
+    }
+
+    /** The scale marks' text, in layout space, so project names keep clear of it. */
+    function markObstacles() {
+        const place = cfg.forces.place;
+        if (!place) return [];
+        const mk = place.marks ?? {};
+        const font = '400 9px "IBM Plex Mono", Consolas, monospace'; // matches .c-mark
+        // A layout px is drawn a little smaller than a screen px (the camera keeps a margin): pad generously.
+        const k = 1.35;
+        return (portfolio.scaleMarks ?? []).map((m) => {
+            const t = layout.toStage(m.at, mk.code ?? 1.12);
+            if (!t) return null;
+            const w = measure(m.label.toUpperCase(), font, 0.18) * k;
+            const x0 = mk.anchor === "start" ? Math.max(12, t.x) : t.x - w / 2;
+            return { x0: x0 - 4, y0: t.y - 9, x1: x0 + w + 4, y1: t.y + 9 };
         });
     }
 
@@ -97,10 +115,19 @@ export async function mountConstellation(root, portfolio) {
     /* ───────────── views ───────────── */
     const dustLayer = svgEl("g", { class: "c-layer c-layer--dust", "aria-hidden": "true" });
     const edgesLayer = svgEl("g", { class: "c-layer c-layer--edges" });
+    const marksLayer = svgEl("g", { class: "c-layer c-layer--marks", "aria-hidden": "true" });
     const symbolsLayer = svgEl("g", { class: "c-layer c-layer--symbols" });
     const nodesLayer = svgEl("g", { class: "c-layer c-layer--nodes" });
     const world = svgEl("g", { class: "c-world" });
-    world.append(dustLayer, edgesLayer, symbolsLayer, nodesLayer);
+    world.append(dustLayer, marksLayer, edgesLayer, symbolsLayer, nodesLayer);
+
+    // Scale names along the sky, like the coordinate marks of a star chart.
+    const markViews = (portfolio.scaleMarks ?? []).map((m) => {
+        const el = svgEl("text", { class: "c-mark" });
+        el.textContent = m.label;
+        marksLayer.append(el);
+        return { m, el };
+    });
     svg.append(world);
 
     const dustRand = mulberry32(hashString("dust:" + graph.nodes.map((n) => n.id).join()));
@@ -185,7 +212,9 @@ export async function mountConstellation(root, portfolio) {
 
     const symbols = createSymbols({
         layer: symbolsLayer, graph, measure, getStage: () => size, getConfig: () => cfg,
-        getAvoid: (id) => graph.projects.filter((m) => m.id !== id).map(nodeAvoidRect).filter(Boolean),
+        getAvoid: (id) => graph.projects
+            .filter((m) => m.id !== id && m.rVisible !== false && Number.isFinite(m.rx))
+            .map((m) => ({ x0: m.rx - 8, y0: m.ry - 8, x1: m.rx + 8, y1: m.ry + 8 })),
     });
 
     /* ───────────── state ───────────── */
@@ -234,9 +263,10 @@ export async function mountConstellation(root, portfolio) {
             onSelect: (id) => select(id),
             onOpen: (id, e) => {
                 const node = graph.byId.get(id);
-                if (node?.data?.href) {
-                    try { localStorage.setItem("currentProjectId", node.data.id); } catch { /* private mode */ }
-                }
+                if (!node?.data?.href) return;
+                // The card's Warp button runs the same departure as a click on the star.
+                if (e?.target?.closest?.("button")) { openProject(node); return; }
+                try { localStorage.setItem("currentProjectId", node.data.id); } catch { /* private mode */ }
                 // Let the <a href> navigate natively. Do not preventDefault.
             },
         })
@@ -866,7 +896,8 @@ export async function mountConstellation(root, portfolio) {
         motionIntroTimer = window.setTimeout(dismissMotionIntro, 3600);
     }
 
-    showMotionIntroOnce();
+    // Phones look by touch now: tap a star to see its figure, Warp in the card to go.
+    // The tilt-to-explore sensor mode stays in the code but is not offered.
 
     let touchLooking = false;
     let touchLookX = 0;
@@ -1038,18 +1069,21 @@ export async function mountConstellation(root, portfolio) {
         if (!id) return;
         e.preventDefault();
         const node = graph.byId.get(id);
-        // Touch has no hover, so the first tap shows the figure and the second opens it.
-        const previewFirst = e.pointerType === "touch" && selectedId !== id;
-        if (node?.type === "project" && node.data?.href && !previewFirst) {
+        // Touch has no hover: a tap shows the figure and its card, and the card's
+        // Warp button opens the project. A pointer click on a star still warps.
+        if (e.pointerType !== "touch" && node?.type === "project" && node.data?.href) {
             openProject(node);
             return;
         }
         setHover(id);
     });
+    let lastPointerType = "mouse";
+    stageEl.addEventListener("pointerdown", (e) => { lastPointerType = e.pointerType || "mouse"; }, true);
     stageEl.addEventListener("click", (e) => {
         if (e.target.closest?.("button, a")) return;
         if (pickNode(e)) return;
-        if (!hoveredId && selectedId) select(null);
+        // A tap on empty sky puts the figure away (a pointer just moves on instead).
+        if ((lastPointerType === "touch" || !hoveredId) && selectedId) select(null);
     });
     svg.addEventListener("keydown", (e) => {
         const id = nodeFromEvent(e);
@@ -1136,7 +1170,20 @@ export async function mountConstellation(root, portfolio) {
         const skyKey = `${yaw.toFixed(5)}|${pitch.toFixed(5)}|${size.width}x${size.height}`;
         const skyMoved = skyKey !== lastSkyKey;
         lastSkyKey = skyKey;
-        const tilt = cfg.forces.zones?.tilt ?? 0;
+        const tilt = cfg.forces.place?.bandTilt ?? cfg.forces.zones?.tilt ?? 0;
+        if (skyMoved && markViews.length && cfg.forces.place) {
+            const mk = cfg.forces.place.marks ?? {};
+            for (const { m, el } of markViews) {
+                const t = layout.toStage(m.at, mk.code ?? 1.12);
+                if (!t) continue;
+                const sph = toSphere({ type: "project", x: t.x, y: t.y }, size, cam);
+                const p = projectSky(sph.wx, sph.wy, sph.wz, yaw, pitch, cam, size);
+                el.setAttribute("x", (mk.anchor === "start" ? Math.max(12, p.x) : p.x).toFixed(1));
+                el.setAttribute("y", p.y.toFixed(1));
+                el.setAttribute("text-anchor", mk.anchor ?? "middle");
+                el.setAttribute("opacity", p.visible ? p.fade.toFixed(3) : "0");
+            }
+        }
         for (const { star, el } of skyMoved ? hazeDots : []) {
             const w = bandToWorld(star, tilt, size, cam);
             const p = projectSky(w.wx, w.wy, w.wz, yaw, pitch, cam, size);
@@ -1201,6 +1248,7 @@ export async function mountConstellation(root, portfolio) {
         asterisms.refresh();
         syncAsterismViews();
         symbols.relayout();
+        lastSkyKey = "";
         applyState();
         kick();
     }

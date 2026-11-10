@@ -5,9 +5,6 @@
   <path d="M106 172 L106 84 Q150 22 194 84 L194 172" stroke-width="1"/>
   <path d="M94 110 L106 110 M94 140 L106 140 M194 110 L206 110 M194 140 L206 140" stroke-width=".6"/>
   <path d="M144 22 L150 12 L156 22" stroke-width=".8"/>
-  <!-- the door, swung open inward -->
-  <path d="M206 170 L206 86 L244 100 L244 178 Z" stroke-width="1" fill="#fff" fill-opacity=".04"/>
-  <path d="M212 96 L238 106 L238 136 L212 128 Z M212 140 L238 148 L238 170 L212 164 Z" stroke-width=".6"/>
   <!-- ground, the walk in, and the stream below -->
   <path d="M10 172 L290 172" stroke-width="1"/>
   <path d="M12 140 Q50 128 80 142 Q110 160 150 166 Q190 162 230 140 Q256 124 282 112" stroke-width=".8" stroke-dasharray="3 4"/>

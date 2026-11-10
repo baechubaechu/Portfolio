@@ -78,9 +78,8 @@ export const CONFIG = {
             maxPitch: 0.3,
             spanX: 0.78,         // upper bound; actual span is fitted to the window
             spanY: 0.57,
-            fitPad: 28,          // px of sky between the figure and the crop marks
-            fitPadX: 150,        // wider at the sides and top and bottom, so a project
-            fitPadY: 96,         // near the edge still has room for its symbol
+            fitPad: 28,          // px of sky between the figure and the crop marks (when not 1:1)
+            fitIdentity: true,   // draw the resting sky 1:1 with the layout; margins live in stage.padding
             rProject: 1,
             rAttribute: 1.14,
             near: 0.32,
@@ -173,10 +172,24 @@ export const CONFIG = {
             band: 0.26,
             project: 0.06,
         },
+        /**
+         * Placed sky (data `place`): scale runs left → right, building → code
+         * top → bottom. `bandTilt` lays the milky way along the middle, where
+         * building meets code. `marks` sets where the scale names sit (in
+         * code units, beyond the code end) and how they are anchored.
+         */
+        place: {
+            strength: 0.14,
+            transpose: false,
+            inset: [0.03, 0.05],
+            bandTilt: Math.PI / 2,
+            marks: { code: 1.13, anchor: "middle" },
+        },
     },
 
     stage: {
-        padding: { top: 48, right: 52, bottom: 48, left: 52 },
+        // Wide margins, so a project near the edge still has room for its symbol.
+        padding: { top: 96, right: 140, bottom: 96, left: 140 },
     },
 
     /* ── Overrides for narrow stages ── */
@@ -198,9 +211,13 @@ export const CONFIG = {
             spread: { strength: 0.02 },
             // Tall stage: the band runs across, school works above and other works below.
             zones: { tilt: -1.28, side: 0.3 },
+            // Tall stage: a quarter turn. Scale runs top → bottom, building → code
+            // left → right, and the milky way stands upright between them.
+            place: { transpose: true, inset: [0.06, 0.03], bandTilt: 0, marks: { code: -0.1, anchor: "start" } },
         },
         stage: {
-            padding: { top: 20, right: 18, bottom: 16, left: 18 },
+            // Clear of the name plate and Contact above, and View all works below.
+            padding: { top: 84, right: 16, bottom: 100, left: 16 },
         },
         symbol: {
             fill: [0.7, 0.32],
@@ -212,7 +229,7 @@ export const CONFIG = {
         motion: {
             // spanY: the base cap (0.57) is tuned for wide screens; on a tall phone stage it
             // squeezed the figure into the middle 40% of the height. Let the window fit decide.
-            camera: { maxYaw: 0.524, maxPitch: 0.524, spanY: 1.2, fitPadX: 62, fitPadY: 120, gazeRadius: 64, attributeRadius: 24, dust: 160, bandDust: 200, bandHaze: 12 },
+            camera: { maxYaw: 0.524, maxPitch: 0.524, gazeRadius: 64, attributeRadius: 24, dust: 160, bandDust: 200, bandHaze: 12 },
         },
     },
 };

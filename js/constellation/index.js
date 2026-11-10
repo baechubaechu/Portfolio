@@ -6,8 +6,8 @@
  * To restyle, edit css/constellation.css.
  */
 
-import { portfolio } from "./data/portfolio.js?v=3.7";
-import { mountConstellation } from "./components/Constellation.js?v=5.54";
+import { portfolio } from "./data/portfolio.js?v=3.10";
+import { mountConstellation } from "./components/Constellation.js?v=5.58";
 
 const root = document.querySelector("[data-constellation]");
 
@@ -17,6 +17,7 @@ const root = document.querySelector("[data-constellation]");
 const homeSky = {
     projects: portfolio.projects.map((p) => ({ ...p, attributes: [] })),
     attributes: [],
+    scaleMarks: portfolio.scaleMarks,
 };
 
 if (root) {

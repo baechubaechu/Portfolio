@@ -10,6 +10,9 @@
  *   link       connected nodes attract; rest length & strength scale with weight
  *   charge     all nodes repel (projects push harder)
  *   spread     on non-square stages the cloud is eased along the long axis
+ *   place      (when configured) each project is held at a spot read off two
+ *              axes in its data; then only collide / labels / obstacles /
+ *              boundary act, and the forces below are not used
  *   zones      school / other projects settle on either side of a tilted
  *              band; attributes are drawn onto the band
  *   collide    node discs never overlap
@@ -101,6 +104,36 @@ export function createLayout(graph, config) {
 
     /* ───────────────────────── seeding ───────────────────────── */
 
+    /** Stage point for (scale, code), per `forces.place` (null when placement is off). */
+    function toStage(scale, code) {
+        const f = cfg.forces.place;
+        if (!f) return null;
+        let u = scale, v = code;
+        if (f.transpose) [u, v] = [v, u];
+        const p = pad();
+        const W = stage.width, H = stage.height;
+        const [ix, iy] = f.inset ?? [0.04, 0.06];
+        const x0 = p.left + ix * W, x1 = W - p.right - ix * W;
+        const y0 = p.top + iy * H, y1 = H - p.bottom - iy * H;
+        return { x: x0 + u * (x1 - x0), y: y0 + v * (y1 - y0) };
+    }
+
+    function placeOf(n) {
+        const pl = n.data?.place;
+        return pl ? toStage(pl.scale, pl.code) : null;
+    }
+
+    /** Hold each placed project on its spot; only label and disc clearance may nudge it. */
+    function forceAnchor() {
+        const k = cfg.forces.place?.strength ?? 0.14;
+        for (const n of nodes) {
+            const t = placeOf(n);
+            if (!t) continue;
+            n.vx += (t.x - n.x) * k;
+            n.vy += (t.y - n.y) * k;
+        }
+    }
+
     function seedPositions() {
         const W = stage.width, H = stage.height;
         const projects = nodes.filter((n) => n.type === "project");
@@ -140,6 +173,12 @@ export function createLayout(graph, config) {
             n.y = y + (rand() - 0.5) * H * 0.16;
             n.vx = 0; n.vy = 0;
         });
+
+        // Placed projects start on their spot.
+        for (const n of nodes) {
+            const t = placeOf(n);
+            if (t) { n.x = t.x; n.y = t.y; }
+        }
 
         // labels lean inward until the placer runs, so long labels never
         // push their nodes against the far wall during prewarm
@@ -387,15 +426,24 @@ export function createLayout(graph, config) {
         const { alphaDecay, velocityDecay } = cfg.sim;
         alpha += (alphaTarget - alpha) * alphaDecay;
 
-        forceLink(alpha);
-        forceCharge(alpha);
-        forceSpread(alpha);
-        forceZones(alpha);
-        forceCollide();
-        forceLabels();
-        forceObstacles();
-        forceBoundary();
-        forceCenter();
+        if (cfg.forces.place) {
+            // Placed sky: the axes decide; the rest only keeps names and discs apart.
+            forceAnchor();
+            forceCollide();
+            forceLabels();
+            forceObstacles();
+            forceBoundary();
+        } else {
+            forceLink(alpha);
+            forceCharge(alpha);
+            forceSpread(alpha);
+            forceZones(alpha);
+            forceCollide();
+            forceLabels();
+            forceObstacles();
+            forceBoundary();
+            forceCenter();
+        }
 
         const p = pad();
         const W = stage.width, H = stage.height;
@@ -482,6 +530,9 @@ export function createLayout(graph, config) {
                 for (const n of nodes) { n.x *= sx; n.y *= sy; n.vx = 0; n.vy = 0; }
             }
         },
+
+        /** Stage point for a (scale, code) position, or null when placement is off. */
+        toStage,
 
         /** Keep-out rectangles {x0,y0,x1,y1} in stage coordinates. */
         setObstacles(rects) { obstacles = rects.filter(Boolean); },

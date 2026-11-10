@@ -69,7 +69,8 @@ export function createProjectInfo(container, { graph, onSelect, onOpen, getAncho
             <p class="c-panel__kicker">${esc(kicker)}</p>
             <h2 class="c-panel__title">${esc(card?.title || p.title)}</h2>
             ${desc ? `<p class="c-panel__desc">${esc(desc)}</p>` : ""}
-            ${figure ? `<p class="c-panel__figure"><span aria-hidden="true">✦</span> ${esc(figure)}</p>` : ""}`;
+            ${figure ? `<p class="c-panel__figure"><span aria-hidden="true">✦</span> ${esc(figure)}</p>` : ""}
+            ${p.href ? `<button type="button" class="c-panel__warp" data-open="${esc(node.id)}">Warp to project <span aria-hidden="true">→</span></button>` : ""}`;
     }
 
     function renderAttribute(node) {

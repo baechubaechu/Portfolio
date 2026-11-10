@@ -548,6 +548,38 @@
     color: var(--c-ink-2);
 }
 
+/* No tilt-to-explore on phones any more, so no gaze reticle either. */
+.c-mobile-reticle {
+    display: none !important;
+}
+
+/* Touch screens have no hover-to-click: the card carries the way in. */
+.c-panel__warp {
+    align-self: flex-start;
+    margin-top: 14px;
+    padding: 8px 14px;
+    font-family: var(--c-font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #ffc47a;
+    background: rgba(40, 24, 8, 0.82);
+    border: 1px solid rgba(255, 196, 122, 0.45);
+    border-radius: 999px;
+    cursor: pointer;
+    pointer-events: auto;
+}
+
+.c-panel__warp:focus-visible {
+    outline: 1px dashed #ffc47a;
+    outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .c-panel__warp { display: none; }
+}
+
 .c-panel__figure {
     margin: 0;
     font-family: var(--c-font-mono);
@@ -591,6 +623,29 @@
 }
 
 .c-symbol__star--minor { fill: var(--c-ink-2); }
+
+/* Scale marks: the sky's one axis, named faintly along its edge. */
+.c-mark {
+    font-family: var(--c-font-mono);
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    fill: var(--c-ink-3);
+    fill-opacity: 0.7;
+    dominant-baseline: central;
+    pointer-events: none;
+    user-select: none;
+    transition: fill-opacity 320ms var(--c-ease);
+}
+
+.c-hero__stage.has-symbol .c-mark {
+    fill-opacity: 0.25;
+}
+
+.c-hero.is-warp-prep .c-mark,
+.c-hero.is-warping .c-mark {
+    fill-opacity: 0;
+}
 
 .c-symbol__art {
     opacity: 0;
@@ -641,8 +696,9 @@
     transition: opacity 460ms var(--c-ease) calc(var(--step) * var(--c-sym-step) + 360ms);
 }
 
-/* The figure names the project now, and the card carries the title. */
-.c-hero__stage.has-symbol .c-node--project.is-focus .c-node__label {
+/* While a figure is up only its own words are on the sky: the card carries the
+   project's title, and the other projects keep their dots but not their names. */
+.c-hero__stage.has-symbol .c-node--project .c-node__label {
     opacity: 0;
     transition: opacity 240ms var(--c-ease);
 }

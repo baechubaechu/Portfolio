@@ -76,12 +76,21 @@ export function resolveCamera(cfg, stage) {
     const pad = cfg.stage?.padding ?? { top: 48, right: 52, bottom: 48, left: 52 };
     // Fit the padded layout to the window so the figure stays wide,
     // with only a sliver of sky at the crop marks.
-    const screenPadX = Math.min(c.fitPadX ?? c.fitPad ?? 28, halfW * 0.4);
-    const screenPadY = Math.min(c.fitPadY ?? c.fitPad ?? 28, halfH * 0.4);
     const uEdge = Math.max(0.25, 1 - (pad.left + pad.right) / W);
     const vEdge = Math.max(0.25, 1 - (pad.top + pad.bottom) / H);
-    const spanX = Math.atan(Math.max(0.12, (halfW - screenPadX) / c.focal)) / uEdge;
-    const spanY = Math.atan(Math.max(0.12, (halfH - screenPadY) / c.focal)) / vEdge;
+    if (c.fitIdentity) {
+        // At rest the screen is the layout, 1:1: the padded layout edge stays where
+        // it is. Names the layout kept apart stay apart on any screen size.
+        const padX = (pad.left + pad.right) / 2, padY = (pad.top + pad.bottom) / 2;
+        c.spanX = Math.atan(Math.max(0.12, (halfW - padX) / c.focal)) / uEdge;
+        c.spanY = Math.atan(Math.max(0.12, (halfH - padY) / c.focal)) / vEdge;
+        c.tanX = Math.tan(c.spanX * uEdge) / uEdge;
+        c.tanY = Math.tan(c.spanY * vEdge) / vEdge;
+        return c;
+    }
+    const screenPad = c.fitPad ?? 28;
+    const spanX = Math.atan(Math.max(0.12, (halfW - screenPad) / c.focal)) / uEdge;
+    const spanY = Math.atan(Math.max(0.12, (halfH - screenPad) / c.focal)) / vEdge;
     const corner = Math.sqrt(Math.max(0.72, Math.cos(Math.min(spanX, 1.1))));
     c.spanX = Math.min(c.spanX ?? spanX, spanX);
     c.spanY = Math.min(c.spanY ?? spanY, spanY * corner);
