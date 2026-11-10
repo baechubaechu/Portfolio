@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 760" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+  <!-- How an AI BIM-editing benchmark scores a task, and where each audit criterion checks it. -->
+  <rect width="1600" height="760" fill="#0f1012"/>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M1 1L9 5L1 9" fill="none" stroke="#bdbab4" stroke-width="1.4"/>
+    </marker>
+  </defs>
+  <g fill="none" stroke="#e8e6e1" stroke-width="1.4">
+    <rect x="70" y="250" width="230" height="120" rx="6"/>
+    <rect x="400" y="250" width="230" height="120" rx="6"/>
+    <rect x="730" y="250" width="230" height="120" rx="6"/>
+    <rect x="1060" y="250" width="230" height="120" rx="6"/>
+    <rect x="1360" y="250" width="180" height="120" rx="6"/>
+    <rect x="1060" y="470" width="230" height="100" rx="6" stroke-dasharray="6 5"/>
+  </g>
+  <g stroke="#bdbab4" stroke-width="1.4" fill="none" marker-end="url(#a)">
+    <line x1="300" y1="310" x2="396" y2="310"/>
+    <line x1="630" y1="310" x2="726" y2="310"/>
+    <line x1="960" y1="310" x2="1056" y2="310"/>
+    <line x1="1290" y1="310" x2="1356" y2="310"/>
+    <line x1="1175" y1="470" x2="1175" y2="374"/>
+  </g>
+  <g fill="#e8e6e1" font-size="26" font-weight="500" text-anchor="middle">
+    <text x="185" y="305">Instruction</text>
+    <text x="515" y="305">AI edits</text>
+    <text x="845" y="305">Result IFC</text>
+    <text x="1175" y="305">Scorer</text>
+    <text x="1450" y="305">Score</text>
+    <text x="1175" y="515">Answer key</text>
+  </g>
+  <g fill="#8f8c86" font-size="19" text-anchor="middle">
+    <text x="185" y="340">input IFC + target ID</text>
+    <text x="515" y="340">language model</text>
+    <text x="845" y="340">the edited model</text>
+    <text x="1175" y="340">geometry · meaning · topology</text>
+    <text x="1450" y="340">0 to 1</text>
+    <text x="1175" y="548">ground-truth IFC or value</text>
+  </g>
+  <!-- the four checks -->
+  <g font-size="20" fill="#e8e6e1">
+    <g stroke="#ffc47a" stroke-width="1.2" fill="none" stroke-dasharray="3 5">
+      <path d="M185 250 L185 150"/>
+      <path d="M1175 570 L1175 650"/>
+      <path d="M845 250 L845 120 L1450 120 L1450 250"/>
+      <path d="M1175 250 L1175 190"/>
+    </g>
+    <g fill="#ffc47a">
+      <circle cx="185" cy="150" r="17"/><circle cx="1175" cy="650" r="17"/><circle cx="1147" cy="120" r="17"/><circle cx="1175" cy="190" r="17"/>
+    </g>
+    <g fill="#0f1012" font-weight="600" text-anchor="middle" font-size="18">
+      <text x="185" y="156">3</text><text x="1175" y="656">2</text><text x="1147" y="126">4</text><text x="1175" y="196">1</text>
+    </g>
+    <text x="215" y="145" font-weight="500">Target ID</text>
+    <text x="215" y="171" fill="#8f8c86" font-size="18">Is the object to edit in the input file?</text>
+    <text x="1205" y="645" font-weight="500">Ground truth</text>
+    <text x="1205" y="671" fill="#8f8c86" font-size="18">Does the key match the instruction?</text>
+    <text x="870" y="72" font-weight="500">Independent check</text>
+    <text x="870" y="98" fill="#8f8c86" font-size="18">Does reading the file agree with the score?</text>
+    <text x="1205" y="185" font-weight="500">Right answer</text>
+    <text x="1205" y="211" fill="#8f8c86" font-size="18">Can a correct edit get full marks?</text>
+  </g>
+</svg>

@@ -419,48 +419,33 @@ export const projects = [
         },
     },
     {
-        id: "deary",
+        id: "bim-audit",
         domain: "other",
-        title: "Deary",
+        title: "BIM Benchmark Audit",
         year: 2026,
-        category: "Personal project",
-        bias: [0.86, 0.72],
-        href: "project-detail.html?id=deary",
-        place: { scale: 0.00, code: 0.94 },
-        // Questions and answers on one page, follow-ups and the entry on the other.
+        category: "Research",
+        href: "project-detail.html?id=bim-audit",
+        place: { scale: 0.50, code: 0.92 },
+        // A balance: the benchmark's score in one pan, the check against the file in the other, and the file side weighs more.
         symbol: {
-            name: "The open book",
-            art: { src: "assets-web/constellations/deary.svg", box: [30, 24, 240, 156] },
-            origin: [150, 160],
+            name: "The scales",
+            art: { src: "assets-web/constellations/bim-audit.svg", box: [0, 0, 300, 210] },
+            origin: [150, 30],
             stars: [
-                { id: "guard", label: "Guardrail", at: [150, 68], side: "above" },
-                { id: "question", label: "Question", at: [55, 45], side: "above" },
-                { id: "answer", label: "Answer", at: [55, 140], side: "below" },
-                { id: "followup", label: "Follow-up", at: [245, 45], side: "above" },
-                { id: "entry", label: "Entry", at: [245, 140], side: "below" },
+                { id: "truth", label: "Ground truth", at: [45, 44], side: "above" },
+                { id: "target", label: "Target ID", at: [255, 62], side: "above" },
+                { id: "right", label: "Right answer", at: [150, 110], side: "left" },
+                { id: "score", label: "Score", at: [45, 140], side: "below" },
+                { id: "check", label: "Direct check", at: [255, 160], side: "below" },
+                { id: "ifc", label: "IFC", at: [150, 186], side: "right" },
             ],
-            links: [["@", "guard"], ["guard", "question"], ["question", "answer"], ["answer", "@"], ["guard", "followup"], ["followup", "entry"], ["entry", "@"]],
+            links: [["@", "truth"], ["@", "target"], ["@", "right"], ["right", "ifc"], ["truth", "score"], ["target", "check"]],
         },
         attributes: [
+            { id: "research", weight: 0.95 },
             { id: "code", weight: 0.9 },
-            { id: "ai", weight: 0.8 },
-            { id: "interaction", weight: 0.8 },
+            { id: "ai", weight: 0.7 },
         ],
-        // Small kite
-        asterism: {
-            stars: {
-                "code": [0.00, -1.00],
-                "deary": [-0.78, 0.06],
-                "ai": [0.78, 0.04],
-                "interaction": [0.00, 0.98],
-            },
-            links: [
-                ["code", "deary"],
-                ["code", "ai"],
-                ["deary", "interaction"],
-                ["ai", "interaction"],
-            ],
-        },
     },
 ];
 

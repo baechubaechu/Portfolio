@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+  <!-- Generated from bim-benchmark-audit/bim-edit/results/checklist-results.md (section 3). -->
+  <rect width="1600" height="900" fill="#0f1012"/>
+  <text x="80" y="84" fill="#e8e6e1" font-size="30" font-weight="500">Fully solved tasks per model, BIM-Edit</text>
+  <text x="80" y="122" fill="#8f8c86" font-size="20">Published score vs. re-scored with deletions judged by the benchmark's own definition (upper bound)</text>
+  <line x1="360" y1="170" x2="360" y2="754" stroke="#2a2b2e" stroke-width="1"/>
+  <text x="360" y="782" fill="#6f6c67" font-size="18" text-anchor="middle">0</text>
+  <line x1="540" y1="170" x2="540" y2="754" stroke="#2a2b2e" stroke-width="1"/>
+  <text x="540" y="782" fill="#6f6c67" font-size="18" text-anchor="middle">10</text>
+  <line x1="720" y1="170" x2="720" y2="754" stroke="#2a2b2e" stroke-width="1"/>
+  <text x="720" y="782" fill="#6f6c67" font-size="18" text-anchor="middle">20</text>
+  <line x1="900" y1="170" x2="900" y2="754" stroke="#2a2b2e" stroke-width="1"/>
+  <text x="900" y="782" fill="#6f6c67" font-size="18" text-anchor="middle">30</text>
+  <line x1="1080" y1="170" x2="1080" y2="754" stroke="#2a2b2e" stroke-width="1"/>
+  <text x="1080" y="782" fill="#6f6c67" font-size="18" text-anchor="middle">40</text>
+  <line x1="1260" y1="170" x2="1260" y2="754" stroke="#2a2b2e" stroke-width="1"/>
+  <text x="1260" y="782" fill="#6f6c67" font-size="18" text-anchor="middle">50</text>
+  <line x1="1440" y1="170" x2="1440" y2="754" stroke="#2a2b2e" stroke-width="1"/>
+  <text x="1440" y="782" fill="#6f6c67" font-size="18" text-anchor="middle">60</text>
+  <text x="336" y="222" fill="#e8e6e1" font-size="22" text-anchor="end">claude-sonnet</text>
+  <rect x="360" y="194" width="1062.0" height="26" fill="#ffc47a" fill-opacity="0.85"/>
+  <rect x="360" y="224" width="108.0" height="14" fill="#8f8c86"/>
+  <text x="1434.0" y="214" fill="#ffc47a" font-size="20">59</text>
+  <text x="478.0" y="236" fill="#8f8c86" font-size="17">6</text>
+  <text x="336" y="304" fill="#e8e6e1" font-size="22" text-anchor="end">qwen3.6-plus</text>
+  <rect x="360" y="276" width="900.0" height="26" fill="#ffc47a" fill-opacity="0.85"/>
+  <rect x="360" y="306" width="198.0" height="14" fill="#8f8c86"/>
+  <text x="1272.0" y="296" fill="#ffc47a" font-size="20">50</text>
+  <text x="568.0" y="318" fill="#8f8c86" font-size="17">11</text>
+  <text x="336" y="386" fill="#e8e6e1" font-size="22" text-anchor="end">deepseek-v3.2</text>
+  <rect x="360" y="358" width="846.0" height="26" fill="#ffc47a" fill-opacity="0.85"/>
+  <rect x="360" y="388" width="126.0" height="14" fill="#8f8c86"/>
+  <text x="1218.0" y="378" fill="#ffc47a" font-size="20">47</text>
+  <text x="496.0" y="400" fill="#8f8c86" font-size="17">7</text>
+  <text x="336" y="468" fill="#e8e6e1" font-size="22" text-anchor="end">gemma4-31B</text>
+  <rect x="360" y="440" width="576.0" height="26" fill="#ffc47a" fill-opacity="0.85"/>
+  <rect x="360" y="470" width="54.0" height="14" fill="#8f8c86"/>
+  <text x="948.0" y="460" fill="#ffc47a" font-size="20">32</text>
+  <text x="424.0" y="482" fill="#8f8c86" font-size="17">3</text>
+  <text x="336" y="550" fill="#e8e6e1" font-size="22" text-anchor="end">gpt-5.4</text>
+  <rect x="360" y="522" width="504.0" height="26" fill="#ffc47a" fill-opacity="0.85"/>
+  <rect x="360" y="552" width="72.0" height="14" fill="#8f8c86"/>
+  <text x="876.0" y="542" fill="#ffc47a" font-size="20">28</text>
+  <text x="442.0" y="564" fill="#8f8c86" font-size="17">4</text>
+  <text x="336" y="632" fill="#e8e6e1" font-size="22" text-anchor="end">gemini-flash-3.0</text>
+  <rect x="360" y="604" width="396.0" height="26" fill="#ffc47a" fill-opacity="0.85"/>
+  <rect x="360" y="634" width="90.0" height="14" fill="#8f8c86"/>
+  <text x="768.0" y="624" fill="#ffc47a" font-size="20">22</text>
+  <text x="460.0" y="646" fill="#8f8c86" font-size="17">5</text>
+  <text x="336" y="714" fill="#e8e6e1" font-size="22" text-anchor="end">gpt-5.4-mini</text>
+  <rect x="360" y="686" width="342.0" height="26" fill="#ffc47a" fill-opacity="0.85"/>
+  <rect x="360" y="716" width="36.0" height="14" fill="#8f8c86"/>
+  <text x="714.0" y="706" fill="#ffc47a" font-size="20">19</text>
+  <text x="406.0" y="728" fill="#8f8c86" font-size="17">2</text>
+  <rect x="360" y="814" width="22" height="16" fill="#8f8c86"/>
+  <text x="392" y="828" fill="#bdbab4" font-size="19">Published: 38 of 2,197 records (1.7%)</text>
+  <rect x="830" y="814" width="22" height="16" fill="#ffc47a" fill-opacity="0.85"/>
+  <text x="862" y="828" fill="#bdbab4" font-size="19">Re-scored: 257 (11.7%)</text>
+</svg>

@@ -16,7 +16,7 @@ const projectsData = {
             id: "xtra-space",
             title: "X-tra Space",
             description: "A graduation project that re-layers Geumjeong Station's transfer hub so fast and slow flows cross, with an AI operating layer that runs light, sound and display by situation.",
-            thumbnail: "assets-web/XS-thumbnail.webp",
+            thumbnail: "assets-web/XS-thumbnail.v2.webp",
             tags: ["Transit Hub Remodel", "Geumjeong Station, Gunpo", "Stacked Circulation Layers", "Sanbon Stream Reopening", "AI-Operated Space", "Graduation Project"],
             kind: "Architecture",
             thesis: "Geumjeong Station is a transfer hub people only pass through. X-tra Space stacks transfer, promenade, urban and auxiliary circulation layers so they cross, and the crossings become new public space. An AI operating layer then manages that space, switching light, sound and display modes from what it senses, and a working version ran live at the graduation show.",
@@ -25,7 +25,7 @@ const projectsData = {
             category: "Architecture / Graduation Project",
             role: "Designer · Developer (solo)",
             timeline: "2025.09 - 2026.06",
-            cover: "assets-web/XS-cover.webp",
+            cover: "assets-web/XS-cover.v2.webp",
             chapters: [
                 {
                     id: "site",
@@ -47,10 +47,10 @@ const projectsData = {
                             ["Given plan", "Reopening Sanbon Stream"]
                         ] },
                         { kind: "gallery", images: [
-                            { url: "assets-web/XS-site.webp", caption: "Site diagram. The rail corridor splits the city into two edges; street views from either side." },
-                            { url: "assets-web/XS-site-axis.webp", caption: "Green axis within 1 to 3 km. Hills in green, streams in blue; the red dashed line is the covered section of Sanbon Stream meeting the station." }
+                            { url: "assets-web/XS-site.v2.webp", caption: "Site diagram. The rail corridor splits the city into two edges; street views from either side." },
+                            { url: "assets-web/XS-site-axis.v2.webp", caption: "Green axis within 1 to 3 km. Hills in green, streams in blue; the red dashed line is the covered section of Sanbon Stream meeting the station." }
                         ] },
-                        { kind: "image", url: "assets-web/XS-site-context.webp", caption: "Site model with street photos, historical aerials, and a collage of the transfer environment around the station." }
+                        { kind: "image", url: "assets-web/XS-site-context.v2.webp", caption: "Site model with street photos, historical aerials, and a collage of the transfer environment around the station." }
                     ]
                 },
                 {
@@ -60,7 +60,7 @@ const projectsData = {
                     lead: "Awareness needs contrast, so the design places contrasting conditions right next to each other.",
                     blocks: [
                         { kind: "text", body: "Senses are always there, but in a familiar, uniform space we stop noticing them. They only become conscious through change. X-tra Space is made by crossing things that are usually kept apart: transfer and promenade, fast and slow, moving and staying, efficiency and sensation, and a fixed building with an atmosphere that responds." },
-                        { kind: "image", url: "assets-web/XS-flow.webp", caption: "Flows that are usually kept apart, crossing" },
+                        { kind: "image", url: "assets-web/XS-flow.v2.webp", caption: "Flows that are usually kept apart, crossing" },
                         { kind: "rules", items: [
                             ["Low ceiling / narrow passage", "Compression: tension and focus"],
                             ["Height change / crossing flows", "Transition: curiosity and alertness"],
@@ -87,11 +87,11 @@ const projectsData = {
                             ["X-tra Space", "Sensory transition, where the layers overlap"]
                         ] },
                         { kind: "text", body: "The massing splits the station into two levels: 1F Transfer and 2F Extra. In the final second-floor plan, the transit layer and the walking layer run side by side, and X-tra Space sits at the points where they meet." },
-                        { kind: "image", url: "assets-web/XS-plan.webp", caption: "Second floor plan. 1 Transit layer, 2 Walking layer, 3 X-tra Space, 4 Exit, 5 Platform, 6 Concourse, 7 Cafe/Lounge, 8 Observatory deck, 9 Bicycle storage, 10 Station operations, 11 Restroom, 12 Service." },
-                        { kind: "image", url: "assets-web/XS-long-section.webp", caption: "Long section along the tracks. Transfer below, the walking level and planted deck above, under one roof." },
+                        { kind: "image", url: "assets-web/XS-plan.v2.webp", caption: "Second floor plan. 1 Transit layer, 2 Walking layer, 3 X-tra Space, 4 Exit, 5 Platform, 6 Concourse, 7 Cafe/Lounge, 8 Observatory deck, 9 Bicycle storage, 10 Station operations, 11 Restroom, 12 Service." },
+                        { kind: "image", url: "assets-web/XS-long-section.v2.webp", caption: "Long section along the tracks. Transfer below, the walking level and planted deck above, under one roof." },
                         { kind: "gallery", images: [
-                            { url: "assets-web/XS-section1.webp", caption: "Section 1: the X-tra Space above the tracks." },
-                            { url: "assets-web/XS-section2.webp", caption: "Section 2: the station body, transfer below and the walking level above." }
+                            { url: "assets-web/XS-section1.v2.webp", caption: "Section 1: the X-tra Space above the tracks." },
+                            { url: "assets-web/XS-section2.v2.webp", caption: "Section 2: the station body, transfer below and the walking level above." }
                         ] },
                         { kind: "text", body: "X-tra Space is where the layers overlap. Above the tracks, the transfer layer and the walking layer meet at a change in height: people moving fast to their trains pass people walking slowly toward the stream. The section tightens before each crossing and opens after it into a void with diffuse light under the roof, so a space built for passing through gains places to notice the surroundings and stay." }
                     ]
@@ -103,7 +103,7 @@ const projectsData = {
                     lead: "Four vaulted roof bands follow the flows underneath and cross where they cross, generated in Grasshopper from two edge curves each.",
                     blocks: [
                         { kind: "text", body: "The roof is not modelled by hand. Each of its four bands is defined only by two edge curves drawn along a flow in plan. A Grasshopper definition turns every pair into a vaulted band with ribs, so when a flow moves, its band is regenerated with it. Where the transfer and walking flows swap sides, the bands cross over each other, and the roof above shows the same crossing as the plan below." },
-                        { kind: "image", url: "assets-web/XS-roof-plan.webp", caption: "Roof plan generated by the definition: four bands crossing at both ends of the station." },
+                        { kind: "image", url: "assets-web/XS-roof-plan.v2.webp", caption: "Roof plan generated by the definition: four bands crossing at both ends of the station." },
                         { kind: "steps", items: [
                             "Edges: two curves per band, drawn along the transfer or walking flow it covers.",
                             "Stations: Tween Curve fills 50 curves between the edges, and lines across the band mark stations along its length.",
@@ -112,7 +112,7 @@ const projectsData = {
                             "Panels: the band is split into panels and lifted 400 mm, leaving slits for light between them.",
                             "Ribs: 50 mm rib profiles are placed every 1,000 mm on perpendicular frames and lofted under the vault."
                         ] },
-                        { kind: "image", url: "assets-web/XS-roof-arches.webp", caption: "View along the tracks: each band is an arch of its own curvature, and the bands pass over one another at the crossings." },
+                        { kind: "image", url: "assets-web/XS-roof-arches.v2.webp", caption: "View along the tracks: each band is an arch of its own curvature, and the bands pass over one another at the crossings." },
                         { kind: "text", body: "The columns come from the same file. Twenty-one columns stand on a 12,000 mm grid; each rises 10,767 mm through the first floor, meets a 400 mm box girder, and continues as a 300 mm-radius pipe that branches into 160 mm pipes to pick up the roof." },
                         { kind: "rules", items: [
                             ["Roof curvature", "2,000 to 3,000 mm rise, set per band"],
@@ -162,7 +162,7 @@ const projectsData = {
                             ["critical_focus", "5900 K, 600 ms transition. Focus on the section and diagrams."],
                             ["night_reflect", "2900 K, 1400 ms transition. Low, warm."]
                         ] },
-                        { kind: "image", url: "assets-web/XS-monitor-states.webp", caption: "Four of the ten pre-rendered states of the same interior, varying light level, colour temperature and occupancy. The monitor picks one from the live head count, sound level and current scene." }
+                        { kind: "image", url: "assets-web/XS-monitor-states.v2.webp", caption: "Four of the ten pre-rendered states of the same interior, varying light level, colour temperature and occupancy. The monitor picks one from the live head count, sound level and current scene." }
                     ]
                 },
                 {
@@ -196,15 +196,15 @@ const projectsData = {
                     label: "Photos",
                     lead: "The booth at the graduation show.",
                     blocks: [
-                        { kind: "image", url: "assets-web/XS-booth-wide.webp", caption: "The booth: panels, the live monitor with its camera, the site and section models, and the tablet" },
+                        { kind: "image", url: "assets-web/XS-booth-wide.v2.webp", caption: "The booth: panels, the live monitor with its camera, the site and section models, and the tablet" },
                         { kind: "gallery", images: [
-                            { url: "assets-web/XS-photo-3.webp", caption: "Tablet input" },
-                            { url: "assets-web/XS-photo-4.webp", caption: "Live monitor over the section model" }
+                            { url: "assets-web/XS-photo-3.v2.webp", caption: "Tablet input" },
+                            { url: "assets-web/XS-photo-4.v2.webp", caption: "Live monitor over the section model" }
                         ] },
                         { kind: "gallery", images: [
-                            { url: "assets-web/XS-photo-6.webp", caption: "Section model" },
-                            { url: "assets-web/XS-photo-7.webp", caption: "Roof vaults on branching columns" },
-                            { url: "assets-web/XS-photo-8.webp", caption: "Roof ribs, close up" }
+                            { url: "assets-web/XS-photo-6.v2.webp", caption: "Section model" },
+                            { url: "assets-web/XS-photo-7.v2.webp", caption: "Roof vaults on branching columns" },
+                            { url: "assets-web/XS-photo-8.v2.webp", caption: "Roof ribs, close up" }
                         ] }
                     ]
                 }
@@ -893,121 +893,105 @@ const projectsData = {
             ]
         },
         {
-            id: "deary",
-            title: "Deary",
-            description: "An AI-assisted diary app powered by Gemini. Guided questions turn your day into a reflective diary entry.",
-            thumbnail: "assets-web/deary_logo.webp",
-            tags: ["AI Diary App", "Guided Interview", "Writes Only From Your Answers", "Live Web App"],
-            githubLink: "https://github.com/baechubaechu/Deary",
-            visitLink: "https://deary1.pages.dev/",
-            coverVideo: "https://www.youtube.com/watch?v=GRwoxY0-ZwM",
-            kind: "Code",
-            thesis: "A blank page is the hardest part of keeping a diary. Deary replaces it with a short interview: it asks concrete questions about today, digs one level deeper only when an answer is thin, checks that there is enough to write from, and then writes the entry strictly from what you said.",
-            subtitle: "Dear Day, Daily You.",
-            category: "Personal Project",
-            role: "UI/UX Designer / Developer",
-            timeline: "2026.02~",
-            cover: "assets-web/deary_logo.webp",
+            id: "bim-audit",
+            title: "BIM Benchmark Audit",
+            description: "A check of two public benchmarks that score how well AI edits BIM (IFC) models. Correct edits were losing points, so the reported level of AI was far too low.",
+            thumbnail: "assets-web/BMA-results.svg",
+            tags: ["Research · Conference Paper", "AI × BIM (IFC)", "Benchmark Audit", "IfcOpenShell", "Lead Author"],
+            githubLink: "https://github.com/baechubaechu/bim-benchmark-audit",
+            kind: "Research",
+            thesis: "Benchmarks for AI that edits building models report that no model gets even half of the tasks right. Before taking that number about AI, I checked the number itself: whether a correct edit can reach full marks, whether the answer keys are right, whether the objects to edit exist, and whether the scores agree with what the edited files actually contain. In both benchmarks a correct answer could lose points, and once deletions were scored by the benchmark's own definition the share of fully solved tasks rose from 0.77% to 10.03%.",
+            subtitle: "Is the score right? Checking how AI is graded at editing BIM models",
+            category: "Research / Conference Paper",
+            role: "Researcher (lead author): all code, audits and writing",
+            timeline: "2026.10 - 2026.11",
+            cover: "assets-web/BMA-results.svg",
             chapters: [
                 {
-                    id: "problem",
-                    label: "Problem",
-                    lead: "People want a record of their day. The empty page stops them.",
+                    id: "question",
+                    label: "Question",
+                    lead: "AI is said to be poor at editing building models. The first thing to check is the test.",
                     blocks: [
-                        { kind: "text", body: "Open-ended prompts like \"How was your day?\" get one-line answers, and a one-line answer makes a flat diary. The problem is not writing; it is recalling specific moments on demand." },
-                        { kind: "text", body: "So the product question became: what should an interviewer ask, when should it push further, and when should it stop, so that the final entry is both vivid and true?" },
-                        { kind: "image", url: "assets-web/deary0.webp", caption: "Home screen" }
+                        { kind: "text", body: "BIM-Edit and BIBIMBAP give a language model an IFC model and an instruction (add a door, move a wall, delete a column, find the volume of an opening), then score the edited file automatically. Their headline results, that no model passes 50%, are quoted as a measure of what AI can do with BIM." },
+                        { kind: "text", body: "An automatic score is only as good as its scorer. If a correct edit cannot reach full marks, the benchmark measures the scorer as much as the model." },
+                        { kind: "image", url: "assets-web/BMA-criteria.svg", caption: "How a task is scored, and where each of the four checks looks: the input, the answer key, the scorer, and the file behind the score." }
                     ]
                 },
                 {
-                    id: "pipeline",
-                    label: "Pipeline",
-                    lead: "Five model calls, each with one job and its own temperature.",
+                    id: "criteria",
+                    label: "Four Checks",
+                    lead: "Four questions any automatic grader should pass before its numbers are used.",
                     blocks: [
-                        { kind: "rules", items: [
-                            ["1  generateNextQuestion", "Pick the next question from a themed pool. temp 0.9, JSON output"],
-                            ["2  analyzeAnswerForFollowup", "Decide whether this answer needs one follow-up. temp 0.7, JSON"],
-                            ["3  reviewAnswersBeforeDiary", "Check the whole set is rich enough to write from. temp 0.7, JSON"],
-                            ["4  generateDiary", "Write the entry from the answers only. temp 0.7"],
-                            ["5  extractUserProfile", "Update a long-term profile for better questions next time. temp 0.3, JSON"]
+                        { kind: "rules", strong: true, items: [
+                            ["1 · Right answer", "Make the correct edit by hand and score it. Does it get full marks?"],
+                            ["2 · Ground truth", "Does the answer key itself do what the instruction asks?"],
+                            ["3 · Target ID", "Does the object the instruction and the scorer refer to exist in the input file?"],
+                            ["4 · Independent check", "Open the result files directly. Do the scores agree with what is in them, and do wrong answers lose points?"]
                         ] },
-                        { kind: "note", body: "Creative steps run warm; judging and extraction run cold. Every JSON step has a deterministic fallback, so an API failure never blocks the user." }
+                        { kind: "text", body: "The four checks follow the order audits use in other fields: set criteria, apply them, count the errors, then see how the results change once corrected." }
                     ]
                 },
                 {
-                    id: "rules",
-                    label: "Question Rules",
-                    lead: "An interviewer, not a chatbot.",
-                    blocks: [
-                        { kind: "rules", items: [
-                            ["Pool", "5 themes (morning, highlight, food, work/school, relationships) × 5 questions, in Korean and English"],
-                            ["First question", "Always from the morning theme, never a feelings question"],
-                            ["Coverage", "Prefer the least-covered theme; vary themes"],
-                            ["No repeats", "A generated question that matches any asked question is rejected and replaced by an unasked pool question"],
-                            ["Stop", "End after 4+ questions once the main themes are covered"]
-                        ] },
-                        { kind: "image", url: "assets-web/deary2.webp", caption: "Daily questions" }
-                    ]
-                },
-                {
-                    id: "followup",
-                    label: "Follow-up Logic",
-                    lead: "Dig one level deeper, only when it helps.",
+                    id: "method",
+                    label: "Method",
+                    lead: "Build the right answer, score it with the original code, and compare against the files rather than the scores.",
                     blocks: [
                         { kind: "steps", items: [
-                            "\"I don't know\" / \"not sure\" → stop and move to the next theme.",
-                            "Under 10 characters → a fixed, gentle prompt (no model call).",
-                            "Under 50 characters, or facts without reflection → one follow-up that must reference a specific person, place or object from the answer.",
-                            "Forbidden: generic \"tell me more\" and direct \"how did you feel?\" questions."
+                            "BIM-Edit: read the public scoring logs of seven models (2,267 records) and the result IFC files of the four models that published them.",
+                            "Judge every deletion directly from the files: the target is gone from the result, the answer key also removes it, the 23 building element classes match the key, and nothing else moved by more than 1 mm.",
+                            "BIBIMBAP: run the original scorer at its pinned commit and IfcOpenShell version on reference answers built with the IfcOpenShell API, including equally valid alternative modelling choices.",
+                            "Score 401 deliberately wrong answers across the 45 editing tasks, such as a column floating 10 m above the floor or a deleted object left in place under a new ID.",
+                            "Recompute every retrieval answer from the IFC file and compare it with the key."
                         ] },
-                        { kind: "code", filename: "ai.ts · analyzeAnswerForFollowup (condensed)", language: "TypeScript", code: `const dontKnow = language === "ko"
-  ? ["모르겠", "잘 모르겠", "말하기 어려"]
-  : ["don't know", "not sure", "can't say"];
-if (dontKnow.some((p) => answerLower.includes(p))) {
-  return { needsFollowup: false };        // respect the user, move on
-}
-if (answerLength < 10) {
-  return { needsFollowup: true,           // cheap path, no model call
-           followupQuestion: GENTLE_PROMPT[language] };
-}
-// otherwise ask Gemini, with the rules above in the prompt` }
-                    ]
-                },
-                {
-                    id: "guardrails",
-                    label: "Guardrails",
-                    lead: "The diary may only contain what the user said.",
-                    blocks: [
-                        { kind: "code", filename: "ai.ts · generateDiary", language: "Prompt", code: `You are an 'honest recorder' who summarizes the user's day.
-
-[Rules]
-1. Style: past tense. (ate, was happy, felt tired)
-2. Fact-based: never invent place, weather or people
-   the user didn't mention. (No hallucination)
-3. Simple: easy words, no abstract phrases.
-4. Flow: connect answers in natural time order.
-5. Emotion: reflect the user's feelings vividly.` },
                         { kind: "rules", items: [
-                            ["Review gate", "2 or fewer answers, all under 10 characters, or feelings without events → ask one more question before writing"],
-                            ["Profile memory", "A hobby or interest is stored only after 2+ mentions; lists are merged, never overwritten"]
+                            ["Tools", "Python, IfcOpenShell 0.8.3.post2 (0.9.0 breaks the benchmark's clash check), the public datasets and scoring logs"],
+                            ["Proxy check", "Where result files are missing, deletions are judged from the logs. On the four models with files, that proxy agreed with the direct check in 200 of 200 cases."]
                         ] }
                     ]
                 },
                 {
-                    id: "interface",
-                    label: "Interface",
-                    lead: "Question, answer, entry.",
+                    id: "bim-edit",
+                    label: "BIM-Edit",
+                    lead: "A correct deletion could not pass. Re-scored by the benchmark's own definition, the fully solved share rises from 0.77% to 10.03%.",
                     blocks: [
-                        { kind: "gallery", images: [
-                            { url: "assets-web/deary0.webp", caption: "Home" },
-                            { url: "assets-web/deary2.webp", caption: "Daily questions" },
-                            { url: "assets-web/deary1.webp", caption: "Generated diary entry" }
+                        { kind: "rules", items: [
+                            ["1 · Right answer", "Of 532 records that did delete the target, none scored above zero on meaning, so no deletion task was ever solved."],
+                            ["2 · Ground truth", "In 3 tasks the answer key still contains the object it should delete."],
+                            ["3 · Target ID", "In 7 tasks the scorer found no target object for any model."],
+                            ["4 · Independent check", "All 158 real deletions scored zero on meaning, while 40 of 46 records that deleted nothing scored one."]
+                        ] },
+                        { kind: "image", url: "assets-web/BMA-results.svg", caption: "Fully solved tasks per model, as published and re-scored. Across seven models, 38 records (1.7%) become 257 (11.7%), an upper bound; on the four models with result files the file-checked figure is 5 to 65 of 648 (0.77% to 10.03%)." },
+                        { kind: "text", body: "The average score used for the public ranking barely reorders the models, but every model gains 6 to 10 points, and five of seven move above 50%. The error changes less who is ahead than how capable AI appears." }
+                    ]
+                },
+                {
+                    id: "bibimbap",
+                    label: "BIBIMBAP",
+                    lead: "In 23 of 100 tasks a correct answer loses points or the answer key is wrong.",
+                    blocks: [
+                        { kind: "rules", items: [
+                            ["Deletion", "A clean deletion with the standard IfcOpenShell function scores full marks in 0 of 15 tasks. Leaving debris behind does better."],
+                            ["Volume", "Asked for the volume of two slab openings (1.7325 m³), the key holds 5.775, the sum of their areas."],
+                            ["Rotation", "An exact 45° rotation is measured as 39.2°, because the angle is read along the wall's diagonal."],
+                            ["Wrong answers", "In 36 of 45 editing tasks a clearly wrong answer scores 0.9 or more; in 34 it scores full marks."]
+                        ] },
+                        { kind: "text", body: "Model answer files for BIBIMBAP are not public, so the audit claims only how many tasks mis-score a correct answer, not how the ranking would change." }
+                    ]
+                },
+                {
+                    id: "limits",
+                    label: "Limits",
+                    lead: "What the audit does not claim.",
+                    blocks: [
+                        { kind: "list", items: [
+                            "The re-scored figures are an upper bound: the full check for side effects ran only where result files were public.",
+                            "A deletion judged correct here means the listed building elements match; it does not certify every property and relation in the file.",
+                            "The benchmarks are valuable work. The point is a checklist that any automatic grader of BIM edits should pass before its numbers are quoted."
                         ] },
                         { kind: "links", items: [
-                            { label: "Promo video", url: "https://www.youtube.com/watch?v=GRwoxY0-ZwM" },
-                            { label: "Live", url: "https://deary1.pages.dev/" },
-                            { label: "GitHub", url: "https://github.com/baechubaechu/Deary" }
-                        ] }
+                            { label: "Code, results and per-task evidence", url: "https://github.com/baechubaechu/bim-benchmark-audit" }
+                        ] },
+                        { kind: "note", body: "Park Jihun, Ko Youngsun. Benchmark Audit Criteria for Evaluating AI's BIM Editing Performance: Applying to BIM-Edit and BIBIMBAP. Proceedings of the Korean Society of Cultural Space Architecture Autumn Conference, November 2026 (in Korean)." }
                     ]
                 }
             ]

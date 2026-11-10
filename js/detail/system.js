@@ -6,7 +6,7 @@
  * drawn in perspective (a slightly elevated look, not a floor-plan).
  */
 
-import { portfolio } from "../constellation/data/portfolio.js?v=3.10";
+import { portfolio } from "../constellation/data/portfolio.js?v=3.11";
 import {
     svgEl, htmlEl, mulberry32, hashString, prefersReducedMotion, esc, clamp,
 } from "../constellation/lib/utils.js?v=2.0";
@@ -81,9 +81,9 @@ const SUN_LOOK = {
         lo: [70, 96, 150], hi: [210, 226, 255], glow: [170, 200, 255],
         cells: 190, spots: 3, grain: 0.16,
     },
-    deary: {
-        lo: [28, 118, 112], hi: [176, 248, 232], glow: [138, 240, 220],
-        cells: 150, spots: 2, grain: 0.12,
+    "bim-audit": {
+        lo: [70, 104, 116], hi: [206, 238, 240], glow: [182, 228, 232],
+        cells: 240, spots: 3, grain: 0.18,
     },
 };
 
