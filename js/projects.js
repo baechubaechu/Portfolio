@@ -721,131 +721,173 @@ const projectsData = {
         {
             id: "sida",
             title: "Sida",
-            description: "A CLI where twelve narrow AI experts help an architect reason through a design, from site reading to review, without designing the building for them.",
-            thumbnail: "assets-web/SIDA-flow.webp",
-            tags: ["AI Design Assistant", "12 Expert Agents", "Regulation Q&A", "Models in Rhino", "CLI · v0.1"],
+            description: "A local web app that helps architecture students through early design: site facts from government records, ten AI experts around a drafting table, and a site model ready for the laser cutter. It does not design the building for them.",
+            thumbnail: "assets-web/SIDA-board.webp",
+            tags: ["AI Design Assistant", "Site Facts From Public Records", "10 Expert Agents", "Drafting Table · 3D", "Local Web App · v0.2"],
             githubLink: "https://github.com/baechubaechu/Sida",
+            visitLink: "https://sida-kr.duckdns.org",
             kind: "Code · In progress",
-            thesis: "The AI tools architects use today each cover one moment of a project: a render, a quick question, a massing study. None of them follows the project from one stage to the next, so the designer carries the context between tools by hand. Sida (시다, the Korean word for a studio assistant) is an attempt at one assistant for the whole design process: twelve narrow experts from site reading to the final review, coordinated by a Conductor and sharing a project memory the designer approves. It answers regulation questions only from retrieved text and can model in Rhino. It is a working v0.1 prototype and still in development.",
-            subtitle: "One assistant for the whole design process, not a designer",
-            category: "AI Tool / CLI Platform",
-            role: "Developer (solo)",
+            thesis: "Early design in studio starts with a week of collecting: the lot, the zoning, the ordinance, the buildings around it. A general chatbot will answer all of that fluently and get the numbers wrong. Sida (시다, the word Korean architecture schools use for a junior who assists) starts from one site address. It pulls the lot, zoning and legal limits from government records, shows every figure next to the line of law it was read from, and seats ten narrow AI experts around a drafting table where the designer sketches, tests massing and asks questions. What began in July 2026 as a command-line prototype is now a local web app in closed testing (v0.2).",
+            subtitle: "An assistant for early design that brings the evidence, not the answer",
+            category: "AI Tool / Local Web App",
+            role: "Lead developer (team project)",
             timeline: "2026.07 - in progress",
-            cover: "assets-web/SIDA-flow.webp",
+            cover: "assets-web/SIDA-board.webp",
             chapters: [
                 {
                     id: "problem",
                     label: "Problem",
-                    lead: "A design moves through many stages, but today's AI tools each help with only one.",
+                    lead: "A student needs facts about the site and a second opinion on the design. Today's AI tools blur the two.",
                     blocks: [
-                        { kind: "text", strong: true, body: "Sida's aim is one integrated program that stays with the project through the whole process as an assistant." },
-                        { kind: "text", body: "A studio project runs from reading the site and the brief, through regulations, precedents and a concept, to spatial review, drawings and the final crit. Each stage has its own sources and tools, and what is decided in one stage shapes the next." },
-                        { kind: "text", body: "The AI tools in common use cover single moments of that process. Image generators make concept renders, general chatbots answer one question at a time, and massing tools test feasibility. None of them remembers what was decided last week, so the designer re-explains the project every time. A general chatbot also blends site, program and regulation into one fluent answer, and readily invents code numbers and precedents." },
-                        { kind: "text", body: "Sida helps the designer reason at each stage and keeps the decisions connected from one stage to the next, while design judgement stays with the designer." },
+                        { kind: "text", strong: true, body: "Sida keeps three things apart: what public records say, what an AI reads into them, and what the designer decides." },
+                        { kind: "text", body: "A studio project begins with the site: lot area, zoning, coverage and floor area limits, the local ordinance, roads, existing buildings. Each lives in a different government service, and students collect them by hand. Ask a general chatbot instead and it blends site, program and regulation into one confident answer, with code numbers and precedents it has made up." },
+                        { kind: "text", body: "The first version of Sida (v0.1, July 2026) was a terminal chat that routed questions to expert prompts. It kept the reasoning organised, but every number still had to be checked by the designer, and nothing could be drawn. The rebuild set out to fix both." },
                         { kind: "rules", items: [
-                            ["Does", "Reads the brief, asks focused questions, runs one expert at a time, keeps decisions and open questions in a project file"],
-                            ["Does not", "Draw the building, fix numbers it has not retrieved, or claim that AI designed the project"]
+                            ["Numbers are never invented", "Site figures come from government records. Ordinance figures are read by fixed rules. Anything that could not be confirmed stays marked as unconfirmed."],
+                            ["Evidence travels with the number", "Each figure is shown with the line of text and the article number it was read from."],
+                            ["The designer designs", "What the AI writes is material to review and choose from. It never lands on the drafting table as the answer."]
                         ] }
+                    ]
+                },
+                {
+                    id: "site-facts",
+                    label: "Site Facts",
+                    lead: "Type an address, or click a lot on the cadastral map, and the site sheet fills in from public records.",
+                    blocks: [
+                        { kind: "steps", items: [
+                            "Find the lot: pick province, city and district from lists and type the lot number, paste an address, or click the cadastral map. Several lots can be merged into one site.",
+                            "Look it up: lot boundary, land category, area and zoning from V-World, and the existing buildings from the national building register.",
+                            "Attach the limits: the statutory building coverage and floor area ratio for that zone, from a table checked against the statute and dated.",
+                            "Fetch the ordinance: every article of the municipality's ordinance that deals with coverage or floor area, in full.",
+                            "Save it to the project as site_facts.json, which the site sheet, the experts and the 3D view all read."
+                        ] },
+                        { kind: "rules", items: [
+                            ["A record could not be fetched", "The site is still saved, and that item reads 'unconfirmed'. No estimate is filled in."],
+                            ["A typo in the address", "Not corrected silently. The designer is asked to search again."],
+                            ["Public API keys", "A relay server in Korea holds them. Each tester gets a personal Sida key, approved by hand, limited to 3,000 calls a day. The relay stores no addresses or search terms."]
+                        ] },
+                        { kind: "text", body: "The Site Reader expert then writes in three separate parts: facts with their source, interpretation with the facts it rests on, and what is still unconfirmed." }
+                    ]
+                },
+                {
+                    id: "ordinance",
+                    label: "Ordinance Figures",
+                    lead: "Ordinance numbers are read by rule, not by a model, and always shown with the sentence they came from.",
+                    blocks: [
+                        { kind: "text", body: "National law gives a range for each zone; the municipal ordinance fixes the actual figure, sometimes in running text and sometimes in an appended table inside an HWP file. Sida parses the article or the table row for the site's zone with fixed rules. If the text does not resolve to one figure, or the figure falls outside the statutory range, Sida gives no number and shows the text instead." },
+                        { kind: "rules", items: [
+                            ["Base article", "The row for this site's zone, with the figure and the quoted line"],
+                            ["Districts and special areas", "Articles for landscape districts, growth management areas and the like, passed on only when they apply to this lot"],
+                            ["Relaxations and tightening", "Listed by title. The designer marks which ones the expert should read in full, and hides the irrelevant ones"]
+                        ] },
+                        { kind: "text", body: "The screen shows every article. The Regulation Checker receives only the parts that concern this lot, so it is not tempted to apply a relaxation that does not belong. For Sejong-ro 1 in Seoul that cut the ordinance text from about 12,000 characters to 2,900." },
+                        { kind: "note", body: "Law search goes to the Korea Ministry of Government Legislation's search service with short queries built from the site facts. The expert's output is a list of things to verify against the original text, not a ruling." }
                     ]
                 },
                 {
                     id: "experts",
                     label: "Experts",
-                    lead: "Twelve independent lenses, each with declared inputs and things it must not do.",
+                    lead: "Ten independent lenses, each with declared inputs and things it must not do. Seven are in regular use, three are on hold.",
                     blocks: [
                         { kind: "rules", items: [
-                            ["site_reader", "How systems meet and cut each other on the site; no program or form proposals"],
-                            ["program_analyst", "Users, rhythms, adjacency, public–private gradient; no invented areas"],
-                            ["regulation_checker", "Governing codes and what to verify; numbers are never stated as fact"],
-                            ["precedent_scout", "3–6 precedents matched to the problem, each with a lesson and a caution"],
-                            ["concept_framer", "Turns the designer's intent into a testable one-line concept"],
-                            ["constraint_mapper", "Hard / soft constraints, priorities and tensions, with their source lens"],
-                            ["synthesizer", "Where experts agree or conflict, and which decisions are due now"],
-                            ["spatial_reviewer", "Tests the described circulation, section and thresholds; no alternative design"],
-                            ["systems_advisor", "Structure, envelope, services and egress trade-offs; no sizing"],
-                            ["design_critic", "Jury-style critique against the core problem"],
-                            ["representation_planner", "Drawings and diagrams that prove the concept and test its weak points"],
-                            ["presentation_editor", "Review story, portfolio structure, likely questions"]
+                            ["Site Reader", "Facts, interpretation and unknowns kept apart; how systems meet and cut each other on the site. No program or form proposals, no estimated figures"],
+                            ["Program Analyst", "Users and rhythms, adjacency, the public–private gradient. No invented areas"],
+                            ["Regulation Checker", "Governing laws and a table of what to verify and where. Never states a figure as settled"],
+                            ["Precedent Scout", "3–6 precedents matched to the problem, each with a lesson and a caution"],
+                            ["Design Critic", "Jury-style critique against the core problem"],
+                            ["Representation Planner", "Which diagrams prove the concept, in what order; recommends the physical site model from values the code computed"],
+                            ["Presentation Editor", "Review story, portfolio structure, likely questions"],
+                            ["On hold", "Concept Framer, Spatial Reviewer, Systems Advisor. They run when the designer asks by name, but the Conductor does not suggest them"]
                         ] },
-                        { kind: "text", body: "Every expert output ends with a Handoff section naming who should look next. That is how the lenses connect without a fixed pipeline. Adding an expert takes one prompt file and one entry in config.yaml; the Conductor's list and the project's status table are generated from it." }
+                        { kind: "text", body: "The first roster was a fixed pipeline of five, then twelve experts. Design does not run in one order, so each expert became a lens that can run alone and says what it is missing. Two of the twelve, the constraint mapper and the synthesizer, were removed in October: sorting conditions and conflicts is the Conductor's job, in conversation." },
+                        { kind: "text", body: "Every output ends with a Handoff section naming who should look next. Adding an expert takes one prompt file and one entry in config.yaml; the Conductor's list and the project's status table are generated from it." }
                     ]
                 },
                 {
                     id: "conductor",
                     label: "Conductor",
-                    lead: "Design is not linear, so the entry point depends on what drives the project.",
+                    lead: "One colleague in the chat who decides which expert to call, and keeps conditions, conflicts and open decisions in order.",
                     blocks: [
+                        { kind: "text", body: "The Conductor picks the entry point from what drives the project (site, idea, program or regulation) and from where the designer is actually stuck. It calls experts through function calls, never more than one per reply, and prefers asking one focused question over running anything." },
+                        { kind: "code", filename: "sida/conductor.py", language: "tools", code: "run_expert(agent, address?)      # run one expert now; its document is saved and shown back\nread_expert_output(agent)        # open a finished document when the summary is too thin\nread_board(paper)                # open a massing scheme, note or tracing on the drafting table\npropose_paper(kind, title, ...)  # put a scheme or note in the AI section, never on the table", caption: "The four tools the Conductor has." },
                         { kind: "rules", items: [
-                            ["Primary Driver: site", "Start with site_reader"],
-                            ["idea", "Start with concept_framer"],
-                            ["program", "Start with program_analyst"],
-                            ["regulation", "Start with regulation_checker"],
-                            ["review / competition", "Start with synthesizer or presentation_editor"],
-                            ["3+ experts done, or two disagree", "Suggest synthesizer"],
-                            ["Brief or direction changed", "Name the completed experts that are now stale"]
+                            ["Conditions", "Hard (legal, physical, given by the brief) or soft (intentions), each with its source"],
+                            ["Conflicts", "Where two experts' outputs pull against each other, naming both"],
+                            ["Decisions due now", "The options, what each costs, and which outputs it rests on"],
+                            ["Stale views", "Outputs that predate a change in the brief or direction"]
                         ] },
-                        { kind: "text", body: "The Conductor talks like a colleague and ends every reply with exactly one machine-readable action. It never runs more than one expert per reply and prefers asking one focused question over calling an expert, which keeps cost down." },
-                        { kind: "code", filename: "agents/00_conductor.md", language: "action block", code: "```action\n{\"type\": \"run\", \"agent\": \"site_reader\"}\n```\n\n# other actions\n{\"type\": \"none\"}                          # question or advice\n{\"type\": \"read\", \"module\": \"site_reader\"}  # open a finished output\n{\"type\": \"exit\"}" },
-                        { kind: "rules", items: [
-                            ["site_driven", "site → program → regulation → constraints → concept → critic"],
-                            ["idea_driven", "concept → precedent → site → program → spatial → critic"],
-                            ["review_prep", "synthesizer → critic → representation → presentation"]
-                        ] }
+                        { kind: "text", body: "Instead of the whole chat, the Conductor reads a short project_state.md: decisions, open questions, expert status and the next focus. After an expert runs, Sida proposes an update to that file and shows it section by section. The designer applies or skips it, and the previous version is kept. A decision is settled only when the designer confirms it." }
                     ]
                 },
                 {
-                    id: "memory",
-                    label: "Project Memory",
-                    lead: "The Conductor reads a short project file instead of the whole chat, and the designer approves every change to it.",
+                    id: "table",
+                    label: "Drafting Table",
+                    lead: "The centre of the screen is a table of papers on the site drawing, in plan and in 3D.",
                     blocks: [
-                        { kind: "text", body: "After each expert runs, Sida proposes a patch to project_state.md: the Module Status row, the meta lines, and only the sections that expert informs. The designer sees a diff and chooses to apply, skip, or apply and edit. The previous version is kept." },
-                        { kind: "code", filename: "project_state.md update (from the README)", language: "diff", code: "[state] site_reader 결과로 project_state.md 갱신안을 만드는 중 ...\n--- project_state.md\n+++ proposed\n-| site_reader | pending | |\n+| site_reader | done | 남북 레벨 차 6m가 동선의 핵심 제약 |\n...\n이 갱신을 적용할까요? [Y = 적용 / n = 건너뛰기 / e = 적용 후 에디터로 열기]:" },
-                        { kind: "text", body: "The sample project is the Geumjeong Station brief from my graduation project, X-tra Space. Its state file holds the core problem, confirmed decisions with dates, open questions, tensions, missing information and the next focus." }
+                        { kind: "image", url: "assets-web/SIDA-board.webp", caption: "The workspace: the Conductor on the left, the drafting table with a massing scheme among the surrounding buildings in the middle, and layers, experts and properties on the right. Below, a command line takes either a command or a question." },
+                        { kind: "rules", items: [
+                            ["Site", "The lot drawn from the cadastral boundary. Always on the table"],
+                            ["Massing scheme", "Up to 20 blocks with width, depth, floors and rotation, edited with a gumball and push–pull tools"],
+                            ["Note · Tracing paper · Photo", "Text, pen strokes over the site, and images or PDF pages"],
+                            ["Expert result", "Arrives in a separate AI section when an expert finishes"]
+                        ] },
+                        { kind: "text", body: "The designer selects papers and sends them along with a question, and can see exactly what text the model receives. What the AI makes, such as an alternative massing scheme, is placed in the AI section beside the table. It reaches the table only if the designer moves it there, and a changed scheme never overwrites the original." },
+                        { kind: "text", body: "Thoughts worth keeping go on the idea board. Every expert and the Conductor read those ideas on every call, but have no tool to add, edit or delete them. If an idea conflicts with a finding, they are told to say which and why." }
                     ]
                 },
                 {
-                    id: "law",
-                    label: "Regulation Search",
-                    lead: "Numbers and article text are stated only when they appear in retrieved passages.",
+                    id: "model",
+                    label: "Surroundings & Model",
+                    lead: "The same site data becomes a 3D context, a CAD file and the cutting sheets for a physical model.",
                     blocks: [
                         { kind: "steps", items: [
-                            "Build a retrieval query from the brief, the project state and the expert's inputs.",
-                            "Retrieve passages from a RAG server over HTTP, or from local Markdown excerpts offline.",
-                            "Give the model the passages as RETRIEVED KNOWLEDGE with their source paths.",
-                            "Answer with citations; anything not retrieved is marked as something to verify."
+                            "Context: terrain, contours, roads, pavements, water, neighbouring buildings and lots within 100, 200 or 300 m of the site, built from public map data.",
+                            "Check in the city: the massing scheme can be stood on V-World's 3D map, with nearby buildings hidden or shown as a white model.",
+                            "Export: the table goes out as DXF for CAD or 3dm for Rhino, in metres, with the surroundings on their own layer.",
+                            "Site model: the ground is sliced into contour layers at sheet thickness × scale (3 mm at 1:500 is 1.5 m), buildings are stacked from the same sheets, and the pieces are nested onto the designer's sheet size as DXF, PDF and SVG."
                         ] },
                         { kind: "rules", items: [
-                            ["Only partly retrieved", "Quote what is there and say the item or number is missing from this search"],
-                            ["Not found", "Never claim the provision does not exist; point to where to look next"],
-                            ["Scope", "Not legal advice, and no design proposals"]
-                        ] }
+                            ["Building height unknown", "Only the footprint is engraved. No height is made up"],
+                            ["Height estimated from floors", "Marked as estimated in the piece list and coloured differently in the assembly drawing"],
+                            ["Not a survey", "The 3D context carries its sources, their dates and a disclaimer on screen"]
+                        ] },
+                        { kind: "text", body: "The Representation Planner recommends a sheet, scale and thickness for the model, but only from combinations the code has already computed. One click sets the model up as recommended." }
                     ]
                 },
                 {
-                    id: "rhino",
-                    label: "Rhino Modeling",
-                    lead: "A separate assistant turns a clear modeling request into safe Rhino operations through MCP.",
+                    id: "build",
+                    label: "How It Was Built",
+                    lead: "A solo terminal prototype became a team web app in three months, mostly by pairing with coding agents.",
                     blocks: [
-                        { kind: "text", body: "The modeler works in rounds. Each turn returns one JSON block with a short message for the designer and up to three tool calls from an allowed list (for example get_context, run_python, run_command). It reads the document before editing, names objects and layers, and assumes millimetres." },
-                        { kind: "code", filename: "agents/71_rhino_modeler.md", language: "rhino block", code: "```rhino\n{\n  \"say\": \"one or two sentences for the user\",\n  \"done\": false,\n  \"calls\": [\n    {\"tool\": \"get_context\", \"args\": {}}\n  ]\n}\n```" },
-                        { kind: "list", items: [
-                            "Never deletes the whole document or closes the Rhino slot unless asked.",
-                            "Does not invent site or code facts; design judgement is left to the designer.",
-                            "Stops after a set number of rounds."
+                        { kind: "rules", items: [
+                            ["Jul 2026", "First CLI prototype: a Conductor and a fixed line of expert prompts"],
+                            ["Sep", "Combinable expert roster, automatic project-state updates, a local model option"],
+                            ["Early Oct", "Session core separated from the terminal; site facts from government APIs; ordinance figures by rule"],
+                            ["Mid Oct", "JSON API for sessions, settings and law search. The terminal CLI was deleted, and a teammate's Figma mock-up was wired to the API as the new screen"],
+                            ["Late Oct – Nov", "Drafting table, massing editing, idea board, 3D surroundings, DXF/3dm export, laser-cut model, relay server and landing page"]
+                        ] },
+                        { kind: "text", body: "The app has three layers: core functions that never print or prompt, a JSON API over them, and a screen in plain HTML, CSS and JavaScript with no build step. Code that serves one expert lives in that expert's own folder and plugs into the core through a hooks file, so a new capability does not touch the shared core. Projects are stored as readable files on the user's own PC, not on a server." },
+                        { kind: "text", body: "Most of the code was written with AI coding agents, several at a time, so the repository is set up for that. One rules file tells every agent how to work here. Changes go through pull requests that merge automatically once lint and tests pass, with no human approval, which makes the tests the safety net: every feature or fix has to arrive with its own." },
+                        { kind: "techs", items: [
+                            { name: "Python · FastAPI" }, { name: "Vanilla JS · Three.js · Leaflet", note: "no build step" },
+                            { name: "OpenRouter · ChatGPT sign-in · Ollama", note: "model per role" },
+                            { name: "V-World · data.go.kr · law.go.kr", note: "public records" },
+                            { name: "pytest · ruff · GitHub Actions" }
                         ] }
                     ]
                 },
                 {
                     id: "verification",
                     label: "Verification",
-                    lead: "About 170 offline tests run the whole app against a mock model, with no network.",
+                    lead: "More than 650 Python tests and about 150 for the screen's logic run offline, with no model and no network.",
                     blocks: [
-                        { kind: "text", body: "A mock provider runs the full app without any model, so the Conductor's action parsing, sessions, slash commands, state updates, retrieval, law search and the Rhino modeler loop are all tested offline. The Conductor can also run on a local model through Ollama while the experts stay on a cloud model." },
-                        { kind: "techs", items: [
-                            { name: "Python" }, { name: "OpenRouter", note: "experts" }, { name: "Ollama", note: "local Conductor" },
-                            { name: "RAG", note: "HTTP / local files" }, { name: "Rhino MCP" }, { name: "pytest · ruff" }
+                        { kind: "list", items: [
+                            "Model calls are replaced by a mock provider, and government APIs by recorded responses, so the whole app runs in tests without a key.",
+                            "CI runs lint and tests on Python 3.10 and 3.12 for every pull request; about 100 have been merged this way.",
+                            "Some rules are enforced by tests: the shared core may not import an expert's folder, and screen code may not use browser storage.",
+                            "A bug fix starts with a test that reproduces the bug. One example: an ordinance figure with a decimal was once read as the wrong whole number, and that case is now held in place by a test."
                         ] },
-                        { kind: "note", body: "In progress — v0.1 CLI prototype. It does not read drawings or images yet, regulation and precedent outputs still have to be checked by the designer, and the regulation corpus is still being filled." }
+                        { kind: "note", body: "In progress — v0.2, in closed testing with a small group. Regulation and precedent outputs are lists to verify, not confirmed facts. Experts read text, site data and the table's papers, but not drawings as images. Rhino modeling through MCP worked in the CLI and is not yet connected to the web app; for now the table exports a 3dm file instead." }
                     ]
                 }
             ]
