@@ -222,7 +222,7 @@ const projectsData = {
             aliases: ["Student Driven Village"],
             title: "Student Driven Village",
             description: "A Multi-layered Residential Complex Mediated by Student Initiatives.",
-            thumbnail: "assets-web/4-1 thumbnail.webp",
+            thumbnail: "assets-web/4-1 thumbnail.v2.webp",
             tags: ["Housing Complex", "Gwacheon Jugong Reconstruction", "Shared Halls for 5 Schools", "Semi-public Layer", "Yangjae Stream"],
             kind: "Architecture",
             thesis: "Gwacheon's Jugong reconstruction is bringing in more families with school-age children, but the new complexes stay gated. We proposed a housing complex that uses those students as the link: club rooms and large shared halls for five nearby schools, set under the housing and open to residents too. Midway we saw that the halls had created a new boundary next to private homes, and we reorganized the scheme around a semi-public layer between them.",
@@ -236,7 +236,7 @@ const projectsData = {
                 ["Brief", "2025 GH Space Welfare Youth Competition (studio-linked)"],
                 ["Program", "Halls for five nearby schools' clubs; family, youth and senior housing"],
             ],
-            cover: "assets-web/4-1 thumbnail.webp",
+            cover: "assets-web/4-1 thumbnail.v2.webp",
             chapters: [
                 {
                     id: "context",
@@ -269,7 +269,7 @@ const projectsData = {
                             ["Vertical blurring", "Between residents and outsiders: a shared public level that both can reach"],
                             ["Horizontal blurring", "Among residents: corridors widened into shared space for each household type"]
                         ] },
-                        { kind: "image", url: "assets-web/SDV-concept.webp", caption: "Ties among students widen to their brothers, sisters and parents" }
+                        { kind: "image", url: "assets-web/SDV-concept.v2.webp", caption: "Ties among students widen to their brothers, sisters and parents" }
                     ]
                 },
                 {
@@ -306,14 +306,14 @@ const projectsData = {
                             "Housing goes on top, kept apart from the halls by the intermediate layer."
                         ] },
                         { kind: "gallery", images: [
-                            { url: "assets-web/SDV-layout-1.webp", caption: "Sunken passage" },
-                            { url: "assets-web/SDV-layout-2.webp", caption: "Community masses leading into the sunken passage" },
-                            { url: "assets-web/SDV-layout-3.webp", caption: "Entrances from the ground level" }
+                            { url: "assets-web/SDV-layout-1.v2.webp", caption: "Sunken passage" },
+                            { url: "assets-web/SDV-layout-2.v2.webp", caption: "Community masses leading into the sunken passage" },
+                            { url: "assets-web/SDV-layout-3.v2.webp", caption: "Entrances from the ground level" }
                         ] },
                         { kind: "gallery", images: [
-                            { url: "assets-web/SDV-layout-4.webp", caption: "Large halls" },
-                            { url: "assets-web/SDV-layout-5.webp", caption: "Intermediate spaces" },
-                            { url: "assets-web/SDV-layout-6.webp", caption: "Housing" }
+                            { url: "assets-web/SDV-layout-4.v2.webp", caption: "Large halls" },
+                            { url: "assets-web/SDV-layout-5.v2.webp", caption: "Intermediate spaces" },
+                            { url: "assets-web/SDV-layout-6.v2.webp", caption: "Housing" }
                         ] }
                     ]
                 },
@@ -325,17 +325,17 @@ const projectsData = {
                         { kind: "text", body: "Families: the second living room and kitchen of each unit open onto the corridor, and a lowered pocket space in the corridor in front of them becomes a play area that parents can watch from inside." },
                         { kind: "gallery", images: [
                             { url: "assets-web/SDV-family-plan.webp", caption: "Family housing plan: living room and kitchen facing the pocket space" },
-                            { url: "assets-web/SDV-family-section.webp", caption: "Family housing section" }
+                            { url: "assets-web/SDV-family-section.v2.webp", caption: "Family housing section" }
                         ] },
                         { kind: "text", body: "Young one- and two-person households: they need several small rooms more than one large one, so a shared kitchen, shared office, multipurpose room and party room are hung between the two wings on different levels." },
                         { kind: "gallery", images: [
                             { url: "assets-web/SDV-youth-plan.webp", caption: "Youth housing plan: shared rooms between the two wings" },
-                            { url: "assets-web/SDV-youth-section.webp", caption: "Youth housing section" }
+                            { url: "assets-web/SDV-youth-section.v2.webp", caption: "Youth housing section" }
                         ] },
                         { kind: "text", body: "Older residents: demand will grow with an ageing society, and older residents look after one another best when they see each other often. Units ring a shared yard that works as a senior centre, with a long terrace in front, and the slabs are linked around voids so neighbours stay in sight across floors." },
                         { kind: "gallery", images: [
                             { url: "assets-web/SDV-senior-plan.webp", caption: "Senior housing plan: units around the shared yard and terrace" },
-                            { url: "assets-web/SDV-senior-section.webp", caption: "Senior housing section" }
+                            { url: "assets-web/SDV-senior-section.v2.webp", caption: "Senior housing section" }
                         ] }
                     ]
                 },
@@ -360,21 +360,21 @@ const projectsData = {
                     lead: "Renders of the finished complex, a site model for the whole scheme and cut models showing how the corridors open up.",
                     blocks: [
                         { kind: "gallery", images: [
-                            { url: "assets-web/4-1render1.webp", caption: "Street and bridge view" },
-                            { url: "assets-web/4-1render2.webp", caption: "Ground-level plaza" },
-                            { url: "assets-web/4-1render3.webp", caption: "Entrance from the street" },
-                            { url: "assets-web/4-1render4.webp", caption: "View from across the stream" }
+                            { url: "assets-web/4-1render1.v2.webp", caption: "Street and bridge view" },
+                            { url: "assets-web/4-1render2.v2.webp", caption: "Ground-level plaza" },
+                            { url: "assets-web/4-1render3.v2.webp", caption: "Entrance from the street" },
+                            { url: "assets-web/4-1render4.v2.webp", caption: "View from across the stream" }
                         ] },
                         { kind: "text", body: "The site model shows the new housing next to the kept blocks and the stream edge. The cut models open the housing masses to show the widened corridors and in-between spaces." },
                         { kind: "gallery", images: [
-                            { url: "assets-web/4-1model1.webp", caption: "Site model, 1:500" },
-                            { url: "assets-web/4-1model2.webp" },
-                            { url: "assets-web/4-1model3.webp" },
-                            { url: "assets-web/4-1model4.webp" },
-                            { url: "assets-web/4-1model5.webp" },
-                            { url: "assets-web/4-1model6.webp" },
-                            { url: "assets-web/4-1model7.webp", caption: "Housing mass seen from above" },
-                            { url: "assets-web/4-1model8.webp", caption: "Cut model showing the interior" }
+                            { url: "assets-web/4-1model1.v2.webp", caption: "Site model, 1:500" },
+                            { url: "assets-web/4-1model2.v2.webp" },
+                            { url: "assets-web/4-1model3.v2.webp" },
+                            { url: "assets-web/4-1model4.v2.webp" },
+                            { url: "assets-web/4-1model5.v2.webp" },
+                            { url: "assets-web/4-1model6.v2.webp" },
+                            { url: "assets-web/4-1model7.v2.webp", caption: "Housing mass seen from above" },
+                            { url: "assets-web/4-1model8.v2.webp", caption: "Cut model showing the interior" }
                         ] }
                     ]
                 }
@@ -384,7 +384,7 @@ const projectsData = {
             id: "little-forest",
             title: "Little Forest",
             description: "A remodel of the closed Seongsu Technical High School into a pet theme park, a small jungle in the city.",
-            thumbnail: "assets-web/LF-thumbnail.webp",
+            thumbnail: "assets-web/LF-thumbnail.v2.webp",
             tags: ["Closed School Remodel", "Pet Theme Park", "Seongsu-dong, Seoul", "Site 13,800 ㎡", "Rounded Terraces"],
             kind: "Architecture",
             thesis: "Seongsu Technical High School closed as student numbers fell. Little Forest turns it into a pet theme park for residents who want hands-on programs and for young visitors drawn to Seongsu. Rounded edges, winding paths that always connect, and planters instead of railings let pets and people walk the whole site safely.",
@@ -400,7 +400,7 @@ const projectsData = {
                 ["Use", "Closed high school → pet theme park"],
                 ["Parking", "62 required, 80 planned"],
             ],
-            cover: "assets-web/LF-cover.webp",
+            cover: "assets-web/LF-cover.v2.webp",
             chapters: [
                 {
                     id: "site",
@@ -432,10 +432,10 @@ const projectsData = {
                             ["Planters, not railings", "Terrace edges are planter boxes, so every walk runs beside greenery"],
                             ["Reuse the school", "Keep part of the existing building and remove the rest (see Reuse)"]
                         ] },
-                        { kind: "image", url: "assets-web/LF-mass.webp", caption: "Before and after: mass orientation and the route in from the main road" },
+                        { kind: "image", url: "assets-web/LF-mass.v2.webp", caption: "Before and after: mass orientation and the route in from the main road" },
                         { kind: "gallery", images: [
-                            { url: "assets-web/LF-concept.webp", caption: "Rounded terraces and parks" },
-                            { url: "assets-web/LF-jungle.webp", caption: "A small jungle in the city" }
+                            { url: "assets-web/LF-concept.v2.webp", caption: "Rounded terraces and parks" },
+                            { url: "assets-web/LF-jungle.v2.webp", caption: "A small jungle in the city" }
                         ] }
                     ]
                 },
@@ -496,23 +496,23 @@ const projectsData = {
                     lead: "The terraces from the lawn and the street, and a model of the planted edges.",
                     blocks: [
                         { kind: "gallery", images: [
-                            { url: "assets-web/LF-render-snow.webp", caption: "From the lawn in winter" },
-                            { url: "assets-web/LF-render-street.webp", caption: "From the street" }
+                            { url: "assets-web/LF-render-snow.v2.webp", caption: "From the lawn in winter" },
+                            { url: "assets-web/LF-render-street.v2.webp", caption: "From the street" }
                         ] },
                         { kind: "gallery", images: [
-                            { url: "assets-web/LF-elevation-south.webp", caption: "South elevation" },
-                            { url: "assets-web/LF-elevation-right.webp", caption: "Side elevation" }
+                            { url: "assets-web/LF-elevation-south.v2.webp", caption: "South elevation" },
+                            { url: "assets-web/LF-elevation-right.v2.webp", caption: "Side elevation" }
                         ] },
                         { kind: "gallery", images: [
-                            { url: "assets-web/LF-model-4.webp" },
-                            { url: "assets-web/LF-model-1.webp", caption: "Model from above" },
-                            { url: "assets-web/LF-model-6.webp" }
+                            { url: "assets-web/LF-model-4.v2.webp" },
+                            { url: "assets-web/LF-model-1.v2.webp", caption: "Model from above" },
+                            { url: "assets-web/LF-model-6.v2.webp" }
                         ] },
                         { kind: "gallery", images: [
-                            { url: "assets-web/LF-model-2.webp", caption: "Stacked planted terraces" },
-                            { url: "assets-web/LF-model-5.webp" },
-                            { url: "assets-web/LF-model-3.webp", caption: "Terrace edge close-up" },
-                            { url: "assets-web/LF-model-7.webp" }
+                            { url: "assets-web/LF-model-2.v2.webp", caption: "Stacked planted terraces" },
+                            { url: "assets-web/LF-model-5.v2.webp" },
+                            { url: "assets-web/LF-model-3.v2.webp", caption: "Terrace edge close-up" },
+                            { url: "assets-web/LF-model-7.v2.webp" }
                         ] }
                     ]
                 }
@@ -685,7 +685,7 @@ const projectsData = {
                             ["Floating debris", "8,558 t"],
                             ["Total, 2020", "138,362 t"]
                         ] },
-                        { kind: "image", url: "assets-web/KF-background.webp", caption: "Background board: the sea that should hold fish, meeting a shore of garbage." }
+                        { kind: "image", url: "assets-web/KF-background.v2.webp", caption: "Background board: the sea that should hold fish, meeting a shore of garbage." }
                     ]
                 },
                 {
@@ -694,7 +694,7 @@ const projectsData = {
                     lead: "Go fishing, and catch garbage.",
                     blocks: [
                         { kind: "text", body: "The pavilion turns the act of fishing into the message. Bamboo poles lean in like fishing rods, and pieces of debris hang from them on fishing line where a school of fish should be. From a distance it reads as fish; up close it is sea glass and plastic." },
-                        { kind: "image", url: "assets-web/KF-idea.webp", caption: "The catch is garbage, and the garbage becomes the fish: sea glass stands in for scales." },
+                        { kind: "image", url: "assets-web/KF-idea.v2.webp", caption: "The catch is garbage, and the garbage becomes the fish: sea glass stands in for scales." },
                         { kind: "steps", items: [
                             "Rods: the fishing rod is abstracted into plastic-coated bamboo poles.",
                             "Catch: marine debris is hung on the poles, as if caught on the line.",
@@ -717,13 +717,13 @@ const projectsData = {
                     lead: "Poles lean in from a 3.6 m square to a grid overhead, and the school hangs beneath it.",
                     blocks: [
                         { kind: "text", body: "The base is a 3,600 × 3,600 mm platform. The poles stand 3,200 mm tall on 360 mm footings around its edge and lean inward to a lattice about 3,400 mm across at the top. The debris cloud hangs from that lattice over the middle of the platform, while loungers ring the edge so visitors can sit or lie under the school and look up." },
-                        { kind: "image", url: "assets-web/KF-plan.webp", caption: "Section and plan (mm): poles lean in to the top grid; the cloud of pieces hangs over the open centre." },
+                        { kind: "image", url: "assets-web/KF-plan.v2.webp", caption: "Section and plan (mm): poles lean in to the top grid; the cloud of pieces hangs over the open centre." },
                         { kind: "rules", items: [
                             ["Pole to ground", "Each bamboo pole sits in a socket cast into a round concrete footing."],
                             ["Line to pole", "Fishing line is tied to the pole and drops straight down to the pieces."]
                         ] },
-                        { kind: "image", url: "assets-web/KF-detail.webp", caption: "Joint details from the entry: pole to concrete footing, and fishing line to pole." },
-                        { kind: "image", url: "assets-web/KF-aerial.webp", caption: "Modeling: the pavilion on Tamna Cultural Plaza." }
+                        { kind: "image", url: "assets-web/KF-detail.v2.webp", caption: "Joint details from the entry: pole to concrete footing, and fishing line to pole." },
+                        { kind: "image", url: "assets-web/KF-aerial.v2.webp", caption: "Modeling: the pavilion on Tamna Cultural Plaza." }
                     ]
                 },
                 {
@@ -1164,8 +1164,8 @@ const projectsData = {
                     blocks: [
                         { kind: "text", body: "Visitors made faces at a tablet, watched the sphere react, and read the corridor results in a 16-page booklet. Collected data was disclosed and kept for further research." },
                         { kind: "gallery", images: [
-                            { url: "assets-web/EApic4.webp" }, { url: "assets-web/EApic1.webp" },
-                            { url: "assets-web/EApic3.webp" }, { url: "assets-web/EApic2.webp" }
+                            { url: "assets-web/EApic4.v2.webp" }, { url: "assets-web/EApic1.v2.webp" },
+                            { url: "assets-web/EApic3.v2.webp" }, { url: "assets-web/EApic2.v2.webp" }
                         ] },
                         { kind: "links", items: [
                             { label: "Booklet", url: "booklet.html" },
