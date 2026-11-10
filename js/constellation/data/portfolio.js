@@ -460,7 +460,6 @@ export const author = {
     id: "jihun-park",
     title: "Jihun Park",
     author: true,
-    featured: true,
     domain: "other",
     category: "About",
     href: "#contact",

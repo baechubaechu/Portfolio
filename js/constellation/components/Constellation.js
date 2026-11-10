@@ -24,7 +24,7 @@ import {
     createTextMeasurer, debounce, hasFinePointer, mulberry32, hashString,
     prefersReducedMotion, svgEl, waitForFonts,
 } from "../lib/utils.js?v=2.0";
-import { createNodeView } from "./Node.js?v=3.5";
+import { createNodeView } from "./Node.js?v=3.7";
 import { createEdgeView } from "./Edge.js?v=2.5";
 import { createProjectInfo } from "./ProjectInfo.js?v=3.7";
 import { createCursor } from "./Cursor.js?v=2.3";

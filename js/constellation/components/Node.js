@@ -34,7 +34,26 @@ export function createNodeView(node, cfg) {
     const label = svgEl("text", { class: "c-node__label" });
     label.textContent = node.labelText;
 
-    el.append(hitbox, hit, ring, ...(beacon ? [beacon] : []), dot, label);
+    // The author is not a work but the light they are seen by: a glowing cross,
+    // its lower arm the longest, instead of a round star.
+    const datum = node.data?.author ? svgEl("g", { class: "c-node__datum", "aria-hidden": "true" }) : null;
+    if (datum) {
+        const w = 1.6;                      // half-width of each arm at the centre
+        const up = 11, down = 18, side = 9; // arm lengths
+        const spikes = [
+            `M0 ${-up} L${w} 0 L0 ${w} L${-w} 0 Z`,
+            `M0 ${down} L${w} 0 L0 ${-w} L${-w} 0 Z`,
+            `M${-side} 0 L0 ${-w} L${w} 0 L0 ${w} Z`,
+            `M${side} 0 L0 ${-w} L${-w} 0 L0 ${w} Z`,
+        ].join(" ");
+        datum.append(
+            svgEl("circle", { r: 9, class: "c-node__datum-glow" }),
+            svgEl("path", { class: "c-node__datum-spikes", d: spikes }),
+            svgEl("circle", { r: 2.1, class: "c-node__datum-core" }),
+        );
+    }
+
+    el.append(hitbox, hit, ring, ...(beacon ? [beacon] : []), dot, ...(datum ? [datum] : []), label);
 
     let side = null;
 

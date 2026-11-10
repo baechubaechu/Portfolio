@@ -707,9 +707,30 @@
 }
 
 /* The author star: a ring that is always there, so the centre reads as someone, not a gap. */
+.c-node--author .c-node__dot,
 .c-node--author .c-node__ring {
-    opacity: 0.45;
-    transform: scale(1);
+    opacity: 0 !important;
+}
+
+.c-node__datum {
+    filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.9)) drop-shadow(0 0 7px rgba(214, 226, 255, 0.55));
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: transform 360ms var(--c-ease), filter 360ms var(--c-ease);
+}
+
+.c-node__datum-glow { fill: #dfe7ff; opacity: 0.12; }
+.c-node__datum-spikes { fill: #ffffff; }
+.c-node__datum-core { fill: #ffffff; }
+
+.c-node--author.is-hover-focus .c-node__datum,
+.c-node--author.is-focus .c-node__datum {
+    transform: scale(1.18);
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 1)) drop-shadow(0 0 12px rgba(214, 226, 255, 0.7));
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .c-node__datum { transition: none; }
 }
 
 .c-panel__facts {
