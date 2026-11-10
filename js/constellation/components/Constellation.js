@@ -1042,13 +1042,15 @@ export async function mountConstellation(root, portfolio) {
     // (the panel is a sibling of the stage, so leaving the stage used to
     // snap the vault back to center).
     stageEl.addEventListener("pointerleave", (e) => {
+        // A lifted finger also "leaves"; on touch the figure stays until the next tap.
+        if (e.pointerType === "touch") return;
         if (stillInHero(e.relatedTarget)) return;
         requestAnimationFrame(() => {
             if (root.matches(":hover")) return;
             releaseLook();
         });
     });
-    root.addEventListener("pointerleave", () => releaseLook());
+    root.addEventListener("pointerleave", (e) => { if (e.pointerType !== "touch") releaseLook(); });
     panelEl?.addEventListener("pointerenter", () => {
         overPanel = true;
         pointerOn = true;
@@ -1056,6 +1058,7 @@ export async function mountConstellation(root, portfolio) {
     });
     panelEl?.addEventListener("pointerleave", (e) => {
         overPanel = false;
+        if (e.pointerType === "touch") return;
         if (stillInHero(e.relatedTarget)) return;
         releaseLook();
     });
@@ -1069,9 +1072,11 @@ export async function mountConstellation(root, portfolio) {
         if (!id) return;
         e.preventDefault();
         const node = graph.byId.get(id);
-        // Touch has no hover: a tap shows the figure and its card, and the card's
-        // Warp button opens the project. A pointer click on a star still warps.
-        if (e.pointerType !== "touch" && node?.type === "project" && node.data?.href) {
+        // Touch has no hover: the first tap shows the figure and its card, and a second
+        // tap on the star or its figure (or the card's Warp button) opens the project.
+        // A pointer click on a star warps at once.
+        const shownAlready = e.pointerType === "touch" && selectedId === id;
+        if (node?.type === "project" && node.data?.href && (e.pointerType !== "touch" || shownAlready)) {
             openProject(node);
             return;
         }
