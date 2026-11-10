@@ -760,10 +760,6 @@
     border-color: var(--c-hair-strong);
 }
 
-/* On pointer screens the card's button is hidden; the author's stays, since it does not warp. */
-@media (hover: hover) and (pointer: fine) {
-    .c-panel__warp--author { display: inline-block; }
-}
 
 /* While a figure is up only its own words are on the sky: the card carries the
    project's title, and the other projects keep their dots but not their names. */

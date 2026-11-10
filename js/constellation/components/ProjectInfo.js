@@ -66,7 +66,6 @@ export function createProjectInfo(container, { graph, onSelect, onOpen, getAncho
             ${p.bio ? `<p class="c-panel__desc">${esc(p.bio)}</p>` : ""}
             <div class="c-panel__actions">
                 <button type="button" class="c-panel__warp c-panel__warp--author" data-open="${esc(node.id)}">${esc(p.cta || "Get in touch")} <span aria-hidden="true">↓</span></button>
-                ${p.resume ? `<a class="c-panel__warp c-panel__warp--author c-panel__warp--quiet" href="${esc(p.resume)}" target="_blank" rel="noopener">Resume <span aria-hidden="true">↗</span></a>` : ""}
             </div>`;
     }
 

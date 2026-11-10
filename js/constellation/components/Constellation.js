@@ -26,7 +26,7 @@ import {
 } from "../lib/utils.js?v=2.0";
 import { createNodeView } from "./Node.js?v=3.7";
 import { createEdgeView } from "./Edge.js?v=2.5";
-import { createProjectInfo } from "./ProjectInfo.js?v=3.7";
+import { createProjectInfo } from "./ProjectInfo.js?v=3.8";
 import { createCursor } from "./Cursor.js?v=2.3";
 import { createIdlePulse } from "./IdlePulse.js?v=1.9";
 import { createSymbols } from "./Symbol.js?v=1.9";
@@ -754,7 +754,8 @@ export async function mountConstellation(root, portfolio) {
         if (!cursor) return;
         if (!hoveredId || opening) { cursor.setState("default"); return; }
         const n = graph.byId.get(hoveredId);
-        cursor.setState("node", n?.type === "project" && n.data?.href ? "Click to warp" : "");
+        const hint = n?.data?.author ? "About · contact" : n?.type === "project" && n.data?.href ? "Click to warp" : "";
+        cursor.setState("node", hint);
         cursor.el.classList.toggle("is-label-above", n?.side === "below");
     }
 
@@ -974,7 +975,7 @@ export async function mountConstellation(root, portfolio) {
         }
         // While a figure is up, reading it keeps it up; only a star close to the
         // pointer takes over.
-        const held = hoveredId && symbols.contains(hoveredId, px, py);
+        const held = hoveredId && (symbols.contains(hoveredId, px, py) || onWayToCard(px, py));
         if (held && bestP !== hoveredId && !(bestP && bestPD < (cam.takeoverRadius ?? 26))) return;
         if (bestP) { setHover(bestP); return; }
         let bestA = null, bestAD = cam.attributeRadius;
@@ -984,6 +985,23 @@ export async function mountConstellation(root, portfolio) {
             if (d < bestAD) { bestAD = d; bestA = n.id; }
         }
         setHover(bestA);
+    }
+
+    /**
+     * The card may sit away from its figure (the author's is pinned to a corner).
+     * While the pointer is on the card, or anywhere in the box spanning figure and
+     * card, it is on its way to the card's buttons: keep the figure and card up.
+     */
+    function onWayToCard(px, py) {
+        if (!panelEl?.classList.contains("is-open") || !hoveredId) return false;
+        const s = stageEl.getBoundingClientRect();
+        const c = panelEl.getBoundingClientRect();
+        const card = { x0: c.left - s.left, y0: c.top - s.top, x1: c.right - s.left, y1: c.bottom - s.top };
+        const fig = symbols.bbox(hoveredId) ?? card;
+        const pad = 24;
+        const x0 = Math.min(card.x0, fig.x0) - pad, x1 = Math.max(card.x1, fig.x1) + pad;
+        const y0 = Math.min(card.y0, fig.y0) - pad, y1 = Math.max(card.y1, fig.y1) + pad;
+        return px > x0 && px < x1 && py > y0 && py < y1;
     }
 
     function pointerToStage(e) {
