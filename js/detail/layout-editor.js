@@ -1,4 +1,4 @@
-import { projects } from '../constellation/data/portfolio.js?v=3.12';
+import { projects } from '../constellation/data/portfolio.js?v=3.16';
 
 // Keep the editing session when moving between project detail pages.
 const editorSessionKey = 'portfolio-layout-editor-active';

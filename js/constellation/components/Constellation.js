@@ -24,12 +24,12 @@ import {
     createTextMeasurer, debounce, hasFinePointer, mulberry32, hashString,
     prefersReducedMotion, svgEl, waitForFonts,
 } from "../lib/utils.js?v=2.0";
-import { createNodeView } from "./Node.js?v=3.4";
+import { createNodeView } from "./Node.js?v=3.5";
 import { createEdgeView } from "./Edge.js?v=2.5";
-import { createProjectInfo } from "./ProjectInfo.js?v=3.4";
+import { createProjectInfo } from "./ProjectInfo.js?v=3.7";
 import { createCursor } from "./Cursor.js?v=2.3";
 import { createIdlePulse } from "./IdlePulse.js?v=1.9";
-import { createSymbols } from "./Symbol.js?v=1.6";
+import { createSymbols } from "./Symbol.js?v=1.9";
 
 export async function mountConstellation(root, portfolio) {
     const stageEl = root.querySelector("[data-c-stage]");
@@ -316,6 +316,7 @@ export async function mountConstellation(root, portfolio) {
             const words = symbols.keywords(n.id);
             const base = `${p.title}, project, ${p.year ?? ""}`.trim()
                 + (words.length ? `. Keywords: ${words.join(", ")}` : "");
+            if (p.author) return `${p.title}. About the author. ${sel ? "Click to go to Contact." : "Look to see every work."}`;
             if (!sel) return `${base}. Look to see its constellation.`;
             return p.href
                 ? `${base}. Click to open the project.`
@@ -343,6 +344,7 @@ export async function mountConstellation(root, portfolio) {
         const symChanged = symId !== symbols.current;
         symbols.show(symId);
         stageEl.classList.toggle("has-symbol", !!symbols.current);
+        stageEl.classList.toggle("has-author-figure", !!(symbols.current && graph.byId.get(symbols.current)?.data?.author));
         if (symChanged) {
             // Turn the head a little so a figure near the edge comes fully into view.
             const cam = cameraCfg();
@@ -369,7 +371,8 @@ export async function mountConstellation(root, portfolio) {
         for (const n of graph.nodes) {
             const v = nodeViews.get(n.id);
             const isFocus = sel?.id === n.id;
-            const isLinked = selMembers ? selMembers.has(n.id) && !isFocus : !!selAdj?.has(n.id);
+            const isLinked = (sel?.data?.author && n.type === "project" && !isFocus)
+                || (selMembers ? selMembers.has(n.id) && !isFocus : !!selAdj?.has(n.id));
             const isHoverFocus = hov?.id === n.id;
             const isHoverLinked = hovMembers ? hovMembers.has(n.id) && !isHoverFocus : !!hovAdj?.has(n.id);
             v.setClass("is-focus", isFocus);
@@ -711,6 +714,12 @@ export async function mountConstellation(root, portfolio) {
     function openProject(node, { skipWarp = false } = {}) {
         const p = node?.data;
         if (!p?.href || opening) return;
+        // The author star is not a project: it goes to Contact on this page, no warp.
+        if (p.author) {
+            select(null);
+            document.querySelector(p.href)?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+            return;
+        }
         opening = true;
         updateCursorForHover();
         try { localStorage.setItem("currentProjectId", p.id); } catch { /* private mode */ }
@@ -1151,6 +1160,22 @@ export async function mountConstellation(root, portfolio) {
 
         for (const e of visualEdges) edgeViews.get(e.id).update(e.sourceNode, e.targetNode);
         symbols.update();
+
+        // Keep a shown figure in view. The pointer keeps turning the sky, so the
+        // one-time turn set when the figure appeared can be undone; whenever part of
+        // the figure is off the stage, aim the camera at exactly the turn that brings
+        // it back, measured from where the camera is now (no build-up, no overshoot).
+        // A figure that already fits leaves the look alone.
+        if (symbols.current && !reduceMotion) {
+            const { dx, dy } = symbols.nudge(symbols.current);
+            if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) {
+                // Allowed to outweigh the pointer's own turn, so the far edge still comes into view.
+                const limY = (cam.maxYaw ?? 0.4) + (cam.maxBias ?? 0.32);
+                const limP = (cam.maxPitch ?? 0.3) + (cam.maxBias ?? 0.32);
+                lookBias.yaw = Math.max(-limY, Math.min(limY, (yaw - yawT) - dx / cam.focal));
+                lookBias.pitch = Math.max(-limP, Math.min(limP, (pitch - pitchT) + dy / cam.focal));
+            }
+        }
 
         if (sensorActive) {
             let nextId = null;

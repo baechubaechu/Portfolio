@@ -72,8 +72,23 @@ export function createSymbols({ layer, graph, measure, getStage, getConfig, getA
         return c.symbol?.labelFont ?? '400 10px "IBM Plex Mono", Consolas, monospace';
     }
 
+    /** The author's figure: a line from the centre star to every work, in order of distance. */
+    function buildToAll(node) {
+        const g = svgEl("g", { class: "c-symbol c-symbol--all", "data-project": node.id, "aria-hidden": "true" });
+        const others = graph.projects.filter((m) => m !== node);
+        const lineViews = others.map((m) => {
+            const el = svgEl("line", { class: "c-symbol__line" });
+            el.setAttribute("pathLength", "1");
+            g.append(el);
+            return { el, m };
+        });
+        layer.append(g);
+        return { node, g, starViews: [], lineViews, toAll: true, art: null, size: { w: 1, h: 1 }, place: { k: 1, flip: 1 } };
+    }
+
     function build(node) {
         const symbol = node.data?.symbol;
+        if (symbol?.toAll) return buildToAll(node);
         if (!symbol?.stars?.length) return null;
         const g = svgEl("g", { class: "c-symbol", "data-project": node.id, "aria-hidden": "true" });
         const lines = svgEl("g", { class: "c-symbol__lines" });
@@ -226,6 +241,7 @@ export function createSymbols({ layer, graph, measure, getStage, getConfig, getA
     }
 
     function choosePlacement(v) {
+        if (v.toAll) return;
         const n = v.node;
         const stage = getStage();
         const c = getConfig().symbol ?? {};
@@ -256,12 +272,31 @@ export function createSymbols({ layer, graph, measure, getStage, getConfig, getA
         v.place = { k: best.k, flip: best.flip, sides: best.sides };
     }
 
+    function positionToAll(v) {
+        const n = v.node;
+        // Order the reveal by distance once per showing, so the lines spread outward.
+        if (!v.ordered) {
+            v.lineViews.sort((a, b) => Math.hypot(a.m.rx - n.rx, a.m.ry - n.ry) - Math.hypot(b.m.rx - n.rx, b.m.ry - n.ry));
+            v.lineViews.forEach((l, i) => l.el.style.setProperty("--step", String(i * 0.5)));
+            v.ordered = true;
+        }
+        for (const l of v.lineViews) {
+            const dx = l.m.rx - n.rx, dy = l.m.ry - n.ry, d = Math.hypot(dx, dy) || 1;
+            const a = 12 / d, b = 1 - 9 / d;   // stop short of both stars
+            l.el.setAttribute("x1", (n.rx + dx * a).toFixed(1));
+            l.el.setAttribute("y1", (n.ry + dy * a).toFixed(1));
+            l.el.setAttribute("x2", (n.rx + dx * b).toFixed(1));
+            l.el.setAttribute("y2", (n.ry + dy * b).toFixed(1));
+        }
+    }
+
     function position(v) {
+        if (v.toAll) { positionToAll(v); return; }
         const n = v.node;
         if (!Number.isFinite(n.rx)) return;
         const { k, flip } = v.place;
-        const s = Math.min(1.15, Math.max(0.85, n.rScale ?? 1));
-        const kk = k * s;
+        // Fixed size while shown: letting perspective swell it as the sky turns would undo the label spacing.
+        const kk = k;
         const at = (pt) => [n.rx + pt.dx * kk * flip, n.ry + pt.dy * kk];
         for (const sv of v.starViews) {
             const [x, y] = at(sv.pt);
@@ -308,6 +343,7 @@ export function createSymbols({ layer, graph, measure, getStage, getConfig, getA
         currentId = id && viewOf(id) ? id : null;
         if (!currentId) return;
         const v = views.get(currentId);
+        v.ordered = false;
         clearTimeout(fading.get(currentId));
         fading.delete(currentId);
         choosePlacement(v);
@@ -333,9 +369,9 @@ export function createSymbols({ layer, graph, measure, getStage, getConfig, getA
         bbox(id) {
             const v = viewOf(id);
             if (!v || !Number.isFinite(v.node.rx)) return null;
+            if (v.toAll) return { x0: v.node.rx - 20, y0: v.node.ry - 20, x1: v.node.rx + 20, y1: v.node.ry + 20 };
             if (id !== currentId) choosePlacement(v);
-            const s = Math.min(1.15, Math.max(0.85, v.node.rScale ?? 1));
-            return extent(v, v.node.rx, v.node.ry, v.place.k * s, v.place.flip);
+            return extent(v, v.node.rx, v.node.ry, v.place.k, v.place.flip);
         },
         /**
          * Screen shift that would bring the shown figure fully inside the stage
@@ -368,7 +404,7 @@ export function createSymbols({ layer, graph, measure, getStage, getConfig, getA
         /** Keyword labels, for screen readers. */
         keywords(id) {
             const sym = graph.byId.get(id)?.data?.symbol;
-            return sym ? sym.stars.map((s) => s.label).filter(Boolean) : [];
+            return sym?.stars ? sym.stars.map((s) => s.label).filter(Boolean) : [];
         },
         relayout() {
             for (const [, v] of views) v?.g.remove();

@@ -12,7 +12,7 @@ export function createNodeView(node, cfg) {
     let v = visualOf(node, cfg);
 
     const el = svgEl("g", {
-        class: `c-node c-node--${node.type}${isFeatured ? " c-node--featured" : ""}`,
+        class: `c-node c-node--${node.type}${isFeatured ? " c-node--featured" : ""}${node.data?.author ? " c-node--author" : ""}`,
         "data-id": node.id,
         tabindex: 0,
         role: "button",

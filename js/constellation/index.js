@@ -6,8 +6,8 @@
  * To restyle, edit css/constellation.css.
  */
 
-import { portfolio } from "./data/portfolio.js?v=3.12";
-import { mountConstellation } from "./components/Constellation.js?v=5.61";
+import { portfolio } from "./data/portfolio.js?v=3.16";
+import { mountConstellation } from "./components/Constellation.js?v=5.67";
 
 const root = document.querySelector("[data-constellation]");
 
@@ -24,7 +24,7 @@ function placeOnSky(projects, marks) {
     const at = new Map(marks.map((m, i) => [m.id, EDGE + (1 - 2 * EDGE) * (marks.length > 1 ? i / (marks.length - 1) : 0.5)]));
     const byBin = new Map();
     for (const p of projects) {
-        if (!p.place) continue;
+        if (!p.place || typeof p.place.scale === "number") continue;
         if (!byBin.has(p.place.scale)) byBin.set(p.place.scale, []);
         byBin.get(p.place.scale).push(p);
     }
@@ -40,13 +40,13 @@ function placeOnSky(projects, marks) {
         projects: projects.map((p) => ({
             ...p,
             attributes: [],
-            ...(p.place ? { place: { ...p.place, scale: scale.get(p.id) } } : {}),
+            ...(p.place && typeof p.place.scale !== "number" ? { place: { ...p.place, scale: scale.get(p.id) } } : {}),
         })),
         scaleMarks: marks.map((m) => ({ ...m, at: at.get(m.id) })),
     };
 }
 
-const placed = placeOnSky(portfolio.projects, portfolio.scaleMarks ?? []);
+const placed = placeOnSky([...portfolio.projects, ...(portfolio.author ? [portfolio.author] : [])], portfolio.scaleMarks ?? []);
 const homeSky = {
     projects: placed.projects,
     attributes: [],

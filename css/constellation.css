@@ -696,6 +696,54 @@
     transition: opacity 460ms var(--c-ease) calc(var(--step) * var(--c-sym-step) + 360ms);
 }
 
+/* The author's figure lights every work: their names come back, the author's own steps aside. */
+.c-hero__stage.has-author-figure .c-node--project:not(.c-node--author) .c-node__label {
+    opacity: 1;
+}
+
+.c-symbol--all .c-symbol__line {
+    stroke-opacity: 0.32;
+    stroke-dasharray: 1 1;
+}
+
+/* The author star: a ring that is always there, so the centre reads as someone, not a gap. */
+.c-node--author .c-node__ring {
+    opacity: 0.45;
+    transform: scale(1);
+}
+
+.c-panel__facts {
+    margin: 0 0 2px;
+    line-height: 1.6;
+    text-transform: none;
+    letter-spacing: 0.04em;
+}
+
+.c-panel__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.c-panel__actions .c-panel__warp {
+    text-decoration: none;
+    margin-top: 12px;
+    padding: 6px 11px;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+}
+
+.c-panel__warp--quiet {
+    color: var(--c-ink-2);
+    background: transparent;
+    border-color: var(--c-hair-strong);
+}
+
+/* On pointer screens the card's button is hidden; the author's stays, since it does not warp. */
+@media (hover: hover) and (pointer: fine) {
+    .c-panel__warp--author { display: inline-block; }
+}
+
 /* While a figure is up only its own words are on the sky: the card carries the
    project's title, and the other projects keep their dots but not their names. */
 .c-hero__stage.has-symbol .c-node--project .c-node__label {

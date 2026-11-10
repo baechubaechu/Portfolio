@@ -450,6 +450,30 @@ export const projects = [
     },
 ];
 
+/**
+ * The author, as the star in the middle of the home sky: halfway between
+ * building and code and between the smallest and largest scale. Looking at it
+ * draws a line to every work ("Part and Beyond": the pieces read as one hand).
+ * Not a project: it has no detail page; `href` scrolls to Contact.
+ */
+export const author = {
+    id: "jihun-park",
+    title: "Jihun Park",
+    author: true,
+    featured: true,
+    domain: "other",
+    category: "About",
+    href: "#contact",
+    place: { scale: 0.5, code: 0.5 },
+    panelSlot: "bottom-right",   // the card would sit on the works its lines point to; this corner is clear
+    bio: "B.Arch candidate at Hongik University (Feb 2027). I design buildings, and the tools around them: geometry from rules, AI that brings evidence, and checks that a result is right.",
+    facts: "Intern, Namu Architectural Office · Exchange, Freie Universität Berlin · Rhino, Grasshopper, Python",
+    resume: "assets-web/Jihun_Park_Resume.pdf",
+    figureName: "Every work, one hand",
+    cta: "Get in touch",
+    symbol: { toAll: true },
+};
+
 /** Marks along the scale axis of the home sky (see `place`). */
 export const scaleMarks = [
     { id: "room", label: "A room" },
@@ -459,5 +483,5 @@ export const scaleMarks = [
     { id: "city", label: "The city" },
 ];
 
-export const portfolio = { projects, attributes, scaleMarks };
+export const portfolio = { projects, attributes, scaleMarks, author };
 export default portfolio;
