@@ -74,19 +74,20 @@ export const projects = [
         year: 2026,
         category: "Graduation project",
         href: "project-detail.html?id=xtra-space",
-        // Four circulation flows cross under one canopy; the crossing is the project.
+        // A branching column under a ribbed roof: two flows meet at its foot, squeeze up the trunk, open at the fork, and reach the roof and the AI that runs it.
         symbol: {
-            name: "The crossing",
-            origin: [150, 117],
+            name: "The branching column",
+            art: { src: "assets-web/constellations/xtra-space.svg", box: [0, 0, 300, 210] },
+            origin: [150, 150],
             stars: [
-                { id: "transfer", label: "Transfer", at: [80, 64], side: "left" },
-                { id: "promenade", label: "Promenade", at: [220, 64], side: "right" },
-                { id: "stream", label: "Stream", at: [80, 170], side: "left" },
-                { id: "urban", label: "Urban link", at: [220, 170], side: "right" },
-                { id: "roof", label: "Flow roof", at: [115, 26], side: "above" },
-                { id: "operator", label: "AI operator", at: [185, 26], side: "above" },
+                { id: "transfer", label: "Transfer", at: [70, 180], side: "left" },
+                { id: "promenade", label: "Promenade", at: [230, 180], side: "right" },
+                { id: "compression", label: "Compression", at: [150, 105], side: "right" },
+                { id: "release", label: "Release", at: [150, 62], side: "right" },
+                { id: "roof", label: "Rib roof", at: [75, 22], side: "above" },
+                { id: "operator", label: "AI operator", at: [225, 22], side: "above" },
             ],
-            links: [["@", "transfer"], ["@", "promenade"], ["@", "stream"], ["@", "urban"], ["transfer", "roof"], ["roof", "operator"], ["operator", "promenade"]],
+            links: [["@", "transfer"], ["@", "promenade"], ["@", "compression"], ["compression", "release"], ["release", "roof"], ["release", "operator"]],
         },
         attributes: [
             { id: "ai", weight: 0.9 },
@@ -123,18 +124,20 @@ export const projects = [
         year: 2025,
         category: "School work",
         href: "project-detail.html?id=student-driven-village",
-        // A gable whose base folds inward like a door: the boundary students open.
+        // A gated complex opened by its students: from five schools, through the clubs, across the threshold into the shared hall.
         symbol: {
-            name: "The open house",
-            origin: [150, 20],
+            name: "The open gate",
+            art: { src: "assets-web/constellations/student-driven-village.svg", box: [0, 0, 300, 210] },
+            origin: [150, 166],
             stars: [
-                { id: "clubs", label: "Club rooms", at: [75, 80], side: "left" },
-                { id: "halls", label: "Shared halls", at: [225, 80], side: "right" },
-                { id: "semi", label: "Semi-public", at: [75, 160], side: "left" },
-                { id: "corridor", label: "Wide corridor", at: [225, 160], side: "right" },
-                { id: "schools", label: "Five schools", at: [150, 128], side: "below" },
+                { id: "schools", label: "Five schools", at: [55, 120], side: "above" },
+                { id: "clubs", label: "Student clubs", at: [100, 152], side: "left" },
+                { id: "public", label: "Public level", at: [150, 36], side: "above" },
+                { id: "hall", label: "Shared hall", at: [200, 152], side: "right" },
+                { id: "corridor", label: "Widened corridor", at: [250, 110], side: "above" },
+                { id: "stream", label: "Yangjae Stream", at: [240, 186], side: "below" },
             ],
-            links: [["@", "clubs"], ["@", "halls"], ["clubs", "semi"], ["halls", "corridor"], ["semi", "schools"], ["schools", "corridor"]],
+            links: [["@", "clubs"], ["@", "hall"], ["@", "stream"], ["clubs", "schools"], ["clubs", "public"], ["public", "hall"], ["hall", "corridor"]],
         },
         attributes: [
             { id: "physical-model", weight: 0.9 },
@@ -221,19 +224,20 @@ export const projects = [
         year: 2023,
         category: "School work",
         href: "project-detail.html?id=little-forest",
-        // A paw print for a park shared by pets and people.
+        // A little dog, after Canis Minor: the park's design rules sit on its head, ear, back, tail and paws.
         symbol: {
-            name: "The paw",
-            origin: [150, 160],
+            name: "The little dog",
+            art: { src: "assets-web/constellations/little-forest.svg", box: [0, 0, 300, 210] },
+            origin: [160, 84],
             stars: [
-                { id: "park", label: "Pet park", at: [115, 130], side: "left" },
-                { id: "reuse", label: "Reuse", at: [185, 130], side: "right" },
-                { id: "terraces", label: "Terraces", at: [85, 80], side: "left" },
-                { id: "paths", label: "Winding paths", at: [125, 50], side: "left" },
-                { id: "planters", label: "Planters", at: [175, 50], side: "right" },
-                { id: "hotel", label: "Care hotel", at: [215, 80], side: "right" },
+                { id: "rounded", label: "Rounded edges", at: [115, 62], side: "left" },
+                { id: "planters", label: "Planter edges", at: [135, 32], side: "above" },
+                { id: "frame", label: "Kept frame", at: [240, 84], side: "right" },
+                { id: "paths", label: "Looping paths", at: [275, 48], side: "above" },
+                { id: "walk", label: "Long walk", at: [150, 172], side: "left" },
+                { id: "runs", label: "Dog runs", at: [245, 172], side: "right" },
             ],
-            links: [["@", "park"], ["@", "reuse"], ["park", "reuse"], ["terraces", "paths"], ["paths", "planters"], ["planters", "hotel"]],
+            links: [["@", "rounded"], ["rounded", "planters"], ["@", "frame"], ["frame", "paths"], ["@", "walk"], ["frame", "runs"]],
         },
         attributes: [
             { id: "research", weight: 0.8 },
@@ -263,18 +267,21 @@ export const projects = [
         year: 2023,
         category: "School work",
         href: "project-detail.html?id=class-ic",
-        // Euljiro's workshops piled floor on floor into one tower over the old waterway.
+        // A craftsman's hammer stood up as the tower: workshops up the handle, the lounge at the neck, offices in the head.
         symbol: {
-            name: "The stack",
-            origin: [150, 10],
+            name: "The hammer",
+            art: { src: "assets-web/constellations/class-ic.svg", box: [0, 0, 300, 210] },
+            origin: [150, 40],
             stars: [
-                { id: "office", label: "Shared office", at: [170, 44], side: "right" },
-                { id: "lounges", label: "Lounges", at: [130, 86], side: "left" },
-                { id: "classes", label: "One-day classes", at: [170, 128], side: "right" },
-                { id: "workshops", label: "Craft workshops", at: [130, 170], side: "left" },
-                { id: "waterway", label: "Waterway", at: [230, 175], side: "right" },
+                { id: "ic", label: "Inter-change", at: [150, 62], side: "left" },
+                { id: "classes", label: "One-day class", at: [150, 100], side: "right" },
+                { id: "studios", label: "Craft studios", at: [150, 140], side: "right" },
+                { id: "waterway", label: "Waterway", at: [150, 182], side: "right" },
+                { id: "office", label: "Shared office", at: [95, 40], side: "above" },
+                { id: "claw", label: "", at: [205, 36], side: "above", minor: true },
+                { id: "green", label: "Green fall", at: [228, 66], side: "right" },
             ],
-            links: [["@", "office"], ["office", "lounges"], ["lounges", "classes"], ["classes", "workshops"], ["workshops", "waterway"]],
+            links: [["@", "ic"], ["ic", "classes"], ["classes", "studios"], ["studios", "waterway"], ["@", "office"], ["@", "claw"], ["claw", "green"]],
         },
         attributes: [
             { id: "structure", weight: 0.8 },
@@ -306,19 +313,19 @@ export const projects = [
         year: 2026,
         category: "Interactive installation",
         href: "project-detail.html?id=emotional-architecture",
-        // A face is read, and the reading reshapes a corridor; the project is the pupil.
+        // Two masks, comedy and tragedy: the face is read, and the reading inflates or erodes the space.
         symbol: {
-            name: "The eye",
-            origin: [150, 100],
+            name: "The two masks",
+            art: { src: "assets-web/constellations/emotional-architecture.svg", box: [0, 0, 300, 210] },
+            origin: [150, 104],
             stars: [
-                { id: "face", label: "Face", at: [40, 100], side: "left" },
-                { id: "vector", label: "Emotion vector", at: [110, 55], side: "above" },
-                { id: "eeg", label: "EEG", at: [190, 55], side: "above" },
-                { id: "corridor", label: "Corridor", at: [260, 100], side: "right" },
-                { id: "erosion", label: "Erosion", at: [190, 145], side: "below" },
-                { id: "dilation", label: "Dilation", at: [110, 145], side: "below" },
+                { id: "inflate", label: "Inflate", at: [100, 168], side: "below" },
+                { id: "erode", label: "Erode", at: [205, 176], side: "below" },
+                { id: "valence", label: "Valence & arousal", at: [70, 68], side: "above" },
+                { id: "eeg", label: "EEG", at: [232, 72], side: "right" },
+                { id: "face", label: "Face", at: [150, 28], side: "above" },
             ],
-            links: [["face", "vector"], ["vector", "eeg"], ["eeg", "corridor"], ["corridor", "erosion"], ["erosion", "dilation"], ["dilation", "face"]],
+            links: [["@", "inflate"], ["@", "erode"], ["inflate", "valence"], ["erode", "eeg"], ["valence", "face"], ["face", "eeg"]],
         },
         attributes: [
             { id: "ai", weight: 0.9 },
@@ -359,17 +366,20 @@ export const projects = [
         category: "AI tool · in progress",
         bias: [0.61, 0.09],
         href: "project-detail.html?id=sida",
-        // A drafting compass: one assistant whose legs reach from the experts to the model.
+        // A drafting lamp clamped to the table: it lights the facts on the desk and leaves the drawing to the designer.
         symbol: {
-            name: "The compass",
-            origin: [150, 18],
+            name: "The desk lamp",
+            art: { src: "assets-web/constellations/sida.svg", box: [0, 0, 300, 210] },
+            origin: [190, 48],
             stars: [
-                { id: "experts", label: "10 experts", at: [115, 95], side: "left" },
-                { id: "conductor", label: "Conductor", at: [185, 95], side: "right" },
-                { id: "table", label: "Drafting table", at: [85, 170], side: "below" },
-                { id: "site", label: "Site facts", at: [215, 170], side: "below" },
+                { id: "conductor", label: "Conductor", at: [90, 90], side: "left" },
+                { id: "table", label: "Drafting table", at: [60, 180], side: "below" },
+                { id: "model", label: "Cut model", at: [212, 128], side: "right" },
+                { id: "ordinance", label: "Ordinance", at: [212, 176], side: "below" },
+                { id: "site", label: "Site facts", at: [150, 176], side: "below" },
+                { id: "citation", label: "Citation", at: [262, 170], side: "above" },
             ],
-            links: [["@", "experts"], ["@", "conductor"], ["experts", "conductor"], ["experts", "table"], ["conductor", "site"]],
+            links: [["@", "conductor"], ["conductor", "table"], ["@", "model"], ["model", "ordinance"], ["ordinance", "site"], ["ordinance", "citation"]],
         },
         attributes: [
             { id: "ai", weight: 0.95 },

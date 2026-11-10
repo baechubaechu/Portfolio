@@ -54,7 +54,7 @@ export const CONFIG = {
         maxScale: 2.4,         // …or larger than this
         labelFont: '400 11px "IBM Plex Mono", Consolas, monospace', // must match .c-symbol__label
         letterSpacing: 0.1,    // em
-        pad: { top: 64, right: 18, bottom: 18, left: 18 },
+        pad: { top: 64, right: 18, bottom: 54, left: 18 }, // bottom clears the corner captions
     },
 
     /* ── Motion (ms / px). CSS reads the durations via custom props. ── */

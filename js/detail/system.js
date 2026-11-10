@@ -6,7 +6,7 @@
  * drawn in perspective (a slightly elevated look, not a floor-plan).
  */
 
-import { portfolio } from "../constellation/data/portfolio.js?v=3.6";
+import { portfolio } from "../constellation/data/portfolio.js?v=3.7";
 import {
     svgEl, htmlEl, mulberry32, hashString, prefersReducedMotion, esc, clamp,
 } from "../constellation/lib/utils.js?v=2.0";

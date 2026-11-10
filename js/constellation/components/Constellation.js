@@ -18,7 +18,7 @@
 import { buildGraph } from "../lib/graph.js?v=1.2";
 import { createLayout } from "../lib/graphLayout.js?v=2.9";
 import { buildAsterisms } from "../lib/asterism.js?v=2.2";
-import { resolveConfig, visualOf } from "../config.js?v=3.14";
+import { resolveConfig, visualOf } from "../config.js?v=3.15";
 import { toSphere, project as projectSky, resolveCamera, createSkyDust, createBandDust, bandToWorld } from "../lib/sky.js?v=3.1";
 import {
     createTextMeasurer, debounce, hasFinePointer, mulberry32, hashString,
@@ -29,7 +29,7 @@ import { createEdgeView } from "./Edge.js?v=2.5";
 import { createProjectInfo } from "./ProjectInfo.js?v=3.3";
 import { createCursor } from "./Cursor.js?v=2.3";
 import { createIdlePulse } from "./IdlePulse.js?v=1.9";
-import { createSymbols } from "./Symbol.js?v=1.5";
+import { createSymbols } from "./Symbol.js?v=1.6";
 
 export async function mountConstellation(root, portfolio) {
     const stageEl = root.querySelector("[data-c-stage]");

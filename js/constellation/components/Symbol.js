@@ -85,7 +85,8 @@ export function createSymbols({ layer, graph, measure, getStage, getConfig, getA
         // Authored size of the figure (stars and the project), for fitting it to the screen.
         const xs = [ox, ...symbol.stars.map((s) => s.at[0])];
         const ys = [oy, ...symbol.stars.map((s) => s.at[1])];
-        const size = { w: Math.max(60, Math.max(...xs) - Math.min(...xs)), h: Math.max(60, Math.max(...ys) - Math.min(...ys)) };
+        // A narrow figure (the hammer) is fitted as if it were as wide as the others, so it is not blown up.
+        const size = { w: Math.max(200, Math.max(...xs) - Math.min(...xs)), h: Math.max(150, Math.max(...ys) - Math.min(...ys)) };
 
         let art = null;
         if (symbol.art?.src && symbol.art.box) {

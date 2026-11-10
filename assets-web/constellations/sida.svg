@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 210" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Drawn in the symbol frame of data/portfolio.js, so the stars land on the drawing. -->
+  <!-- light on the desk -->
+  <polygon points="188,64 128,180 292,180" stroke-width=".5" fill="#fff" fill-opacity=".06" stroke-opacity=".5"/>
+  <!-- the lamp: clamp, two arms, the shade -->
+  <path d="M52 180 L68 180 L68 190 L52 190 Z" stroke-width=".9"/>
+  <path d="M58 178 L86 92 M64 180 L92 94" stroke-width=".9"/>
+  <path d="M90 88 L186 46 M92 96 L190 54" stroke-width=".9"/>
+  <path d="M70 140 Q76 136 74 128 Q80 124 78 116" stroke-width=".6" stroke-opacity=".8"/>
+  <circle cx="90" cy="92" r="5" stroke-width=".9"/>
+  <path d="M170 34 L206 38 L220 66 L164 62 Z" stroke-width="1.3" fill="#fff" fill-opacity=".05"/>
+  <path d="M184 62 Q192 70 200 64" stroke-width=".8"/>
+  <!-- the drafting table, its papers and a cut model -->
+  <path d="M20 182 L292 182 M24 188 L288 188" stroke-width="1"/>
+  <path d="M126 180 L170 176 L174 180 Z M240 176 L282 172 L286 178 Z" stroke-width=".7"/>
+  <path d="M132 179 L162 176 M246 175 L276 173" stroke-width=".5"/>
+  <path d="M198 180 L198 146 L212 140 L226 146 L226 180 M198 146 L212 152 L226 146 M212 152 L212 180 M204 158 L204 172 M220 158 L220 172" stroke-width=".8"/>
+</svg>

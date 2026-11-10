@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 210" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Drawn in the symbol frame of data/portfolio.js, so the stars land on the drawing. -->
+  <!-- the little dog -->
+  <path d="M98 70 Q100 44 122 46 L135 28 L141 54 Q170 70 235 70 Q262 64 276 44 Q270 78 248 92 L251 174 L238 174 L232 110 Q190 116 168 108 L161 174 L146 174 L140 100 Q112 96 98 70 Z" stroke-width="1.4" fill="#fff" fill-opacity=".04"/>
+  <path d="M141 54 Q132 62 126 52" stroke-width=".7"/>
+  <circle cx="112" cy="58" r="2" stroke-width=".9"/>
+  <path d="M98 70 L94 72 L98 75" stroke-width=".9"/>
+  <path d="M140 96 Q150 90 160 92" stroke-width=".8"/>
+  <path d="M168 108 Q166 140 161 174 M232 110 Q236 140 238 174" stroke-width=".5" stroke-opacity=".6"/>
+  <!-- leaves along its back: the park it walks through -->
+  <path d="M176 70 Q182 58 192 62 Q186 72 176 70 Z M204 70 Q212 58 222 64 Q214 74 204 70 Z M188 68 L184 62" stroke-width=".7"/>
+  <!-- ground, a looping path and grass -->
+  <path d="M20 176 L290 176" stroke-width=".9"/>
+  <path d="M30 196 Q70 180 110 192 Q150 206 190 192 Q230 178 270 192" stroke-width=".7" stroke-dasharray="3 4"/>
+  <path d="M40 176 L44 166 L46 176 M60 176 L62 168 M268 176 L272 164 L274 176 M284 176 L286 168" stroke-width=".7"/>
+</svg>

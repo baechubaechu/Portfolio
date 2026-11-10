@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 210" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Drawn in the symbol frame of data/portfolio.js, so the stars land on the drawing. -->
+  <!-- comedy -->
+  <path d="M66 64 Q108 34 150 46 Q156 120 102 172 Q58 132 66 64 Z" stroke-width="1.3" fill="#fff" fill-opacity=".04"/>
+  <path d="M86 80 Q95 70 104 80 Q95 84 86 80 Z M118 80 Q127 70 136 80 Q127 84 118 80 Z" stroke-width=".8"/>
+  <path d="M86 118 Q108 146 134 116 Q110 130 86 118 Z" stroke-width=".9"/>
+  <path d="M80 64 Q90 58 100 62 M114 60 Q124 56 134 60" stroke-width=".6"/>
+  <!-- tragedy -->
+  <path d="M150 48 Q196 38 238 68 Q242 142 206 180 Q160 160 150 48 Z" stroke-width="1.3" fill="#fff" fill-opacity=".04"/>
+  <path d="M172 92 Q181 86 190 94 Q181 98 172 92 Z M204 94 Q213 88 222 96 Q213 100 204 94 Z" stroke-width=".8"/>
+  <path d="M180 146 Q200 124 222 148 Q200 138 180 146 Z" stroke-width=".9"/>
+  <path d="M174 82 Q182 74 190 80 M206 82 Q214 76 224 84" stroke-width=".6"/>
+  <path d="M186 104 Q184 112 187 116" stroke-width=".6"/>
+  <!-- the ribbon tying them at the top -->
+  <path d="M150 46 Q140 30 126 30 Q138 40 150 46 Q162 32 176 32 Q162 40 150 46 M150 46 Q144 56 132 60 M150 46 Q158 58 170 62" stroke-width=".8"/>
+</svg>
