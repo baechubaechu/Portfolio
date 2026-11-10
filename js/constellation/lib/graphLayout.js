@@ -115,8 +115,15 @@ export function createLayout(graph, config) {
         const p = pad();
         const W = stage.width, H = stage.height;
         const [ix, iy] = f.inset ?? [0.04, 0.06];
-        const x0 = p.left + ix * W, x1 = W - p.right - ix * W;
+        let x0 = p.left + ix * W, x1 = W - p.right - ix * W;
         const y0 = p.top + iy * H, y1 = H - p.bottom - iy * H;
+        // On very wide screens the chart stops widening past `maxAspect` × its height and
+        // sits centred, so the works stay one group with the milky way instead of edge to edge.
+        const maxW = (f.maxAspect ?? Infinity) * (y1 - y0);
+        if (x1 - x0 > maxW) {
+            const c = (x0 + x1) / 2;
+            x0 = c - maxW / 2; x1 = c + maxW / 2;
+        }
         return { x: x0 + u * (x1 - x0), y: y0 + v * (y1 - y0) };
     }
 

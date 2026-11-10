@@ -16,9 +16,9 @@
  */
 
 import { buildGraph } from "../lib/graph.js?v=1.2";
-import { createLayout } from "../lib/graphLayout.js?v=3.2";
+import { createLayout } from "../lib/graphLayout.js?v=3.3";
 import { buildAsterisms } from "../lib/asterism.js?v=2.2";
-import { resolveConfig, visualOf } from "../config.js?v=3.19";
+import { resolveConfig, visualOf } from "../config.js?v=3.20";
 import { toSphere, project as projectSky, resolveCamera, createSkyDust, createBandDust, bandToWorld } from "../lib/sky.js?v=3.2";
 import {
     createTextMeasurer, debounce, hasFinePointer, mulberry32, hashString,

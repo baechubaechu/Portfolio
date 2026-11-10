@@ -182,6 +182,7 @@ export const CONFIG = {
             strength: 0.14,
             transpose: false,
             inset: [0.0, 0.03],
+            maxAspect: 1.75,          // chart width never exceeds this × its height (wide monitors)
             bandTilt: Math.PI / 2,
             marks: { code: 1.04, anchor: "middle" },   // just under the last row, clear of the corner captions
             // Names face away from the milky way, so the band stays clear:
@@ -218,7 +219,7 @@ export const CONFIG = {
             // Tall stage: a quarter turn. Scale runs top → bottom, building → code
             // left → right, and the milky way stands upright between them.
             // Phones: names face inward, toward the upright band, so they never run off the narrow screen.
-            place: { transpose: true, inset: [0.06, 0.03], bandTilt: 0, marks: { code: -0.1, anchor: "start" }, labelFacing: { axis: "x", toward: "in" } },
+            place: { transpose: true, inset: [0.06, 0.03], maxAspect: Infinity, bandTilt: 0, marks: { code: -0.1, anchor: "start" }, labelFacing: { axis: "x", toward: "in" } },
         },
         stage: {
             // Clear of the name plate and Contact above, and View all works below.
