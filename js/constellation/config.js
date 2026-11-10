@@ -181,15 +181,19 @@ export const CONFIG = {
         place: {
             strength: 0.14,
             transpose: false,
-            inset: [0.03, 0.05],
+            inset: [0.0, 0.03],
             bandTilt: Math.PI / 2,
-            marks: { code: 1.13, anchor: "middle" },
+            marks: { code: 1.04, anchor: "middle" },   // just under the last row, clear of the corner captions
+            // Names face away from the milky way, so the band stays clear:
+            // stars above it are named above, stars below it below.
+            labelFacing: { axis: "y", toward: "out" },
         },
     },
 
     stage: {
-        // Wide margins, so a project near the edge still has room for its symbol.
-        padding: { top: 96, right: 140, bottom: 96, left: 140 },
+        // Figures near an edge turn the sky to come into view, so the stars can use most of it.
+        padding: { top: 84, right: 96, bottom: 84, left: 96 },
+        labelPadding: { top: 72, right: 24, bottom: 56, left: 24 },
     },
 
     /* ── Overrides for narrow stages ── */
@@ -213,11 +217,13 @@ export const CONFIG = {
             zones: { tilt: -1.28, side: 0.3 },
             // Tall stage: a quarter turn. Scale runs top → bottom, building → code
             // left → right, and the milky way stands upright between them.
-            place: { transpose: true, inset: [0.06, 0.03], bandTilt: 0, marks: { code: -0.1, anchor: "start" } },
+            // Phones: names face inward, toward the upright band, so they never run off the narrow screen.
+            place: { transpose: true, inset: [0.06, 0.03], bandTilt: 0, marks: { code: -0.1, anchor: "start" }, labelFacing: { axis: "x", toward: "in" } },
         },
         stage: {
             // Clear of the name plate and Contact above, and View all works below.
             padding: { top: 84, right: 16, bottom: 100, left: 16 },
+            labelPadding: { top: 84, right: 12, bottom: 100, left: 12 },
         },
         symbol: {
             fill: [0.7, 0.32],

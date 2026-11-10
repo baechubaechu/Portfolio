@@ -59,6 +59,8 @@ export function createLayout(graph, config) {
     /* ───────────────────────── geometry helpers ───────────────────────── */
 
     const pad = () => cfg.stage.padding;
+    /** Names only need to stay on screen; the wider stage padding is room kept for the stars and their figures. */
+    const labelPad = () => cfg.stage.labelPadding ?? cfg.stage.padding;
 
     function updateScale() {
         const s = cfg.forces.scale;
@@ -309,14 +311,20 @@ export function createLayout(graph, config) {
         const p = pad();
         const W = stage.width, H = stage.height;
         const m = f.margin ?? 0, ms = f.marginStrength ?? 0;
+        const lp = labelPad();
         for (const n of nodes) {
             const x = n.x + n.vx, y = n.y + n.vy;
             const box = unionRect(discRect(n, x, y), labelRect(n, x, y));
-            // hard wall at the padding
-            if (box.x0 < p.left) n.vx += (p.left - box.x0) * f.strength;
-            if (box.x1 > W - p.right) n.vx -= (box.x1 - (W - p.right)) * f.strength;
-            if (box.y0 < p.top) n.vy += (p.top - box.y0) * f.strength;
-            if (box.y1 > H - p.bottom) n.vy -= (box.y1 - (H - p.bottom)) * f.strength;
+            // hard walls: the disc at the padding, its name at the (narrower) label padding
+            const disc = discRect(n, x, y), name = labelRect(n, x, y);
+            const push = (r, q) => {
+                if (r.x0 < q.left) n.vx += (q.left - r.x0) * f.strength;
+                if (r.x1 > W - q.right) n.vx -= (r.x1 - (W - q.right)) * f.strength;
+                if (r.y0 < q.top) n.vy += (q.top - r.y0) * f.strength;
+                if (r.y1 > H - q.bottom) n.vy -= (r.y1 - (H - q.bottom)) * f.strength;
+            };
+            push(disc, p);
+            push(name, lp);
             // soft cushion just inside the wall (quadratic ramp)
             if (m > 0) {
                 const l = box.x0 - p.left, r = (W - p.right) - box.x1;
@@ -476,18 +484,36 @@ export function createLayout(graph, config) {
         const sideAngle = { right: 0, below: Math.PI / 2, left: Math.PI, above: -Math.PI / 2 };
         const c = freeCenter();
 
+        const facing = cfg.forces.place?.labelFacing;
+        /** Side order for a star: the facing rule's side first, then its opposite, then the rest. */
+        function sidesFor(n) {
+            if (!facing) return sides;
+            let first;
+            if (facing.axis === "y") {
+                const above = n.y < H / 2;
+                first = (above === (facing.toward === "out")) ? "above" : "below";
+            } else {
+                const left = n.x < W / 2;
+                first = (left === (facing.toward === "out")) ? "left" : "right";
+            }
+            const opposite = { above: "below", below: "above", left: "right", right: "left" }[first];
+            return [first, opposite, ...sides.filter((s) => s !== first && s !== opposite)];
+        }
+
         for (const n of nodes) {
             const incident = graph.neighborsOf(n.id).map(({ node }) => Math.atan2(node.y - n.y, node.x - n.x));
-            let best = sides[0], bestScore = Infinity;
-            sides.forEach((side, idx) => {
+            const order = sidesFor(n);
+            let best = order[0], bestScore = Infinity;
+            order.forEach((side, idx) => {
                 n.side = side;
                 const r = labelRect(n);
+                const lp = labelPad();
                 let score = idx * 0.35; // preference order
                 // stage overflow
-                score += Math.max(0, p.left - r.x0) + Math.max(0, r.x1 - (W - p.right));
-                score += Math.max(0, p.top - r.y0) + Math.max(0, r.y1 - (H - p.bottom));
+                score += Math.max(0, lp.left - r.x0) + Math.max(0, r.x1 - (W - lp.right));
+                score += Math.max(0, lp.top - r.y0) + Math.max(0, r.y1 - (H - lp.bottom));
                 // lean inward: a label that reaches away from the centre costs a little
-                score += Math.max(0, (Math.abs(cx(r) - c.x) - Math.abs(n.x - c.x)) / W) * 3;
+                if (!facing) score += Math.max(0, (Math.abs(cx(r) - c.x) - Math.abs(n.x - c.x)) / W) * 3;
                 // incident edges crossing the label direction
                 for (const a of incident) {
                     let d = Math.abs(a - sideAngle[side]);

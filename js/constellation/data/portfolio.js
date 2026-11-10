@@ -36,10 +36,11 @@
  *   bias        optional [fx, fy] (0…1 of the stage): pulls the project
  *               toward that spot on wide screens, to untangle neighbours.
  *   place       where the project sits on the home sky, by two rules:
- *                 scale  0…1  the largest physical thing the project reads or
- *                             shapes: a person 0 · a room · a building 0.5 ·
- *                             a site · a block · the city 1
+ *                 scale  the largest physical thing the project reads or
+ *                        shapes, as one of `scaleMarks` (room … city)
  *                 code   0…1  how much of the work is building (0) or code (1)
+ *               The marks are spread evenly across the sky; projects that
+ *               share a mark are eased apart sideways, in code order.
  *               Wide screens run scale left → right and building → code top →
  *               bottom, with the milky way along the middle where the two meet;
  *               tall screens turn it a quarter (config `forces.place`).
@@ -82,7 +83,7 @@ export const projects = [
         year: 2026,
         category: "Graduation project",
         href: "project-detail.html?id=xtra-space",
-        place: { scale: 1.00, code: 0.50 },
+        place: { scale: "city", code: 0.50 },
         // A branching column under a ribbed roof: two flows meet at its foot, squeeze up the trunk, open at the fork, and reach the roof and the AI that runs it.
         symbol: {
             name: "The branching column",
@@ -133,7 +134,7 @@ export const projects = [
         year: 2025,
         category: "School work",
         href: "project-detail.html?id=student-driven-village",
-        place: { scale: 0.90, code: 0.14 },
+        place: { scale: "block", code: 0.14 },
         // A gated complex opened by its students: from five schools, through the clubs, across the threshold into the shared hall.
         symbol: {
             name: "The open gate",
@@ -183,7 +184,7 @@ export const projects = [
         year: 2026,
         category: "Competition",
         href: "project-detail.html?id=kitch-fish",
-        place: { scale: 0.24, code: 0.40 },
+        place: { scale: "room", code: 0.40 },
         // A bamboo rod that lands sea glass and plastic instead of fish.
         symbol: {
             name: "The catch",
@@ -234,7 +235,7 @@ export const projects = [
         year: 2023,
         category: "School work",
         href: "project-detail.html?id=little-forest",
-        place: { scale: 0.76, code: 0.02 },
+        place: { scale: "block", code: 0.02 },
         // A little dog, after Canis Minor: the park's design rules sit on its head, ear, back, tail and paws.
         symbol: {
             name: "The little dog",
@@ -278,7 +279,7 @@ export const projects = [
         year: 2023,
         category: "School work",
         href: "project-detail.html?id=class-ic",
-        place: { scale: 0.50, code: 0.04 },
+        place: { scale: "building", code: 0.04 },
         // A craftsman's hammer stood up as the tower: workshops up the handle, the lounge at the neck, offices in the head.
         symbol: {
             name: "The hammer",
@@ -325,7 +326,7 @@ export const projects = [
         year: 2026,
         category: "Interactive installation",
         href: "project-detail.html?id=emotional-architecture",
-        place: { scale: 0.33, code: 0.66 },
+        place: { scale: "room", code: 0.66 },
         // Two masks, comedy and tragedy: the face is read, and the reading inflates or erodes the space.
         symbol: {
             name: "The two masks",
@@ -379,7 +380,7 @@ export const projects = [
         category: "AI tool · in progress",
         bias: [0.61, 0.09],
         href: "project-detail.html?id=sida",
-        place: { scale: 0.66, code: 0.82 },
+        place: { scale: "site", code: 0.82 },
         // A drafting lamp clamped to the table: it lights the facts on the desk and leaves the drawing to the designer.
         symbol: {
             name: "The desk lamp",
@@ -425,7 +426,7 @@ export const projects = [
         year: 2026,
         category: "Research",
         href: "project-detail.html?id=bim-audit",
-        place: { scale: 0.50, code: 0.92 },
+        place: { scale: "building", code: 0.92 },
         // A balance: the benchmark's score in one pan, the check against the file in the other, and the file side weighs more.
         symbol: {
             name: "The scales",
@@ -451,12 +452,11 @@ export const projects = [
 
 /** Marks along the scale axis of the home sky (see `place`). */
 export const scaleMarks = [
-    { at: 0.00, label: "A person" },
-    { at: 0.28, label: "A room" },
-    { at: 0.50, label: "A building" },
-    { at: 0.66, label: "A site" },
-    { at: 0.83, label: "A block" },
-    { at: 1.00, label: "The city" },
+    { id: "room", label: "A room" },
+    { id: "building", label: "A building" },
+    { id: "site", label: "A site" },
+    { id: "block", label: "A block" },
+    { id: "city", label: "The city" },
 ];
 
 export const portfolio = { projects, attributes, scaleMarks };
