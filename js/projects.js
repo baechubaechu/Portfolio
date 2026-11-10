@@ -5,7 +5,7 @@
  *                and the ?id= of its detail page
  *   aliases      optional older ids that still resolve (old links keep working)
  *   title, description, thumbnail, tags     home cards
- *   kind, thesis, subtitle, category, role, timeline, team, organizer, cover
+ *   kind, thesis, subtitle, category, role, timeline, overview, team, organizer, cover
  *                the opening plate of the detail page
  *   chapters     the detail page body: [{ id, label, title, lead, blocks: [...] }]
  *   sections     legacy block list, only rendered for a project that is not on the home sky
@@ -25,6 +25,13 @@ const projectsData = {
             category: "Architecture / Graduation Project",
             role: "Designer · Developer (solo)",
             timeline: "2025.09 - 2026.06",
+            overview: [
+                ["Location", "Geumjeong Station, Gunpo, Gyeonggi-do"],
+                ["Type", "Transit hub remodel · graduation project"],
+                ["Lines", "Seoul Subway Lines 1 and 4, GTX-C planned"],
+                ["Levels", "1F transfer, 2F X-tra (walking) layer"],
+                ["Structure", "21 branching columns on a 12,000 mm grid, ribbed vault roof"],
+            ],
             cover: "assets-web/XS-cover.v2.webp",
             chapters: [
                 {
@@ -223,6 +230,12 @@ const projectsData = {
             category: "Architecture / Studio",
             role: "Designer (2-person team)",
             timeline: "2025.03 - 2025.06",
+            overview: [
+                ["Location", "Gwacheon Jugong complex, beside the Yangjae Stream, Gwacheon, Gyeonggi-do"],
+                ["Type", "Apartment complex under reconstruction · housing with shared halls"],
+                ["Brief", "2025 GH Space Welfare Youth Competition (studio-linked)"],
+                ["Program", "Halls for five nearby schools' clubs; family, youth and senior housing"],
+            ],
             cover: "assets-web/4-1 thumbnail.webp",
             chapters: [
                 {
@@ -379,6 +392,14 @@ const projectsData = {
             category: "Architecture / Studio",
             role: "Designer",
             timeline: "2023.09 - 2023.12",
+            overview: [
+                ["Location", "333-128 Seongsu-dong 2-ga, Seongdong-gu, Seoul"],
+                ["Zoning", "Semi-industrial zone, Type 1 district unit plan area"],
+                ["Site area", "13,800 ㎡"],
+                ["Coverage / FAR", "60% / 400%"],
+                ["Use", "Closed high school → pet theme park"],
+                ["Parking", "62 required, 80 planned"],
+            ],
             cover: "assets-web/LF-cover.webp",
             chapters: [
                 {
@@ -509,6 +530,15 @@ const projectsData = {
             category: "Architecture / Studio",
             role: "Designer",
             timeline: "2023.03 - 2023.06",
+            overview: [
+                ["Location", "65-13 Euljiro 3-ga, Jung-gu, Seoul"],
+                ["Zoning", "General commercial zone, redevelopment district"],
+                ["Site area", "About 2,940 ㎡ (building area 1,660 ㎡)"],
+                ["Coverage", "60% (podium 69%)"],
+                ["FAR", "600% base, 780% allowed"],
+                ["Scale", "B5 / 17F, about 70 m, GFA about 23,000 ㎡, reinforced concrete"],
+                ["Parking", "231 spaces (230 required)"],
+            ],
             cover: "assets-web/CI-cover.webp",
             chapters: [
                 {
@@ -633,6 +663,12 @@ const projectsData = {
             category: "Pavilion / Competition",
             role: "Team Leader (3-person team)",
             timeline: "2023.05",
+            overview: [
+                ["Location", "Jeju coast"],
+                ["Type", "Competition pavilion"],
+                ["Footprint", "3.6 m square"],
+                ["Materials", "Plastic-coated bamboo poles (Ø40 × 3,200 mm), sea glass, ground plastic, fishing line"],
+            ],
             team: "Team 곡란 (Goklan): 김기태 (Suwon Univ.), 최하영 (Seoul Institute of the Arts), 박지훈 (Hongik Univ.)",
             cover: "assets-web/KF-thumbnail.webp",
             chapters: [

@@ -374,9 +374,16 @@ function sunDossierHTML(project) {
         ${quote ? `<p class="sys-dock__quote">${esc(quote)}</p>` : ""}
         ${rows.length ? `<dl class="sys-dock__meta">${rows.map(([k, v]) =>
             `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>` : ""}
-        ${project.coverVideo
-            ? blockHTML({ kind: "video", url: project.coverVideo, title: project.title })
-            : img ? `<figure class="sys-dock__figure sys-dock__figure--cover"><img src="${esc(img)}" alt="${esc(project.title)}"></figure>` : ""}
+        ${(() => {
+            const cover = project.coverVideo
+                ? blockHTML({ kind: "video", url: project.coverVideo, title: project.title })
+                : img ? `<figure class="sys-dock__figure sys-dock__figure--cover"><img src="${esc(img)}" alt="${esc(project.title)}"></figure>` : "";
+            if (!project.overview?.length) return cover;
+            // The cover stays on the first screen; the overview sits to its right
+            // (or just under it when the dock is narrow).
+            return `<div class="sys-dock__cover-row">${cover}<div class="sys-dock__overview">`
+                + `<p class="sys-dock__overview-label">Overview</p>${blockHTML({ kind: "rules", items: project.overview })}</div></div>`;
+        })()}
         ${thesis ? `<p class="sys-dock__thesis">${esc(thesis)}</p>` : ""}
         ${links.length ? blockHTML({ kind: "links", items: links }) : ""}
     `;
