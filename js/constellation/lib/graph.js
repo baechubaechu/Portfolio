@@ -61,7 +61,7 @@ export function buildGraph({ projects = [], attributes = [] }) {
     for (const n of nodes) n.degree = adjacency.get(n.id).size;
 
     const orphans = nodes.filter((n) => n.degree === 0);
-    if (orphans.length) {
+    if (orphans.length && attributes.length) {
         console.warn(`[constellation] unconnected nodes: ${orphans.map((n) => n.id).join(", ")}`);
     }
 

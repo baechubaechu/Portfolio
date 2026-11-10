@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="30 24 240 156" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Drawn in the symbol's own frame (data/portfolio.js → deary.symbol), so its stars land on the drawing. -->
+  <!-- page block underneath -->
+  <path d="M150 168 C118 156 82 150 46 150 L46 46" stroke-width=".6" stroke-opacity=".6"/>
+  <path d="M150 168 C182 156 218 150 254 150 L254 46" stroke-width=".6" stroke-opacity=".6"/>
+  <!-- left page -->
+  <path d="M150 68 C122 50 86 42 50 42 L50 144 C86 144 122 150 150 162 Z" stroke-width="1.4" fill="#fff" fill-opacity=".05"/>
+  <!-- right page -->
+  <path d="M150 68 C178 50 214 42 250 42 L250 144 C214 144 178 150 150 162 Z" stroke-width="1.4" fill="#fff" fill-opacity=".05"/>
+  <!-- spine -->
+  <path d="M150 68 L150 162" stroke-width="1"/>
+  <!-- the questions: printed lines and a speech bubble -->
+  <path d="M64 70 C90 70 116 76 138 88 M64 82 C90 82 116 88 138 100 M64 94 C88 94 112 99 132 108" stroke-width=".6" stroke-opacity=".75"/>
+  <path d="M66 112 C66 106 72 103 82 103 C92 103 98 106 98 112 C98 118 92 121 82 121 L76 121 L70 127 L71 120 C68 118 66 116 66 112 Z" stroke-width=".9"/>
+  <path d="M80 109 C80 107 84 106 84 109 C84 111 82 112 82 114 M82 117 L82 117.5" stroke-width=".8"/>
+  <!-- the entry: handwriting -->
+  <path d="M164 84 C170 80 174 88 180 84 C186 80 190 88 196 84 C202 80 206 88 212 84 C218 80 222 88 228 84" stroke-width=".7"/>
+  <path d="M164 98 C170 94 174 102 180 98 C186 94 190 102 196 98 C202 94 206 102 212 98 C218 94 222 102 230 97" stroke-width=".7"/>
+  <path d="M164 112 C170 108 174 116 180 112 C186 108 190 116 196 112 C202 108 206 114 214 111" stroke-width=".7"/>
+  <!-- heart, as on the app's mark -->
+  <path d="M228 126 C228 121 222 119 220 123 C218 119 212 121 212 126 C212 131 220 136 220 136 C220 136 228 131 228 126 Z" stroke-width=".9"/>
+  <!-- ribbon bookmark -->
+  <path d="M154 66 L156 30 L162 36 L166 28 L160 66" stroke-width=".8" stroke-opacity=".85"/>
+</svg>

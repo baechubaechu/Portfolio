@@ -9,25 +9,27 @@
  *
  * Interaction model
  *   look        the pointer turns the head on a celestial vault
- *   gaze        looking at a project draws its asterism in place
- *               and opens the detail card — nodes never rearrange
+ *   gaze        looking at a project draws its symbol around it (its own
+ *               keywords as stars, components/Symbol.js) and opens the
+ *               detail card — nodes never rearrange
  *   open        click a project star → detail page
  */
 
-import { buildGraph } from "../lib/graph.js?v=1.1";
+import { buildGraph } from "../lib/graph.js?v=1.2";
 import { createLayout } from "../lib/graphLayout.js?v=2.9";
 import { buildAsterisms } from "../lib/asterism.js?v=2.2";
-import { resolveConfig, visualOf } from "../config.js?v=3.11";
-import { toSphere, project as projectSky, resolveCamera, createSkyDust, createBandDust, bandToWorld } from "../lib/sky.js?v=3.0";
+import { resolveConfig, visualOf } from "../config.js?v=3.14";
+import { toSphere, project as projectSky, resolveCamera, createSkyDust, createBandDust, bandToWorld } from "../lib/sky.js?v=3.1";
 import {
     createTextMeasurer, debounce, hasFinePointer, mulberry32, hashString,
     prefersReducedMotion, svgEl, waitForFonts,
 } from "../lib/utils.js?v=2.0";
 import { createNodeView } from "./Node.js?v=3.4";
 import { createEdgeView } from "./Edge.js?v=2.5";
-import { createProjectInfo } from "./ProjectInfo.js?v=3.1";
+import { createProjectInfo } from "./ProjectInfo.js?v=3.3";
 import { createCursor } from "./Cursor.js?v=2.3";
 import { createIdlePulse } from "./IdlePulse.js?v=1.9";
+import { createSymbols } from "./Symbol.js?v=1.5";
 
 export async function mountConstellation(root, portfolio) {
     const stageEl = root.querySelector("[data-c-stage]");
@@ -95,9 +97,10 @@ export async function mountConstellation(root, portfolio) {
     /* ───────────── views ───────────── */
     const dustLayer = svgEl("g", { class: "c-layer c-layer--dust", "aria-hidden": "true" });
     const edgesLayer = svgEl("g", { class: "c-layer c-layer--edges" });
+    const symbolsLayer = svgEl("g", { class: "c-layer c-layer--symbols" });
     const nodesLayer = svgEl("g", { class: "c-layer c-layer--nodes" });
     const world = svgEl("g", { class: "c-world" });
-    world.append(dustLayer, edgesLayer, nodesLayer);
+    world.append(dustLayer, edgesLayer, symbolsLayer, nodesLayer);
     svg.append(world);
 
     const dustRand = mulberry32(hashString("dust:" + graph.nodes.map((n) => n.id).join()));
@@ -180,6 +183,11 @@ export async function mountConstellation(root, portfolio) {
     }
     const driftOn = !reduceMotion && cfg.motion.drift.amplitude > 0;
 
+    const symbols = createSymbols({
+        layer: symbolsLayer, graph, measure, getStage: () => size, getConfig: () => cfg,
+        getAvoid: (id) => graph.projects.filter((m) => m.id !== id).map(nodeAvoidRect).filter(Boolean),
+    });
+
     /* ───────────── state ───────────── */
     let selectedId = null;
     let hoveredId = null;
@@ -206,6 +214,13 @@ export async function mountConstellation(root, portfolio) {
                     y0 = Math.min(y0, r.y0);
                     x1 = Math.max(x1, r.x1);
                     y1 = Math.max(y1, r.y1);
+                }
+                const sym = n.type === "project" ? symbols.bbox(id) : null;
+                if (sym) {
+                    x0 = Math.min(x0, sym.x0);
+                    y0 = Math.min(y0, sym.y0);
+                    x1 = Math.max(x1, sym.x1);
+                    y1 = Math.max(y1, sym.y1);
                 }
                 if (!Number.isFinite(x0)) return null;
                 const pad = 26;
@@ -268,7 +283,9 @@ export async function mountConstellation(root, portfolio) {
         const sel = n.id === selectedId;
         if (n.type === "project") {
             const p = n.data;
-            const base = `${p.title}, project, ${p.year ?? ""}`.trim();
+            const words = symbols.keywords(n.id);
+            const base = `${p.title}, project, ${p.year ?? ""}`.trim()
+                + (words.length ? `. Keywords: ${words.join(", ")}` : "");
             if (!sel) return `${base}. Look to see its constellation.`;
             return p.href
                 ? `${base}. Click to open the project.`
@@ -291,6 +308,19 @@ export async function mountConstellation(root, portfolio) {
         const hovAdj = hov ? graph.adjacency.get(hov.id) : null;
         const selMembers = selFig?.memberIds ?? null;
         const hovMembers = hovFig?.memberIds ?? null;
+
+        const symId = sel?.type === "project" ? sel.id : hov?.type === "project" ? hov.id : null;
+        const symChanged = symId !== symbols.current;
+        symbols.show(symId);
+        stageEl.classList.toggle("has-symbol", !!symbols.current);
+        if (symChanged) {
+            // Turn the head a little so a figure near the edge comes fully into view.
+            const cam = cameraCfg();
+            const { dx, dy } = symbols.nudge(symbols.current);
+            const lim = cam.maxBias ?? 0.32;
+            lookBias.yaw = reduceMotion ? 0 : Math.max(-lim, Math.min(lim, -dx / cam.focal));
+            lookBias.pitch = reduceMotion ? 0 : Math.max(-lim, Math.min(lim, dy / cam.focal));
+        }
 
         root.dataset.mode = sel ? sel.type : "idle";
         stageEl.classList.toggle("has-selection", !!sel);
@@ -614,8 +644,10 @@ export async function mountConstellation(root, portfolio) {
             if (!m || m.rVisible === false) continue;
             sx += m.rx; sy += m.ry; n++;
         }
-        const fx = n ? sx / n : size.width / 2;
-        const fy = n ? sy / n : size.height / 2;
+        let fx = n ? sx / n : size.width / 2;
+        let fy = n ? sy / n : size.height / 2;
+        const symBox = symbols.bbox(node.id);
+        if (symBox) { fx = (symBox.x0 + symBox.x1) / 2; fy = (symBox.y0 + symBox.y1) / 2; }
         const cx = size.width / 2, cy = size.height / 2;
 
         world.style.transformOrigin = "0 0";
@@ -706,6 +738,8 @@ export async function mountConstellation(root, portfolio) {
 
     /* ───────────── celestial look ───────────── */
     let yaw = 0, pitch = 0, yawT = 0, pitchT = 0;
+    /** Extra look added while a figure is up, so it is not cut off by the stage edge. */
+    const lookBias = { yaw: 0, pitch: 0 };
     let pointerOn = false;
     const SENSOR_LIMIT_DEG = 30;
     const SENSOR_LIMIT_RAD = Math.PI / 6;
@@ -898,6 +932,10 @@ export async function mountConstellation(root, portfolio) {
             const d = Math.hypot((n.rx ?? n.x) - px, (n.ry ?? n.y) - py);
             if (d < bestPD) { bestPD = d; bestP = n.id; }
         }
+        // While a figure is up, reading it keeps it up; only a star close to the
+        // pointer takes over.
+        const held = hoveredId && symbols.contains(hoveredId, px, py);
+        if (held && bestP !== hoveredId && !(bestP && bestPD < (cam.takeoverRadius ?? 26))) return;
         if (bestP) { setHover(bestP); return; }
         let bestA = null, bestAD = cam.attributeRadius;
         for (const n of graph.attributes) {
@@ -943,7 +981,10 @@ export async function mountConstellation(root, portfolio) {
         const fromDom = nodeFromEvent(e);
         if (fromDom) return fromDom;
         const { px, py } = pointerToStage(e);
-        return nearestNode(px, py, cameraCfg().clickRadius ?? 28);
+        const near = nearestNode(px, py, cameraCfg().clickRadius ?? 28);
+        if (near) return near;
+        // A click anywhere on the figure that is up opens its project.
+        return hoveredId && symbols.contains(hoveredId, px, py) ? hoveredId : null;
     }
 
     function releaseLook() {
@@ -1046,8 +1087,8 @@ export async function mountConstellation(root, portfolio) {
         const amp = driftOn ? cfg.motion.drift.amplitude : 0;
         const cam = cameraCfg();
         const ease = reduceMotion ? 1 : (cam.ease ?? 0.1);
-        yaw += (yawT - yaw) * ease;
-        pitch += (pitchT - pitch) * ease;
+        yaw += (yawT + lookBias.yaw - yaw) * ease;
+        pitch += (pitchT + lookBias.pitch - pitch) * ease;
 
         for (const n of graph.nodes) {
             let x = n.x, y = n.y;
@@ -1070,6 +1111,7 @@ export async function mountConstellation(root, portfolio) {
         }
 
         for (const e of visualEdges) edgeViews.get(e.id).update(e.sourceNode, e.targetNode);
+        symbols.update();
 
         if (sensorActive) {
             let nextId = null;
@@ -1129,7 +1171,8 @@ export async function mountConstellation(root, portfolio) {
 
         if (panelId) panel?.place(graph.byId.get(panelId));
 
-        const looking = Math.abs(yawT - yaw) > 0.0004 || Math.abs(pitchT - pitch) > 0.0004;
+        const looking = Math.abs(yawT + lookBias.yaw - yaw) > 0.0004
+            || Math.abs(pitchT + lookBias.pitch - pitch) > 0.0004;
         if (onScreen && (active || driftOn || looking || pointerOn)) raf = requestAnimationFrame(frame);
     }
 
@@ -1157,6 +1200,7 @@ export async function mountConstellation(root, portfolio) {
         layout.run(40);
         asterisms.refresh();
         syncAsterismViews();
+        symbols.relayout();
         applyState();
         kick();
     }

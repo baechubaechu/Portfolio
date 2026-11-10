@@ -4,7 +4,7 @@
  */
 
 import { hashString, svgEl } from "../lib/utils.js?v=2.0";
-import { visualOf } from "../config.js?v=3.11";
+import { visualOf } from "../config.js?v=3.14";
 
 export function createNodeView(node, cfg) {
     const isProject = node.type === "project";

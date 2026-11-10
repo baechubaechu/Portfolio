@@ -35,6 +35,16 @@
  *               it is where the eye (and hand) goes first.
  *   bias        optional [fx, fy] (0…1 of the stage): pulls the project
  *               toward that spot on wide screens, to untangle neighbours.
+ *   symbol      the figure drawn on the home sky when the project is looked at:
+ *               { name, origin: [x, y], stars: [{ id, label, at: [x, y],
+ *               side: "left"|"right"|"above"|"below", minor? }],
+ *               links: [[a, b], ...] }. Coordinates are px at full size in
+ *               the sketch frame; `origin` is where the project star sits and
+ *               "@" names it in `links`. Optional `art: { src, box: [x, y, w, h] }`
+ *               lays a faint line drawing under the stars, drawn in the same
+ *               frame (box = the drawing's viewBox). The keywords come from the project
+ *               itself, so figures never share stars across projects.
+ *               `attributes` and `asterism` stay for the detail pages.
  *
  * Attributes are shared: every project that lists "parametric"
  * connects to the same single Parametric node. The asterism is a
@@ -64,6 +74,20 @@ export const projects = [
         year: 2026,
         category: "Graduation project",
         href: "project-detail.html?id=xtra-space",
+        // Four circulation flows cross under one canopy; the crossing is the project.
+        symbol: {
+            name: "The crossing",
+            origin: [150, 117],
+            stars: [
+                { id: "transfer", label: "Transfer", at: [80, 64], side: "left" },
+                { id: "promenade", label: "Promenade", at: [220, 64], side: "right" },
+                { id: "stream", label: "Stream", at: [80, 170], side: "left" },
+                { id: "urban", label: "Urban link", at: [220, 170], side: "right" },
+                { id: "roof", label: "Flow roof", at: [115, 26], side: "above" },
+                { id: "operator", label: "AI operator", at: [185, 26], side: "above" },
+            ],
+            links: [["@", "transfer"], ["@", "promenade"], ["@", "stream"], ["@", "urban"], ["transfer", "roof"], ["roof", "operator"], ["operator", "promenade"]],
+        },
         attributes: [
             { id: "ai", weight: 0.9 },
             { id: "interaction", weight: 0.8 },
@@ -99,6 +123,19 @@ export const projects = [
         year: 2025,
         category: "School work",
         href: "project-detail.html?id=student-driven-village",
+        // A gable whose base folds inward like a door: the boundary students open.
+        symbol: {
+            name: "The open house",
+            origin: [150, 20],
+            stars: [
+                { id: "clubs", label: "Club rooms", at: [75, 80], side: "left" },
+                { id: "halls", label: "Shared halls", at: [225, 80], side: "right" },
+                { id: "semi", label: "Semi-public", at: [75, 160], side: "left" },
+                { id: "corridor", label: "Wide corridor", at: [225, 160], side: "right" },
+                { id: "schools", label: "Five schools", at: [150, 128], side: "below" },
+            ],
+            links: [["@", "clubs"], ["@", "halls"], ["clubs", "semi"], ["halls", "corridor"], ["semi", "schools"], ["schools", "corridor"]],
+        },
         attributes: [
             { id: "physical-model", weight: 0.9 },
             { id: "research", weight: 0.8 },
@@ -133,6 +170,22 @@ export const projects = [
         year: 2026,
         category: "Competition",
         href: "project-detail.html?id=kitch-fish",
+        // A bamboo rod that lands sea glass and plastic instead of fish.
+        symbol: {
+            name: "The catch",
+            art: { src: "assets-web/constellations/kitch-fish.svg", box: [30, 0, 260, 140] },
+            origin: [165, 100],
+            stars: [
+                { id: "line", label: "Fishing line", at: [165, 22], side: "left" },
+                { id: "bamboo", label: "Bamboo frame", at: [50, 110], side: "below" },
+                { id: "glass", label: "Sea glass", at: [205, 82], side: "above" },
+                { id: "plastic", label: "Plastic", at: [205, 118], side: "below" },
+                { id: "tail", label: "", at: [240, 100], side: "right", minor: true },
+                { id: "debris", label: "Debris", at: [265, 80], side: "right" },
+                { id: "jeju", label: "Jeju", at: [265, 120], side: "right" },
+            ],
+            links: [["@", "line"], ["line", "bamboo"], ["@", "glass"], ["@", "plastic"], ["glass", "tail"], ["plastic", "tail"], ["tail", "debris"], ["tail", "jeju"]],
+        },
         panelSlot: "top-left",
         attributes: [
             { id: "parametric", weight: 0.9 },
@@ -168,6 +221,20 @@ export const projects = [
         year: 2023,
         category: "School work",
         href: "project-detail.html?id=little-forest",
+        // A paw print for a park shared by pets and people.
+        symbol: {
+            name: "The paw",
+            origin: [150, 160],
+            stars: [
+                { id: "park", label: "Pet park", at: [115, 130], side: "left" },
+                { id: "reuse", label: "Reuse", at: [185, 130], side: "right" },
+                { id: "terraces", label: "Terraces", at: [85, 80], side: "left" },
+                { id: "paths", label: "Winding paths", at: [125, 50], side: "left" },
+                { id: "planters", label: "Planters", at: [175, 50], side: "right" },
+                { id: "hotel", label: "Care hotel", at: [215, 80], side: "right" },
+            ],
+            links: [["@", "park"], ["@", "reuse"], ["park", "reuse"], ["terraces", "paths"], ["paths", "planters"], ["planters", "hotel"]],
+        },
         attributes: [
             { id: "research", weight: 0.8 },
             { id: "phenomenology", weight: 0.7 },
@@ -196,6 +263,19 @@ export const projects = [
         year: 2023,
         category: "School work",
         href: "project-detail.html?id=class-ic",
+        // Euljiro's workshops piled floor on floor into one tower over the old waterway.
+        symbol: {
+            name: "The stack",
+            origin: [150, 10],
+            stars: [
+                { id: "office", label: "Shared office", at: [170, 44], side: "right" },
+                { id: "lounges", label: "Lounges", at: [130, 86], side: "left" },
+                { id: "classes", label: "One-day classes", at: [170, 128], side: "right" },
+                { id: "workshops", label: "Craft workshops", at: [130, 170], side: "left" },
+                { id: "waterway", label: "Waterway", at: [230, 175], side: "right" },
+            ],
+            links: [["@", "office"], ["office", "lounges"], ["lounges", "classes"], ["classes", "workshops"], ["workshops", "waterway"]],
+        },
         attributes: [
             { id: "structure", weight: 0.8 },
             { id: "research", weight: 0.7 },
@@ -226,6 +306,20 @@ export const projects = [
         year: 2026,
         category: "Interactive installation",
         href: "project-detail.html?id=emotional-architecture",
+        // A face is read, and the reading reshapes a corridor; the project is the pupil.
+        symbol: {
+            name: "The eye",
+            origin: [150, 100],
+            stars: [
+                { id: "face", label: "Face", at: [40, 100], side: "left" },
+                { id: "vector", label: "Emotion vector", at: [110, 55], side: "above" },
+                { id: "eeg", label: "EEG", at: [190, 55], side: "above" },
+                { id: "corridor", label: "Corridor", at: [260, 100], side: "right" },
+                { id: "erosion", label: "Erosion", at: [190, 145], side: "below" },
+                { id: "dilation", label: "Dilation", at: [110, 145], side: "below" },
+            ],
+            links: [["face", "vector"], ["vector", "eeg"], ["eeg", "corridor"], ["corridor", "erosion"], ["erosion", "dilation"], ["dilation", "face"]],
+        },
         attributes: [
             { id: "ai", weight: 0.9 },
             { id: "interaction", weight: 0.9 },
@@ -265,6 +359,18 @@ export const projects = [
         category: "AI tool · in progress",
         bias: [0.61, 0.09],
         href: "project-detail.html?id=sida",
+        // A drafting compass: one assistant whose legs reach from the experts to the model.
+        symbol: {
+            name: "The compass",
+            origin: [150, 18],
+            stars: [
+                { id: "experts", label: "10 experts", at: [115, 95], side: "left" },
+                { id: "conductor", label: "Conductor", at: [185, 95], side: "right" },
+                { id: "table", label: "Drafting table", at: [85, 170], side: "below" },
+                { id: "site", label: "Site facts", at: [215, 170], side: "below" },
+            ],
+            links: [["@", "experts"], ["@", "conductor"], ["experts", "conductor"], ["experts", "table"], ["conductor", "site"]],
+        },
         attributes: [
             { id: "ai", weight: 0.95 },
             { id: "code", weight: 0.9 },
@@ -296,6 +402,20 @@ export const projects = [
         category: "Personal project",
         bias: [0.86, 0.72],
         href: "project-detail.html?id=deary",
+        // Questions and answers on one page, follow-ups and the entry on the other.
+        symbol: {
+            name: "The open book",
+            art: { src: "assets-web/constellations/deary.svg", box: [30, 24, 240, 156] },
+            origin: [150, 160],
+            stars: [
+                { id: "guard", label: "Guardrail", at: [150, 68], side: "above" },
+                { id: "question", label: "Question", at: [55, 45], side: "above" },
+                { id: "answer", label: "Answer", at: [55, 140], side: "below" },
+                { id: "followup", label: "Follow-up", at: [245, 45], side: "above" },
+                { id: "entry", label: "Entry", at: [245, 140], side: "below" },
+            ],
+            links: [["@", "guard"], ["guard", "question"], ["question", "answer"], ["answer", "@"], ["guard", "followup"], ["followup", "entry"], ["entry", "@"]],
+        },
         attributes: [
             { id: "code", weight: 0.9 },
             { id: "ai", weight: 0.8 },

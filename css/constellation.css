@@ -457,7 +457,7 @@
     left: 0;
     top: 0;
     z-index: 20;
-    width: min(248px, calc(100% - 32px));
+    width: min(272px, calc(100% - 32px));
     max-height: min(52vh, 420px);
     padding: 16px 16px 14px;
     overflow: auto;
@@ -536,6 +536,121 @@
     line-height: 1.2;
     letter-spacing: -0.02em;
     color: var(--c-ink);
+}
+
+.c-panel__desc {
+    margin: 0 0 12px;
+    font-family: var(--c-font-sans);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: 0.005em;
+    color: var(--c-ink-2);
+}
+
+.c-panel__figure {
+    margin: 0;
+    font-family: var(--c-font-mono);
+    font-size: 9px;
+    line-height: 1.4;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--c-ink-3);
+}
+
+/* ── Project symbols: a keyword figure drawn around the looked-at star ── */
+
+.c-symbol {
+    pointer-events: none;
+    visibility: hidden;
+    --c-sym-step: 150ms;
+}
+
+.c-symbol.is-placed {
+    visibility: visible;
+}
+
+.c-symbol__line {
+    fill: none;
+    stroke: var(--c-ink);
+    stroke-width: 0.8;
+    stroke-opacity: 0.5;
+    stroke-linecap: round;
+    stroke-dasharray: 1 1;
+    stroke-dashoffset: 1;
+    transition: stroke-dashoffset 260ms var(--c-ease);
+}
+
+.c-symbol__star {
+    fill: var(--c-ink);
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+    transform: scale(0.2);
+    transition: opacity 220ms var(--c-ease), transform 220ms var(--c-ease);
+}
+
+.c-symbol__star--minor { fill: var(--c-ink-2); }
+
+.c-symbol__art {
+    opacity: 0;
+    transition: opacity 260ms var(--c-ease);
+}
+
+.c-symbol__art image {
+    pointer-events: none;
+}
+
+.c-symbol__label {
+    font-family: var(--c-font-mono);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    dominant-baseline: central;
+    fill: var(--c-ink-2);
+    opacity: 0;
+    transition: opacity 180ms var(--c-ease);
+    paint-order: stroke;
+    stroke: var(--c-bg);
+    stroke-width: 3px;
+    stroke-opacity: 0.8;
+}
+
+/* Reveal hop by hop from the project star: star, then its lines, then names. */
+.c-symbol.is-on .c-symbol__star {
+    opacity: 0.95;
+    transform: none;
+    transition: opacity 420ms var(--c-ease) calc(var(--step) * var(--c-sym-step) + 120ms),
+        transform 520ms var(--c-ease) calc(var(--step) * var(--c-sym-step) + 120ms);
+}
+
+.c-symbol.is-on .c-symbol__line {
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 520ms var(--c-ease) calc(var(--step) * var(--c-sym-step));
+}
+
+/* The drawing surfaces last and stays faint, behind the lines. */
+.c-symbol.is-on .c-symbol__art {
+    opacity: var(--c-sym-art, 0.2);
+    transition: opacity 1200ms var(--c-ease) calc(var(--steps, 3) * var(--c-sym-step) + 300ms);
+}
+
+.c-symbol.is-on .c-symbol__label {
+    opacity: 1;
+    transition: opacity 460ms var(--c-ease) calc(var(--step) * var(--c-sym-step) + 360ms);
+}
+
+/* The figure names the project now, and the card carries the title. */
+.c-hero__stage.has-symbol .c-node--project.is-focus .c-node__label {
+    opacity: 0;
+    transition: opacity 240ms var(--c-ease);
+}
+
+.c-hero.is-warp-prep .c-symbol,
+.c-hero.is-warping .c-symbol {
+    opacity: 0;
+    transition: opacity 280ms linear;
 }
 
 .c-panel__list {
@@ -1083,6 +1198,7 @@
     .c-node--project .c-node__label { font-size: 10px; }
     .c-node--project.c-node--featured .c-node__label { font-size: 11px; }
     .c-node--attribute .c-node__label { font-size: 9px; }
+    .c-symbol__label { font-size: 9px; }
 
     .c-mobile-observer {
         position: absolute;
@@ -1209,6 +1325,8 @@
 /* ── Reduced motion ────────────────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
+    .c-symbol { --c-sym-step: 0ms; }
+
     .c-hero *,
     .c-hero *::before,
     .c-hero *::after,

@@ -2,7 +2,9 @@
  * Info panel: a small floating card for the current selection.
  *
  *   idle       → hidden
- *   project    → title, year, attributes
+ *   project    → year · category, title, one-line description and the
+ *                name of its figure (the keywords are the figure's stars,
+ *                so the card does not repeat them)
  *   attribute  → name, list of projects that share it
  *
  * Positioned next to the selected node; flips side if it would overflow.
@@ -43,17 +45,31 @@ export function createProjectInfo(container, { graph, onSelect, onOpen, getAncho
             </button>
         </li>`;
 
+    /** The project card's record (js/projects.js, loaded as a classic script before this module). */
+    function cardRecord(id) {
+        // A top-level const in a classic script is a global binding, not a window property.
+        // eslint-disable-next-line no-undef
+        const all = typeof projectsData !== "undefined" ? projectsData : window.projectsData;
+        if (!all) return null;
+        for (const list of Object.values(all)) {
+            const hit = list?.find?.((r) => r.id === id || r.aliases?.includes(id));
+            if (hit) return hit;
+        }
+        return null;
+    }
+
     function renderProject(node) {
         const p = node.data;
-        const rels = graph.neighborsOf(node.id);
-        const kicker = ["Project", p.year, p.category, p.href ? null : "In progress"]
+        const card = cardRecord(node.id);
+        const kicker = [p.year, card?.category || p.category, p.href ? null : "In progress"]
             .filter(Boolean).join(" · ");
+        const desc = card?.description || "";
+        const figure = p.symbol?.name;
         return `
             <p class="c-panel__kicker">${esc(kicker)}</p>
-            <h2 class="c-panel__title">${esc(p.title)}</h2>
-            <ul class="c-panel__list" aria-label="Attributes">
-                ${rels.map(({ node: a, edge }) => weightRow(a.id, a.label, null, edge.weight)).join("")}
-            </ul>`;
+            <h2 class="c-panel__title">${esc(card?.title || p.title)}</h2>
+            ${desc ? `<p class="c-panel__desc">${esc(desc)}</p>` : ""}
+            ${figure ? `<p class="c-panel__figure"><span aria-hidden="true">✦</span> ${esc(figure)}</p>` : ""}`;
     }
 
     function renderAttribute(node) {

@@ -47,6 +47,16 @@ export const CONFIG = {
         labelSides: ["right", "left", "below", "above"],
     },
 
+    /* ── Project symbols drawn on hover (components/Symbol.js) ── */
+    symbol: {
+        fill: [0.34, 0.46],    // a figure spans up to this share of the stage width / height
+        minScale: 0.8,         // figures are authored in px; never smaller than this…
+        maxScale: 2.4,         // …or larger than this
+        labelFont: '400 11px "IBM Plex Mono", Consolas, monospace', // must match .c-symbol__label
+        letterSpacing: 0.1,    // em
+        pad: { top: 64, right: 18, bottom: 18, left: 18 },
+    },
+
     /* ── Motion (ms / px). CSS reads the durations via custom props. ── */
     motion: {
         drawDuration: 760,
@@ -69,6 +79,8 @@ export const CONFIG = {
             spanX: 0.78,         // upper bound; actual span is fitted to the window
             spanY: 0.57,
             fitPad: 28,          // px of sky between the figure and the crop marks
+            fitPadX: 150,        // wider at the sides and top and bottom, so a project
+            fitPadY: 96,         // near the edge still has room for its symbol
             rProject: 1,
             rAttribute: 1.14,
             near: 0.32,
@@ -190,10 +202,17 @@ export const CONFIG = {
         stage: {
             padding: { top: 20, right: 18, bottom: 16, left: 18 },
         },
+        symbol: {
+            fill: [0.7, 0.32],
+            minScale: 0.5,
+            maxScale: 1.2,
+            labelFont: '400 9px "IBM Plex Mono", Consolas, monospace',
+            pad: { top: 72, right: 12, bottom: 84, left: 12 },
+        },
         motion: {
             // spanY: the base cap (0.57) is tuned for wide screens; on a tall phone stage it
             // squeezed the figure into the middle 40% of the height. Let the window fit decide.
-            camera: { maxYaw: 0.524, maxPitch: 0.524, spanY: 1.2, gazeRadius: 64, attributeRadius: 24, dust: 160, bandDust: 200, bandHaze: 12 },
+            camera: { maxYaw: 0.524, maxPitch: 0.524, spanY: 1.2, fitPadX: 62, fitPadY: 120, gazeRadius: 64, attributeRadius: 24, dust: 160, bandDust: 200, bandHaze: 12 },
         },
     },
 };
