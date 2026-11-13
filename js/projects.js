@@ -221,7 +221,7 @@ const projectsData = {
             id: "student-driven-village",
             aliases: ["Student Driven Village"],
             title: "Student Driven Village",
-            description: "A Multi-layered Residential Complex Mediated by Student Initiatives.",
+            description: "A housing complex in Gwacheon with club rooms and shared halls for five nearby schools, set under the housing and open to residents too.",
             thumbnail: "assets-web/4-1 thumbnail.v2.webp",
             tags: ["Housing Complex", "Gwacheon Jugong Reconstruction", "Shared Halls for 5 Schools", "Semi-public Layer", "Yangjae Stream"],
             kind: "Architecture",
@@ -757,13 +757,13 @@ const projectsData = {
         {
             id: "sida",
             title: "Sida",
-            description: "A local web app that helps architecture students through early design: site facts from government records, ten AI experts around a drafting table, and a site model ready for the laser cutter. It does not design the building for them.",
+            description: "A local web app for early design: site facts from government records, ten AI experts around a drafting table, and a site model ready for the laser cutter.",
             thumbnail: "assets-web/SIDA-board.webp",
             tags: ["AI Design Assistant", "Site Facts From Public Records", "10 Expert Agents", "Drafting Table · 3D", "Local Web App · v0.2"],
             githubLink: "https://github.com/baechubaechu/Sida",
             visitLink: "https://sida-kr.duckdns.org",
             kind: "Code · In progress",
-            thesis: "Early design in studio starts with a week of collecting: the lot, the zoning, the ordinance, the buildings around it. A general chatbot will answer all of that fluently and get the numbers wrong. Sida (시다, the word Korean architecture schools use for a junior who assists) starts from one site address. It pulls the lot, zoning and legal limits from government records, shows every figure next to the line of law it was read from, and seats ten narrow AI experts around a drafting table where the designer sketches, tests massing and asks questions. What began in July 2026 as a command-line prototype is now a local web app in closed testing (v0.2).",
+            thesis: "Early design in studio starts with a week of collecting: the lot, the zoning, the ordinance, the buildings around it. A general chatbot answers all of that fluently and gets the numbers wrong. Sida (시다, the word Korean architecture schools use for a junior who assists) starts from one site address, pulls the lot, zoning and legal limits from government records, and shows every figure next to the line of law it was read from. Ten narrow AI experts then sit around a drafting table where the designer sketches, tests massing and asks questions. It does not design the building for them.",
             subtitle: "An assistant for early design that brings the evidence, not the answer",
             category: "AI Tool / Local Web App",
             role: "Lead developer (team project)",
@@ -776,10 +776,9 @@ const projectsData = {
                     lead: "A student needs facts about the site and a second opinion on the design. Today's AI tools blur the two.",
                     blocks: [
                         { kind: "text", strong: true, body: "Sida keeps three things apart: what public records say, what an AI reads into them, and what the designer decides." },
-                        { kind: "text", body: "A studio project begins with the site: lot area, zoning, coverage and floor area limits, the local ordinance, roads, existing buildings. Each lives in a different government service, and students collect them by hand. Ask a general chatbot instead and it blends site, program and regulation into one confident answer, with code numbers and precedents it has made up." },
-                        { kind: "text", body: "The first version of Sida (v0.1, July 2026) was a terminal chat that routed questions to expert prompts. It kept the reasoning organised, but every number still had to be checked by the designer, and nothing could be drawn. The rebuild set out to fix both." },
+                        { kind: "text", body: "Lot area, zoning, coverage and floor area limits, the local ordinance, roads and existing buildings each live in a different government service, and students collect them by hand. A general chatbot blends site, program and regulation into one confident answer, with code numbers and precedents it has made up." },
                         { kind: "rules", items: [
-                            ["Numbers are never invented", "Site figures come from government records. Ordinance figures are read by fixed rules. Anything that could not be confirmed stays marked as unconfirmed."],
+                            ["Numbers are never invented", "Site figures come from government records. Anything that could not be confirmed stays marked as unconfirmed."],
                             ["Evidence travels with the number", "Each figure is shown with the line of text and the article number it was read from."],
                             ["The designer designs", "What the AI writes is material to review and choose from. It never lands on the drafting table as the answer."]
                         ] }
@@ -791,68 +790,40 @@ const projectsData = {
                     lead: "Type an address, or click a lot on the cadastral map, and the site sheet fills in from public records.",
                     blocks: [
                         { kind: "steps", items: [
-                            "Find the lot: pick province, city and district from lists and type the lot number, paste an address, or click the cadastral map. Several lots can be merged into one site.",
+                            "Find the lot: type or paste an address, or click the cadastral map. Several lots can be merged into one site.",
                             "Look it up: lot boundary, land category, area and zoning from V-World, and the existing buildings from the national building register.",
-                            "Attach the limits: the statutory building coverage and floor area ratio for that zone, from a table checked against the statute and dated.",
-                            "Fetch the ordinance: every article of the municipality's ordinance that deals with coverage or floor area, in full.",
-                            "Save it to the project as site_facts.json, which the site sheet, the experts and the 3D view all read."
+                            "Attach the limits: the statutory building coverage and floor area ratio for that zone, then every article of the municipal ordinance that deals with them.",
+                            "Save it to the project as one file that the site sheet, the experts and the 3D view all read."
                         ] },
+                        { kind: "text", body: "National law gives a range for each zone; the municipal ordinance fixes the actual figure, sometimes in running text and sometimes in a table inside an HWP file. Sida reads that article or table row by fixed rules, not with a model. If the text does not resolve to one figure, or the figure falls outside the statutory range, Sida gives no number and shows the text instead." },
                         { kind: "rules", items: [
                             ["A record could not be fetched", "The site is still saved, and that item reads 'unconfirmed'. No estimate is filled in."],
                             ["A typo in the address", "Not corrected silently. The designer is asked to search again."],
-                            ["Public API keys", "A relay server in Korea holds them. Each tester gets a personal Sida key, approved by hand, limited to 3,000 calls a day. The relay stores no addresses or search terms."]
-                        ] },
-                        { kind: "text", body: "The Site Reader expert then writes in three separate parts: facts with their source, interpretation with the facts it rests on, and what is still unconfirmed." }
-                    ]
-                },
-                {
-                    id: "ordinance",
-                    label: "Ordinance Figures",
-                    lead: "Ordinance numbers are read by rule, not by a model, and always shown with the sentence they came from.",
-                    blocks: [
-                        { kind: "text", body: "National law gives a range for each zone; the municipal ordinance fixes the actual figure, sometimes in running text and sometimes in an appended table inside an HWP file. Sida parses the article or the table row for the site's zone with fixed rules. If the text does not resolve to one figure, or the figure falls outside the statutory range, Sida gives no number and shows the text instead." },
-                        { kind: "rules", items: [
-                            ["Base article", "The row for this site's zone, with the figure and the quoted line"],
-                            ["Districts and special areas", "Articles for landscape districts, growth management areas and the like, passed on only when they apply to this lot"],
-                            ["Relaxations and tightening", "Listed by title. The designer marks which ones the expert should read in full, and hides the irrelevant ones"]
-                        ] },
-                        { kind: "text", body: "The screen shows every article. The Regulation Checker receives only the parts that concern this lot, so it is not tempted to apply a relaxation that does not belong. For Sejong-ro 1 in Seoul that cut the ordinance text from about 12,000 characters to 2,900." },
-                        { kind: "note", body: "Law search goes to the Korea Ministry of Government Legislation's search service with short queries built from the site facts. The expert's output is a list of things to verify against the original text, not a ruling." }
+                            ["Only what applies", "The regulation expert receives the parts of the ordinance that concern this lot. For Sejong-ro 1 in Seoul that cut the text from about 12,000 characters to 2,900."]
+                        ] }
                     ]
                 },
                 {
                     id: "experts",
                     label: "Experts",
-                    lead: "Ten independent lenses, each with declared inputs and things it must not do. Seven are in regular use, three are on hold.",
+                    lead: "Ten independent lenses, each with declared inputs and things it must not do, and one Conductor who decides which to call.",
                     blocks: [
                         { kind: "rules", items: [
-                            ["Site Reader", "Facts, interpretation and unknowns kept apart; how systems meet and cut each other on the site. No program or form proposals, no estimated figures"],
+                            ["Site Reader", "Facts, interpretation and unknowns kept apart. No program or form proposals, no estimated figures"],
                             ["Program Analyst", "Users and rhythms, adjacency, the public–private gradient. No invented areas"],
                             ["Regulation Checker", "Governing laws and a table of what to verify and where. Never states a figure as settled"],
                             ["Precedent Scout", "3–6 precedents matched to the problem, each with a lesson and a caution"],
                             ["Design Critic", "Jury-style critique against the core problem"],
-                            ["Representation Planner", "Which diagrams prove the concept, in what order; recommends the physical site model from values the code computed"],
+                            ["Representation Planner", "Which diagrams prove the concept, in what order; recommends the physical site model"],
                             ["Presentation Editor", "Review story, portfolio structure, likely questions"],
-                            ["On hold", "Concept Framer, Spatial Reviewer, Systems Advisor. They run when the designer asks by name, but the Conductor does not suggest them"]
+                            ["On hold", "Concept Framer, Spatial Reviewer, Systems Advisor. They run only when the designer asks by name"]
                         ] },
-                        { kind: "text", body: "The first roster was a fixed pipeline of five, then twelve experts. Design does not run in one order, so each expert became a lens that can run alone and says what it is missing. Two of the twelve, the constraint mapper and the synthesizer, were removed in October: sorting conditions and conflicts is the Conductor's job, in conversation." },
-                        { kind: "text", body: "Every output ends with a Handoff section naming who should look next. Adding an expert takes one prompt file and one entry in config.yaml; the Conductor's list and the project's status table are generated from it." }
-                    ]
-                },
-                {
-                    id: "conductor",
-                    label: "Conductor",
-                    lead: "One colleague in the chat who decides which expert to call, and keeps conditions, conflicts and open decisions in order.",
-                    blocks: [
-                        { kind: "text", body: "The Conductor picks the entry point from what drives the project (site, idea, program or regulation) and from where the designer is actually stuck. It calls experts through function calls, never more than one per reply, and prefers asking one focused question over running anything." },
-                        { kind: "code", filename: "sida/conductor.py", language: "tools", code: "run_expert(agent, address?)      # run one expert now; its document is saved and shown back\nread_expert_output(agent)        # open a finished document when the summary is too thin\nread_board(paper)                # open a massing scheme, note or tracing on the drafting table\npropose_paper(kind, title, ...)  # put a scheme or note in the AI section, never on the table", caption: "The four tools the Conductor has." },
+                        { kind: "text", body: "Design does not run in one order, so each expert is a lens that can run alone and says what it is missing. The Conductor is the one colleague in the chat: it picks the entry point from where the designer is actually stuck, calls no more than one expert per reply, and prefers asking one focused question over running anything." },
                         { kind: "rules", items: [
                             ["Conditions", "Hard (legal, physical, given by the brief) or soft (intentions), each with its source"],
                             ["Conflicts", "Where two experts' outputs pull against each other, naming both"],
-                            ["Decisions due now", "The options, what each costs, and which outputs it rests on"],
-                            ["Stale views", "Outputs that predate a change in the brief or direction"]
-                        ] },
-                        { kind: "text", body: "Instead of the whole chat, the Conductor reads a short project_state.md: decisions, open questions, expert status and the next focus. After an expert runs, Sida proposes an update to that file and shows it section by section. The designer applies or skips it, and the previous version is kept. A decision is settled only when the designer confirms it." }
+                            ["Decisions due now", "The options, what each costs, and which outputs it rests on. A decision is settled only when the designer confirms it"]
+                        ] }
                     ]
                 },
                 {
@@ -860,15 +831,14 @@ const projectsData = {
                     label: "Drafting Table",
                     lead: "The centre of the screen is a table of papers on the site drawing, in plan and in 3D.",
                     blocks: [
-                        { kind: "image", url: "assets-web/SIDA-board.webp", caption: "The workspace: the Conductor on the left, the drafting table with a massing scheme among the surrounding buildings in the middle, and layers, experts and properties on the right. Below, a command line takes either a command or a question." },
+                        { kind: "image", url: "assets-web/SIDA-board.webp", caption: "The workspace: the Conductor on the left, the drafting table with a massing scheme among the surrounding buildings in the middle, and layers, experts and properties on the right." },
                         { kind: "rules", items: [
                             ["Site", "The lot drawn from the cadastral boundary. Always on the table"],
                             ["Massing scheme", "Up to 20 blocks with width, depth, floors and rotation, edited with a gumball and push–pull tools"],
                             ["Note · Tracing paper · Photo", "Text, pen strokes over the site, and images or PDF pages"],
                             ["Expert result", "Arrives in a separate AI section when an expert finishes"]
                         ] },
-                        { kind: "text", body: "The designer selects papers and sends them along with a question, and can see exactly what text the model receives. What the AI makes, such as an alternative massing scheme, is placed in the AI section beside the table. It reaches the table only if the designer moves it there, and a changed scheme never overwrites the original." },
-                        { kind: "text", body: "Thoughts worth keeping go on the idea board. Every expert and the Conductor read those ideas on every call, but have no tool to add, edit or delete them. If an idea conflicts with a finding, they are told to say which and why." }
+                        { kind: "text", body: "The designer selects papers and sends them along with a question, and can see exactly what text the model receives. What the AI makes, such as an alternative massing scheme, is placed in the AI section beside the table. It reaches the table only if the designer moves it there, and a changed scheme never overwrites the original." }
                     ]
                 },
                 {
@@ -877,8 +847,7 @@ const projectsData = {
                     lead: "The same site data becomes a 3D context, a CAD file and the cutting sheets for a physical model.",
                     blocks: [
                         { kind: "steps", items: [
-                            "Context: terrain, contours, roads, pavements, water, neighbouring buildings and lots within 100, 200 or 300 m of the site, built from public map data.",
-                            "Check in the city: the massing scheme can be stood on V-World's 3D map, with nearby buildings hidden or shown as a white model.",
+                            "Context: terrain, contours, roads, water, neighbouring buildings and lots within 100, 200 or 300 m of the site, built from public map data.",
                             "Export: the table goes out as DXF for CAD or 3dm for Rhino, in metres, with the surroundings on their own layer.",
                             "Site model: the ground is sliced into contour layers at sheet thickness × scale (3 mm at 1:500 is 1.5 m), buildings are stacked from the same sheets, and the pieces are nested onto the designer's sheet size as DXF, PDF and SVG."
                         ] },
@@ -886,44 +855,31 @@ const projectsData = {
                             ["Building height unknown", "Only the footprint is engraved. No height is made up"],
                             ["Height estimated from floors", "Marked as estimated in the piece list and coloured differently in the assembly drawing"],
                             ["Not a survey", "The 3D context carries its sources, their dates and a disclaimer on screen"]
-                        ] },
-                        { kind: "text", body: "The Representation Planner recommends a sheet, scale and thickness for the model, but only from combinations the code has already computed. One click sets the model up as recommended." }
+                        ] }
                     ]
                 },
                 {
                     id: "build",
-                    label: "How It Was Built",
-                    lead: "A solo terminal prototype became a team web app in three months, mostly by pairing with coding agents.",
+                    label: "Build & Verification",
+                    lead: "A solo terminal prototype became a team web app in three months, built by pairing with coding agents and held in place by tests.",
                     blocks: [
                         { kind: "rules", items: [
-                            ["Jul 2026", "First CLI prototype: a Conductor and a fixed line of expert prompts"],
-                            ["Sep", "Combinable expert roster, automatic project-state updates, a local model option"],
-                            ["Early Oct", "Session core separated from the terminal; site facts from government APIs; ordinance figures by rule"],
-                            ["Mid Oct", "JSON API for sessions, settings and law search. The terminal CLI was deleted, and a teammate's Figma mock-up was wired to the API as the new screen"],
-                            ["Late Oct – Nov", "Drafting table, massing editing, idea board, 3D surroundings, DXF/3dm export, laser-cut model, relay server and landing page"]
+                            ["Jul 2026", "First command-line prototype: a Conductor and a fixed line of expert prompts"],
+                            ["Sep – Oct", "Combinable experts, site facts from government APIs, ordinance figures by rule, a JSON API and a new screen from a teammate's Figma mock-up"],
+                            ["Late Oct – Nov", "Drafting table, massing editing, 3D surroundings, DXF/3dm export, laser-cut model, relay server"]
                         ] },
-                        { kind: "text", body: "The app has three layers: core functions that never print or prompt, a JSON API over them, and a screen in plain HTML, CSS and JavaScript with no build step. Code that serves one expert lives in that expert's own folder and plugs into the core through a hooks file, so a new capability does not touch the shared core. Projects are stored as readable files on the user's own PC, not on a server." },
-                        { kind: "text", body: "Most of the code was written with AI coding agents, several at a time, so the repository is set up for that. One rules file tells every agent how to work here. Changes go through pull requests that merge automatically once lint and tests pass, with no human approval, which makes the tests the safety net: every feature or fix has to arrive with its own." },
+                        { kind: "text", body: "Most of the code was written with AI coding agents, several at a time. Changes go through pull requests that merge automatically once lint and tests pass, which makes the tests the safety net: every feature or fix has to arrive with its own." },
+                        { kind: "list", items: [
+                            "More than 650 Python tests and about 150 for the screen's logic run offline: model calls are replaced by a mock provider, and government APIs by recorded responses.",
+                            "A bug fix starts with a test that reproduces the bug. One example: an ordinance figure with a decimal was once read as the wrong whole number, and that case is now held in place by a test."
+                        ] },
                         { kind: "techs", items: [
                             { name: "Python · FastAPI" }, { name: "Vanilla JS · Three.js · Leaflet", note: "no build step" },
                             { name: "OpenRouter · ChatGPT sign-in · Ollama", note: "model per role" },
                             { name: "V-World · data.go.kr · law.go.kr", note: "public records" },
                             { name: "pytest · ruff · GitHub Actions" }
-                        ] }
-                    ]
-                },
-                {
-                    id: "verification",
-                    label: "Verification",
-                    lead: "More than 650 Python tests and about 150 for the screen's logic run offline, with no model and no network.",
-                    blocks: [
-                        { kind: "list", items: [
-                            "Model calls are replaced by a mock provider, and government APIs by recorded responses, so the whole app runs in tests without a key.",
-                            "CI runs lint and tests on Python 3.10 and 3.12 for every pull request; about 100 have been merged this way.",
-                            "Some rules are enforced by tests: the shared core may not import an expert's folder, and screen code may not use browser storage.",
-                            "A bug fix starts with a test that reproduces the bug. One example: an ordinance figure with a decimal was once read as the wrong whole number, and that case is now held in place by a test."
                         ] },
-                        { kind: "note", body: "In progress — v0.2, in closed testing with a small group. Regulation and precedent outputs are lists to verify, not confirmed facts. Experts read text, site data and the table's papers, but not drawings as images. Rhino modeling through MCP worked in the CLI and is not yet connected to the web app; for now the table exports a 3dm file instead." }
+                        { kind: "note", body: "In progress — v0.2, in closed testing with a small group. Regulation and precedent outputs are lists to verify, not confirmed facts. Experts read text, site data and the table's papers, but not drawings as images." }
                     ]
                 }
             ]
@@ -936,7 +892,7 @@ const projectsData = {
             tags: ["Research · Conference Paper", "AI × BIM (IFC)", "Benchmark Audit", "IfcOpenShell", "Lead Author"],
             githubLink: "https://github.com/baechubaechu/bim-benchmark-audit",
             kind: "Research",
-            thesis: "Benchmarks for AI that edits building models report that no model gets even half of the tasks right. Before taking that number about AI, I checked the number itself: whether a correct edit can reach full marks, whether the answer keys are right, whether the objects to edit exist, and whether the scores agree with what the edited files actually contain. In both benchmarks a correct answer could lose points, and once deletions were scored by the benchmark's own definition the share of fully solved tasks rose from 0.77% to 10.03%.",
+            thesis: "Benchmarks for AI that edits building models report that no model gets even half of the tasks right. Before taking that number about AI, I checked the number itself: whether a correct edit can reach full marks, and whether the scores agree with what the edited files actually contain. In both benchmarks a correct answer could lose points, and once deletions were scored by the benchmark's own definition the share of fully solved tasks rose from 0.77% to 10.03%.",
             subtitle: "Is the score right? Checking how AI is graded at editing BIM models",
             category: "Research / Conference Paper",
             role: "Researcher (lead author): all code, audits and writing",
@@ -948,8 +904,7 @@ const projectsData = {
                     label: "Question",
                     lead: "AI is said to be poor at editing building models. The first thing to check is the test.",
                     blocks: [
-                        { kind: "text", body: "BIM-Edit and BIBIMBAP give a language model an IFC model and an instruction (add a door, move a wall, delete a column, find the volume of an opening), then score the edited file automatically. Their headline results, that no model passes 50%, are quoted as a measure of what AI can do with BIM." },
-                        { kind: "text", body: "An automatic score is only as good as its scorer. If a correct edit cannot reach full marks, the benchmark measures the scorer as much as the model." },
+                        { kind: "text", body: "BIM-Edit and BIBIMBAP give a language model an IFC model and an instruction (add a door, move a wall, delete a column), then score the edited file automatically. Their headline results, that no model passes 50%, are quoted as a measure of what AI can do with BIM. But an automatic score is only as good as its scorer: if a correct edit cannot reach full marks, the benchmark measures the scorer as much as the model." },
                         { kind: "image", url: "assets-web/BMA-criteria.svg", caption: "How a task is scored, and where each of the four checks looks: the input, the answer key, the scorer, and the file behind the score." }
                     ]
                 },
@@ -964,54 +919,26 @@ const projectsData = {
                             ["3 · Target ID", "Does the object the instruction and the scorer refer to exist in the input file?"],
                             ["4 · Independent check", "Open the result files directly. Do the scores agree with what is in them, and do wrong answers lose points?"]
                         ] },
-                        { kind: "text", body: "The four checks follow the order audits use in other fields: set criteria, apply them, count the errors, then see how the results change once corrected." }
-                    ]
-                },
-                {
-                    id: "method",
-                    label: "Method",
-                    lead: "Build the right answer, score it with the original code, and compare against the files rather than the scores.",
-                    blocks: [
                         { kind: "steps", items: [
-                            "BIM-Edit: read the public scoring logs of seven models (2,267 records) and the result IFC files of the four models that published them.",
-                            "Judge every deletion directly from the files: the target is gone from the result, the answer key also removes it, the 23 building element classes match the key, and nothing else moved by more than 1 mm.",
-                            "BIBIMBAP: run the original scorer at its pinned commit and IfcOpenShell version on reference answers built with the IfcOpenShell API, including equally valid alternative modelling choices.",
-                            "Score 401 deliberately wrong answers across the 45 editing tasks, such as a column floating 10 m above the floor or a deleted object left in place under a new ID.",
-                            "Recompute every retrieval answer from the IFC file and compare it with the key."
-                        ] },
-                        { kind: "rules", items: [
-                            ["Tools", "Python, IfcOpenShell 0.8.3.post2 (0.9.0 breaks the benchmark's clash check), the public datasets and scoring logs"],
-                            ["Proxy check", "Where result files are missing, deletions are judged from the logs. On the four models with files, that proxy agreed with the direct check in 200 of 200 cases."]
+                            "BIM-Edit: read the public scoring logs of seven models (2,267 records) and judge every deletion directly from the result IFC files of the four models that published them.",
+                            "BIBIMBAP: run the original scorer on reference answers built with the IfcOpenShell API, including equally valid alternative modelling choices.",
+                            "Score 401 deliberately wrong answers across the 45 editing tasks, such as a column floating 10 m above the floor."
                         ] }
                     ]
                 },
                 {
-                    id: "bim-edit",
-                    label: "BIM-Edit",
+                    id: "results",
+                    label: "Results",
                     lead: "A correct deletion could not pass. Re-scored by the benchmark's own definition, the fully solved share rises from 0.77% to 10.03%.",
                     blocks: [
+                        { kind: "image", url: "assets-web/BMA-results.svg", caption: "BIM-Edit: fully solved tasks per model, as published and re-scored. Across seven models, 38 records (1.7%) become 257 (11.7%), an upper bound; on the four models with result files the file-checked figure is 5 to 65 of 648 (0.77% to 10.03%)." },
                         { kind: "rules", items: [
-                            ["1 · Right answer", "Of 532 records that did delete the target, none scored above zero on meaning, so no deletion task was ever solved."],
-                            ["2 · Ground truth", "In 3 tasks the answer key still contains the object it should delete."],
-                            ["3 · Target ID", "In 7 tasks the scorer found no target object for any model."],
-                            ["4 · Independent check", "All 158 real deletions scored zero on meaning, while 40 of 46 records that deleted nothing scored one."]
+                            ["BIM-Edit · deletions", "Of 532 records that did delete the target, none scored above zero on meaning, while 40 of 46 records that deleted nothing scored one."],
+                            ["BIM-Edit · answer key", "In 3 tasks the answer key still contains the object it should delete; in 7 the scorer found no target object for any model."],
+                            ["BIBIMBAP · correct answers", "In 23 of 100 tasks a correct answer loses points or the answer key is wrong. A clean deletion scores full marks in 0 of 15 tasks."],
+                            ["BIBIMBAP · wrong answers", "In 36 of 45 editing tasks a clearly wrong answer scores 0.9 or more; in 34 it scores full marks."]
                         ] },
-                        { kind: "image", url: "assets-web/BMA-results.svg", caption: "Fully solved tasks per model, as published and re-scored. Across seven models, 38 records (1.7%) become 257 (11.7%), an upper bound; on the four models with result files the file-checked figure is 5 to 65 of 648 (0.77% to 10.03%)." },
                         { kind: "text", body: "The average score used for the public ranking barely reorders the models, but every model gains 6 to 10 points, and five of seven move above 50%. The error changes less who is ahead than how capable AI appears." }
-                    ]
-                },
-                {
-                    id: "bibimbap",
-                    label: "BIBIMBAP",
-                    lead: "In 23 of 100 tasks a correct answer loses points or the answer key is wrong.",
-                    blocks: [
-                        { kind: "rules", items: [
-                            ["Deletion", "A clean deletion with the standard IfcOpenShell function scores full marks in 0 of 15 tasks. Leaving debris behind does better."],
-                            ["Volume", "Asked for the volume of two slab openings (1.7325 m³), the key holds 5.775, the sum of their areas."],
-                            ["Rotation", "An exact 45° rotation is measured as 39.2°, because the angle is read along the wall's diagonal."],
-                            ["Wrong answers", "In 36 of 45 editing tasks a clearly wrong answer scores 0.9 or more; in 34 it scores full marks."]
-                        ] },
-                        { kind: "text", body: "Model answer files for BIBIMBAP are not public, so the audit claims only how many tasks mis-score a correct answer, not how the ranking would change." }
                     ]
                 },
                 {
@@ -1021,7 +948,7 @@ const projectsData = {
                     blocks: [
                         { kind: "list", items: [
                             "The re-scored figures are an upper bound: the full check for side effects ran only where result files were public.",
-                            "A deletion judged correct here means the listed building elements match; it does not certify every property and relation in the file.",
+                            "Model answer files for BIBIMBAP are not public, so the audit claims only how many tasks mis-score a correct answer, not how the ranking would change.",
                             "The benchmarks are valuable work. The point is a checklist that any automatic grader of BIM edits should pass before its numbers are quoted."
                         ] },
                         { kind: "links", items: [
@@ -1036,7 +963,7 @@ const projectsData = {
             id: "emotional-architecture",
             aliases: ["emotional-architect"],
             title: "Emotional Architecture (with A.I.)",
-            description: "Can A.I. understand human emotions? A computational experiment that converts real-time facial expressions and public EEG emotion data into living 3D geometry and AI-rendered architectural space.",
+            description: "An experiment that turns live facial expressions and public EEG emotion data into 3D geometry and AI-rendered space, exhibited in Seoul in 2026.",
             thumbnail: "assets-web/EAthumbnail.webp",
             tags: ["Emotion → Geometry", "Live Facial Expression", "EEG-driven Corridor", "Exhibited 2026, Seoul"],
             githubLink: "https://github.com/baechubaechu/emotion_sphere",

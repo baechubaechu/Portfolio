@@ -508,7 +508,12 @@ p {
 .card-content p {
     font-size: 0.95rem;
     margin-bottom: 1.5rem;
-    flex: 1;
+}
+
+/* Every card reads the same way: title, description, tags straight after it, and the
+   link buttons (when a card has them) on the bottom edge. */
+.card-content + .card-content {
+    flex: none;
 }
 
 .tags {
