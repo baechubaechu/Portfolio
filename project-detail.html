@@ -20,7 +20,7 @@
     <meta name="twitter:title" content="Projects | Jihun Park">
     <meta name="twitter:description" content="Project pages from Jihun Park's architecture and computational design portfolio.">
     <meta name="twitter:image" content="https://portfolio-teal-zeta-74.vercel.app/assets-web/og-image.jpg">
-    <link rel="stylesheet" href="css/styles.css?v=4.9">
+    <link rel="stylesheet" href="css/styles.css?v=5.0">
     <link rel="stylesheet" href="css/spine.css?v=1.0">
     <link rel="stylesheet" href="css/system.css?v=2.58">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,8 +28,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>
         try {
+            // The system intro plays on the first project of a session, or after a full warp.
+            // A skipped warp, or any later project, opens straight on the text.
+            // A reload shows the intro again.
+            var nav = performance.getEntriesByType && performance.getEntriesByType("navigation")[0];
+            var reloaded = !!nav && nav.type === "reload";
+            var arriving = sessionStorage.getItem("c-arrive");
+            window.__directRead = !arriving && !reloaded &&
+                !!(sessionStorage.getItem("c-direct") || sessionStorage.getItem("c-seen-project"));
+            sessionStorage.removeItem("c-direct");
             sessionStorage.setItem("c-seen-project", "1");
-            if (sessionStorage.getItem("c-arrive")) {
+            if (arriving) {
                 document.documentElement.classList.add("is-warp-arrive");
             }
         } catch (e) { /* private mode */ }
@@ -54,11 +63,11 @@
         </div>
     </main>
 
-    <script src="js/projects.js?v=10.8"></script>
+    <script src="js/projects.js?v=11.0"></script>
     <script src="js/detail.js?v=3.5"></script>
     <script src="js/script.js?v=4.0"></script> <!-- For the background canvas and scroll effects -->
     <script type="module" src="js/detail/spine.js?v=1.19"></script>
-    <script type="module" src="js/detail/system.js?v=3.83"></script>
+    <script type="module" src="js/detail/system.js?v=3.84"></script>
     <script type="module" src="js/detail/layout-editor.js?v=2.14"></script>
     <!-- Vercel Web Analytics (script-tag form: this site is served without a build step) -->
     <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>

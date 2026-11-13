@@ -1433,6 +1433,16 @@ function init(project) {
     document.fonts?.ready.then(measure);
     raf = requestAnimationFrame(frame);
 
+    // Opened without the intro (see project-detail.html): start on the text. "← System" still leads back.
+    if (window.__directRead && !arriving) {
+        dismissGuide();
+        camTween = null;
+        storyTgt = 1;
+        story = 1;
+        applyFraming();
+        syncReading();
+    }
+
     if (arriving && !reduce) {
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {

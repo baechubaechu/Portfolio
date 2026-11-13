@@ -228,7 +228,7 @@ const projectsData = {
             thesis: "Gwacheon's Jugong reconstruction is bringing in more families with school-age children, but the new complexes stay gated. We proposed a housing complex that uses those students as the link: club rooms and large shared halls for five nearby schools, set under the housing and open to residents too. Midway we saw that the halls had created a new boundary next to private homes, and we reorganized the scheme around a semi-public layer between them.",
             subtitle: "Gwacheon, a village changed by students: a neighbourhood platform built around student clubs",
             category: "Architecture / Studio",
-            role: "Designer (2-person team)",
+            role: "Designer (2-person team) · floor plans, renders, models",
             timeline: "2025.03 - 2025.06",
             overview: [
                 ["Location", "Gwacheon Jugong complex, beside the Yangjae Stream, Gwacheon, Gyeonggi-do"],
@@ -661,7 +661,7 @@ const projectsData = {
             thesis: "Kitsch Fish is a 2023 competition pavilion about marine debris off Jeju: you look for fish and find garbage. Bamboo poles act as fishing rods, and pieces of sea glass and plastic hang on fishing line where the fish should be. The 2023 Grasshopper definition hung those pieces but never checked spacing, clearance or load, and this page records exactly what they left unchecked.",
             subtitle: "Fishing for garbage instead of fish",
             category: "Pavilion / Competition",
-            role: "Team Leader (3-person team)",
+            role: "Team Leader (3-person team) · design, modelling, rendering",
             timeline: "2023.05",
             overview: [
                 ["Location", "Jeju coast"],

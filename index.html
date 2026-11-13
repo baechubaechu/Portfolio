@@ -23,11 +23,17 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css?v=4.9">
+    <link rel="stylesheet" href="css/styles.css?v=5.0">
     <meta name="theme-color" content="#0a0a0a">
-    <link rel="stylesheet" href="css/constellation.css?v=3.55">
+    <link rel="stylesheet" href="css/constellation.css?v=3.56">
     <script>
         try {
+            // A reload starts over: the warp and the system intro play again.
+            var nav = performance.getEntriesByType && performance.getEntriesByType("navigation")[0];
+            if (nav && nav.type === "reload") {
+                sessionStorage.removeItem("c-seen-project");
+                sessionStorage.removeItem("c-direct");
+            }
             if (sessionStorage.getItem("c-seen-project")) {
                 document.documentElement.classList.add("c-seen-project");
             }
@@ -105,8 +111,20 @@
 
         <section id="contact" class="contact-section">
             <div class="contact-card fade-in-scroll">
+                <div class="about">
+                    <p class="about__kicker">About</p>
+                    <p class="about__bio">B.Arch candidate at Hongik University, graduating in February 2027. I design buildings, and the tools around them: geometry from rules, AI that brings evidence, and checks that a result is right.</p>
+                    <dl class="about__facts">
+                        <div><dt>Education</dt><dd>Hongik University, B.Arch (expected Feb 2027) · Exchange at Freie Universität Berlin, summer 2026</dd></div>
+                        <div><dt>Experience</dt><dd>Intern, Namu Architectural Office, Seoul (2023): 3D models, drawings, renders and scale models</dd></div>
+                        <div><dt>Drawing</dt><dd>AutoCAD, Rhino, SketchUp, Revit (basic), Photoshop, Illustrator, InDesign</dd></div>
+                        <div><dt>Rendering</dt><dd>D5, Enscape, Lumion, Twinmotion</dd></div>
+                        <div><dt>Computation</dt><dd>Grasshopper, Python, AI coding agents</dd></div>
+                        <div><dt>Languages</dt><dd>Korean (native), English (C1)</dd></div>
+                    </dl>
+                </div>
                 <h2>Let's build something together.</h2>
-                <p>Available for internships and collaborations in Architecture and Software.</p>
+                <p>Graduating in February 2027 and looking for a role in architectural or computational design.</p>
                 <div class="contact-methods">
                     <div class="contact-item">
                         <span>Email:</span>
@@ -139,9 +157,9 @@
         </div>
     </footer>
 
-    <script src="js/projects.js?v=10.8"></script>
+    <script src="js/projects.js?v=11.0"></script>
     <script src="js/script.js?v=4.0"></script>
-    <script type="module" src="js/constellation/index.js?v=5.86"></script>
+    <script type="module" src="js/constellation/index.js?v=5.87"></script>
     <!-- Vercel Web Analytics (script-tag form: this site is served without a build step) -->
     <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
     <script defer src="/_vercel/insights/script.js"></script>

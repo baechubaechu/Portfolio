@@ -77,7 +77,9 @@ export function createProjectInfo(container, { graph, onSelect, onOpen, getAncho
             .filter(Boolean).join(" · ");
         const desc = card?.description || "";
         const figure = p.symbol?.name;
+        const thumb = card?.thumbnail;
         return `
+            ${thumb ? `<img class="c-panel__thumb" src="${esc(encodeURI(thumb))}" alt="" decoding="async">` : ""}
             <p class="c-panel__kicker">${esc(kicker)}</p>
             <h2 class="c-panel__title">${esc(card?.title || p.title)}</h2>
             ${desc ? `<p class="c-panel__desc">${esc(desc)}</p>` : ""}

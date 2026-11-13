@@ -26,7 +26,7 @@ import {
 } from "../lib/utils.js?v=2.0";
 import { createNodeView } from "./Node.js?v=3.7";
 import { createEdgeView } from "./Edge.js?v=2.5";
-import { createProjectInfo } from "./ProjectInfo.js?v=3.8";
+import { createProjectInfo } from "./ProjectInfo.js?v=3.9";
 import { createCursor } from "./Cursor.js?v=2.3";
 import { createIdlePulse } from "./IdlePulse.js?v=1.9";
 import { createSymbols } from "./Symbol.js?v=1.9";
@@ -465,7 +465,11 @@ export async function mountConstellation(root, portfolio) {
         const flash = document.createElement("div");
         flash.className = "c-warp__flash";
         warpEl.append(canvas, flash);
-        root.append(warpEl);
+        const skip = document.createElement("div");
+        skip.className = "c-warp-skip";
+        skip.setAttribute("aria-hidden", "true");
+        skip.textContent = "Click to skip";
+        root.append(warpEl, skip);
         return warpEl;
     }
 
@@ -511,8 +515,37 @@ export async function mountConstellation(root, portfolio) {
         dustLayer.append(frag);
     }
 
+    /* A click or key during the warp leaves at once; the detail page then opens on its text. */
+    let skipHref = "";
+    let skipArmedAt = 0;
+    function markDirect() {
+        try {
+            sessionStorage.removeItem("c-arrive");
+            sessionStorage.setItem("c-direct", "1");
+        } catch { /* private mode */ }
+    }
+    function skipWarpNow() {
+        if (!opening || !skipHref || performance.now() < skipArmedAt) return false;
+        const href = skipHref;
+        skipHref = "";
+        clearTimeout(navTimer);
+        clearTimeout(leaveTimer);
+        markDirect();
+        root.classList.add("is-leaving");
+        window.location.href = href;
+        return true;
+    }
+    window.addEventListener("pointerdown", (e) => {
+        if (skipWarpNow()) { e.preventDefault(); e.stopPropagation(); }
+    }, true);
+    window.addEventListener("keydown", (e) => {
+        if (e.key !== "Escape" && e.key !== "Enter" && e.key !== " ") return;
+        if (skipWarpNow()) { e.preventDefault(); e.stopPropagation(); }
+    }, true);
+
     function abortOpen() {
         opening = false;
+        skipHref = "";
         clearTimeout(navTimer);
         clearTimeout(leaveTimer);
         clearTimeout(warpStartTimer);
@@ -723,7 +756,11 @@ export async function mountConstellation(root, portfolio) {
         opening = true;
         updateCursorForHover();
         try { localStorage.setItem("currentProjectId", p.id); } catch { /* private mode */ }
-        if (skipWarp) {
+        // The warp and the system intro play once per session; after that a project opens on its text.
+        let seen = false;
+        try { seen = !!sessionStorage.getItem("c-seen-project"); } catch { /* private mode */ }
+        if (skipWarp || seen) {
+            if (seen) markDirect();
             window.location.href = p.href;
             return;
         }
@@ -736,6 +773,8 @@ export async function mountConstellation(root, portfolio) {
             window.location.href = p.href;
             return;
         }
+        skipHref = p.href;
+        skipArmedAt = performance.now() + 350;
         leaveTimer = setTimeout(() => root.classList.add("is-leaving"), Math.max(0, wait - 160));
         navTimer = setTimeout(() => { window.location.href = p.href; }, wait);
     }

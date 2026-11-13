@@ -590,6 +590,63 @@ p {
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
 }
 
+/* About: the short profile above the contact lines, left-aligned inside the centred card. */
+.about {
+    margin-bottom: 3rem;
+    padding-bottom: 3rem;
+    border-bottom: 1px solid var(--border-color);
+    text-align: left;
+}
+
+.contact-card .about__kicker {
+    margin-bottom: 0.75rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.contact-card .about__bio {
+    margin-bottom: 1.75rem;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: var(--text-primary);
+}
+
+.about__facts {
+    margin: 0;
+}
+
+.about__facts > div {
+    display: grid;
+    grid-template-columns: 7.5rem 1fr;
+    gap: 1rem;
+    padding: 0.6rem 0;
+    border-top: 1px solid var(--border-color);
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.about__facts dt {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding-top: 0.15em;
+}
+
+.about__facts dd {
+    margin: 0;
+    color: var(--text-primary);
+}
+
+@media (max-width: 560px) {
+    .about__facts > div {
+        grid-template-columns: 1fr;
+        gap: 0.2rem;
+    }
+}
+
 .contact-card h2 {
     margin-bottom: 1rem;
 }

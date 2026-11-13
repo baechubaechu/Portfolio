@@ -1458,3 +1458,42 @@
         animation: none !important;
     }
 }
+
+/* One small image of the work at the top of the hover card. The box has a fixed ratio so the
+   card keeps its size while the image loads. */
+.c-panel__thumb {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    margin: 0 0 12px;
+    object-fit: cover;
+    background: #111111;
+    border: 1px solid var(--c-hair-strong);
+}
+
+/* During the warp: a second click (or Enter / Esc) leaves at once. */
+.c-warp-skip {
+    position: absolute;
+    left: 50%;
+    bottom: 34px;
+    z-index: 41;
+    transform: translateX(-50%);
+    font-family: var(--c-font-mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.5);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 200ms linear;
+}
+
+.c-hero.is-departing .c-warp-skip {
+    opacity: 1;
+    transition: opacity 500ms linear 600ms;
+}
+
+.c-hero.is-leaving .c-warp-skip {
+    opacity: 0;
+    transition: opacity 120ms linear;
+}
