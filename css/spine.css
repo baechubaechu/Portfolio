@@ -11,8 +11,8 @@
     --sp-hair: rgba(255, 255, 255, 0.13);
     --sp-hair-strong: rgba(255, 255, 255, 0.4);
     --sp-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
-    --sp-mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, Menlo, monospace;
-    --sp-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --sp-mono: 'DM Mono', 'IBM Plex Mono', 'SFMono-Regular', Consolas, Menlo, monospace;
+    --sp-sans: 'Schibsted Grotesk', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 .detail-page .grid-background { opacity: 0.18; }

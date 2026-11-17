@@ -18,7 +18,7 @@ export const CONFIG = {
     visual: {
         project: {
             r: 3.6,
-            labelFont: '500 11px Inter, "Segoe UI", sans-serif',
+            labelFont: '500 11px "Schibsted Grotesk", Inter, "Segoe UI", sans-serif',
             letterSpacing: 0.09, // em
             labelGap: 9,
             labelH: 13,
@@ -26,14 +26,14 @@ export const CONFIG = {
         /** Lead works (`featured: true` in the data): a larger star and name. */
         featured: {
             r: 5.4,
-            labelFont: '600 13px Inter, "Segoe UI", sans-serif',
+            labelFont: '600 13px "Schibsted Grotesk", Inter, "Segoe UI", sans-serif',
             letterSpacing: 0.08, // em
             labelGap: 12,
             labelH: 16,
         },
         attribute: {
             r: 2.4,
-            labelFont: '400 10px "IBM Plex Mono", Consolas, monospace',
+            labelFont: '400 10px "DM Mono", "IBM Plex Mono", Consolas, monospace',
             letterSpacing: 0.1, // em
             labelGap: 8,
             labelH: 12,
@@ -52,7 +52,7 @@ export const CONFIG = {
         fill: [0.34, 0.46],    // a figure spans up to this share of the stage width / height
         minScale: 0.8,         // figures are authored in px; never smaller than this…
         maxScale: 2.4,         // …or larger than this
-        labelFont: '400 11px "IBM Plex Mono", Consolas, monospace', // must match .c-symbol__label
+        labelFont: '400 11px "DM Mono", "IBM Plex Mono", Consolas, monospace', // must match .c-symbol__label
         letterSpacing: 0.1,    // em
         pad: { top: 64, right: 18, bottom: 54, left: 18 }, // bottom clears the corner captions
     },
@@ -200,9 +200,9 @@ export const CONFIG = {
     /* ── Overrides for narrow stages ── */
     compact: {
         visual: {
-            project: { r: 3.2, labelFont: '500 10px Inter, "Segoe UI", sans-serif', labelGap: 7, labelH: 12 },
-            featured: { r: 4.4, labelFont: '600 11px Inter, "Segoe UI", sans-serif', labelGap: 9, labelH: 13 },
-            attribute: { r: 2.2, labelFont: '400 9px "IBM Plex Mono", Consolas, monospace', labelGap: 6, labelH: 11 },
+            project: { r: 3.2, labelFont: '500 10px "Schibsted Grotesk", Inter, "Segoe UI", sans-serif', labelGap: 7, labelH: 12 },
+            featured: { r: 4.4, labelFont: '600 11px "Schibsted Grotesk", Inter, "Segoe UI", sans-serif', labelGap: 9, labelH: 13 },
+            attribute: { r: 2.2, labelFont: '400 9px "DM Mono", "IBM Plex Mono", Consolas, monospace', labelGap: 6, labelH: 11 },
             ringR: 9,
         },
         forces: {
@@ -230,7 +230,7 @@ export const CONFIG = {
             fill: [0.7, 0.32],
             minScale: 0.5,
             maxScale: 1.2,
-            labelFont: '400 9px "IBM Plex Mono", Consolas, monospace',
+            labelFont: '400 9px "DM Mono", "IBM Plex Mono", Consolas, monospace',
             pad: { top: 72, right: 12, bottom: 84, left: 12 },
         },
         motion: {

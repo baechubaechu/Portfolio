@@ -18,18 +18,18 @@
 import { buildGraph } from "../lib/graph.js?v=1.2";
 import { createLayout } from "../lib/graphLayout.js?v=3.3";
 import { buildAsterisms } from "../lib/asterism.js?v=2.2";
-import { resolveConfig, visualOf } from "../config.js?v=3.20";
+import { resolveConfig, visualOf } from "../config.js?v=3.21";
 import { toSphere, project as projectSky, resolveCamera, createSkyDust, createBandDust, bandToWorld } from "../lib/sky.js?v=3.2";
 import {
     createTextMeasurer, debounce, hasFinePointer, mulberry32, hashString,
     prefersReducedMotion, svgEl, waitForFonts,
 } from "../lib/utils.js?v=2.0";
-import { createNodeView } from "./Node.js?v=3.7";
+import { createNodeView } from "./Node.js?v=3.8";
 import { createEdgeView } from "./Edge.js?v=2.5";
 import { createProjectInfo } from "./ProjectInfo.js?v=3.9";
 import { createCursor } from "./Cursor.js?v=2.3";
 import { createIdlePulse } from "./IdlePulse.js?v=1.9";
-import { createSymbols } from "./Symbol.js?v=1.9";
+import { createSymbols } from "./Symbol.js?v=1.10";
 
 export async function mountConstellation(root, portfolio) {
     const stageEl = root.querySelector("[data-c-stage]");
@@ -92,7 +92,7 @@ export async function mountConstellation(root, portfolio) {
         const place = cfg.forces.place;
         if (!place) return [];
         const mk = place.marks ?? {};
-        const font = '400 9px "IBM Plex Mono", Consolas, monospace'; // matches .c-mark
+        const font = '400 9px "DM Mono", "IBM Plex Mono", Consolas, monospace'; // matches .c-mark
         // A layout px is drawn a little smaller than a screen px (the camera keeps a margin): pad generously.
         const k = 1.35;
         return (portfolio.scaleMarks ?? []).map((m) => {

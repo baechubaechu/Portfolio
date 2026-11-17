@@ -414,7 +414,7 @@ function planetDossierHTML(project, planet, attr, idx) {
     const img = firstImage(pick) || firstImage(cited.find((s) => firstImage(s)));
     return `
         <p class="sys-dock__kicker">${esc(kicker)}</p>
-        <h2 class="sys-dock__title">${esc(String(name).toUpperCase())}</h2>
+        <h2 class="sys-dock__title">${esc(String(name))}</h2>
         ${lead ? `<p class="sys-dock__quote">${esc(lead)}</p>` : ""}
         ${img ? `<figure class="sys-dock__figure"><img src="${esc(img)}" alt="${esc(name)}"></figure>` : ""}
         ${thesis ? `<p class="sys-dock__thesis">${esc(thesis)}</p>` : ""}
@@ -472,7 +472,7 @@ function chapterDossierHTML(chapter, idx) {
     const n = String(idx + 2).padStart(2, "0");
     return `
         <p class="sys-dock__kicker">${esc(`${n}  ·  ${chapter.label}`)}</p>
-        <h2 class="sys-dock__title">${esc(String(chapter.title || chapter.label).toUpperCase())}</h2>
+        <h2 class="sys-dock__title">${esc(String(chapter.title || chapter.label))}</h2>
         ${chapter.lead ? `<p class="sys-dock__quote">${esc(chapter.lead)}</p>` : ""}
         ${(chapter.blocks ?? []).map(blockHTML).join("")}
     `;

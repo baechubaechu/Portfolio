@@ -7,8 +7,8 @@
     --accent-hover: #d4d4d4;
     --border-color: rgba(255, 255, 255, 0.12);
     --card-bg: #111111;
-    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    --font-sans: 'Schibsted Grotesk', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-mono: 'DM Mono', 'IBM Plex Mono', 'SFMono-Regular', Consolas, Menlo, monospace;
     color-scheme: dark;
 }
 
@@ -605,7 +605,7 @@ p {
 
 .contact-card .about__kicker {
     margin-bottom: 0.75rem;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 0.75rem;
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -633,7 +633,7 @@ p {
 }
 
 .about__facts dt {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 0.75rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -810,7 +810,7 @@ footer {
 }
 
 .spec-label {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-weight: 600;
     color: var(--accent);
     text-transform: uppercase;
@@ -831,7 +831,7 @@ footer {
 }
 
 .text-full-width h2 {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 1.25rem !important;
     font-weight: 600;
     line-height: 1.2;
@@ -909,7 +909,7 @@ footer {
 
 .arch-label {
     display: block;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.2em;
@@ -1009,7 +1009,7 @@ footer {
 }
 
 .gallery-item-title {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 0.8rem;
     font-weight: 500;
     color: var(--text-secondary);
@@ -1037,7 +1037,7 @@ footer {
 }
 
 .info-label {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 0.65rem;
     font-weight: 600;
     color: var(--text-secondary);
@@ -1046,7 +1046,7 @@ footer {
 }
 
 .info-value {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 0.95rem;
     font-weight: 400;
     color: var(--text-primary);
@@ -1150,7 +1150,7 @@ footer {
 }
 
 .plan-title {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 0.8rem;
     font-weight: 500;
     color: var(--text-secondary);

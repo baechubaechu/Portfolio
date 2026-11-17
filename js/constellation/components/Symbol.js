@@ -69,7 +69,7 @@ export function createSymbols({ layer, graph, measure, getStage, getConfig, getA
 
     function labelFont() {
         const c = getConfig();
-        return c.symbol?.labelFont ?? '400 10px "IBM Plex Mono", Consolas, monospace';
+        return c.symbol?.labelFont ?? '400 10px "DM Mono", "IBM Plex Mono", Consolas, monospace';
     }
 
     /** The author's figure: a line from the centre star to every work, in order of distance. */
