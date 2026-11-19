@@ -8,8 +8,9 @@
  *   kind, thesis, subtitle, category, role, timeline, overview, team, organizer, cover
  *                the opening plate of the detail page
  *   chapters     the detail page body: [{ id, label, title, lead, blocks: [...] }]
- *                a chapter may add satellites: [{ id, label, teaser, title, lead, blocks }], deeper pages
- *                that open over the dock at #<id> (js/detail/satellites.js)
+ *                a chapter may add satellites: [{ id, key, label, teaser, title, lead, blocks }], deeper
+ *                pages that open over the dock at #<id> (js/detail/satellites.js); key is the short
+ *                word shown for it in the chapter list
  *   sections     legacy block list, only rendered for a project that is not on the home sky
  */
 const projectsData = {
@@ -800,6 +801,7 @@ const projectsData = {
                     satellites: [
                         {
                             id: "site-sheet",
+                            key: "Ordinance",
                             label: "Reading the ordinance by rule",
                             teaser: "Four steps from an address to a saved site, and what happens when a record is missing.",
                             title: "Reading the ordinance by rule",
@@ -836,9 +838,10 @@ const projectsData = {
                     satellites: [
                         {
                             id: "legal-envelope",
-                            label: "The legal envelope",
+                            key: "Envelope",
+                            label: "Legal envelope",
                             teaser: "Sunlight to the north, building line, open space, daylight, height districts and ratios, and the live check on the table.",
-                            title: "The legal envelope",
+                            title: "Legal envelope",
                             lead: "The room the rules leave on the lot, and a check of the massing against it.",
                             blocks: [
                                 { kind: "text", body: "Sida works out the room the rules leave on the lot and shows it as a see-through volume on the table. Each limit is read by rule from the statute or the municipal ordinance as written. Two reference schemes fill it, one wide and low and one a tower to the south, as a first sense of scale, not a design." },
@@ -857,9 +860,10 @@ const projectsData = {
                         },
                         {
                             id: "rhino-plugin",
-                            label: "The Rhino plugin",
+                            key: "Rhino plugin",
+                            label: "Rhino plugin",
                             teaser: "Pull, model, check, draw: the same check inside Rhino 8.",
-                            title: "The same check inside Rhino",
+                            title: "Rhino plugin",
                             lead: "A C# plugin that only measures and carries; every rule stays in Sida.",
                             blocks: [
                                 { kind: "steps", items: [
@@ -883,9 +887,10 @@ const projectsData = {
                     satellites: [
                         {
                             id: "expert-roster",
-                            label: "The ten experts",
+                            key: "Ten experts",
+                            label: "Ten experts",
                             teaser: "What each expert reads, what it must not do, and what the experts hand back.",
-                            title: "The ten experts",
+                            title: "Ten experts",
                             lead: "Each expert is a narrow lens with declared inputs and things it must not do.",
                             blocks: [
                                 { kind: "rules", items: [
@@ -919,6 +924,7 @@ const projectsData = {
                     satellites: [
                         {
                             id: "table-papers",
+                            key: "Papers",
                             label: "What goes on the table",
                             teaser: "Site, massing schemes, notes, tracing paper, photos and expert results.",
                             title: "What goes on the table",
@@ -944,6 +950,7 @@ const projectsData = {
                     satellites: [
                         {
                             id: "site-model",
+                            key: "Laser model",
                             label: "From data to a laser-cut model",
                             teaser: "Context, export and model sheets, and how unknown heights are handled.",
                             title: "From data to a laser-cut model",
@@ -981,6 +988,7 @@ const projectsData = {
                     satellites: [
                         {
                             id: "build-log",
+                            key: "Tests",
                             label: "Timeline and tests",
                             teaser: "Four months of releases, and how the tests run offline.",
                             title: "Timeline and tests",

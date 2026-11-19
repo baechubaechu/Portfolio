@@ -10,7 +10,7 @@ import { portfolio } from "../constellation/data/portfolio.js?v=3.17";
 import {
     svgEl, htmlEl, mulberry32, hashString, prefersReducedMotion, esc, clamp,
 } from "../constellation/lib/utils.js?v=2.0";
-import { mountSatellites, moonsHTML } from "./satellites.js?v=1.2";
+import { mountSatellites, moonsHTML } from "./satellites.js?v=1.3";
 
 const ELEV = 0.56;
 const CAM_DIST = 3.12;
@@ -31,6 +31,7 @@ const STORY_OPEN = 0.56;
 const STORY_CLOSE = 0.4;
 const DOCK_MAX = 1280;
 const DOCK_EDGE = 28;
+const SUB_GAP = 22; // the keyword line under a chapter row (px)
 
 function lerp(a, b, t) {
     return a + (b - a) * t;
@@ -700,7 +701,43 @@ function init(project) {
     chapNav.style.setProperty("--n", String(chapItems.length));
     chapNav.dataset.n = String(chapItems.length);
     const titleEl = htmlEl("h1", { class: "sys__title", text: cproj.title });
-    stage.append(svg, veil, titleEl, sunBtn, backBtn, chapNav, hint);
+    // One short list of satellites under each chapter row, always shown while reading.
+    const subLists = planets.map((p, i) => {
+        const sats = chapters[i]?.satellites ?? [];
+        if (!sats.length) return null;
+        const ol = htmlEl("ul", { class: "sys-subs", "aria-label": `Satellites of ${p.label}` });
+        // A satellite here belongs to its chapter: a click goes to the chapter, like the chapter
+        // row itself. The satellites open from the chapter's body.
+        ol.innerHTML = sats.map((x) => `<li class="sys-subs__row"><span class="sys-subs__dot" aria-hidden="true"></span>`
+            + `<button type="button" class="sys-subs__item" data-chap="${esc(chapters[i].id)}" data-sat-of-row="${esc(x.id)}" title="${esc(x.label)}">${esc(x.key || x.label)}</button></li>`).join("");
+        ol.addEventListener("pointerdown", (e) => e.stopPropagation());
+        ol.addEventListener("click", (e) => {
+            if (e.target.closest("[data-sat-of-row]")) {
+                dismissGuide();
+                goPlate(chapters[i].id);
+            }
+        });
+        return ol;
+    });
+
+    // A chapter row and its satellites light up together under the pointer.
+    const groupHL = (idx, on) => {
+        planetEls[idx]?.g.classList.toggle("is-hl", on);
+        subLists[idx]?.classList.toggle("is-hl", on);
+    };
+    chapBtns.forEach((btn, k) => {
+        if (k === 0) return;
+        const li = btn.parentElement;
+        li.addEventListener("pointerenter", () => groupHL(k - 1, true));
+        li.addEventListener("pointerleave", () => groupHL(k - 1, false));
+    });
+    subLists.forEach((ol, i) => {
+        if (!ol) return;
+        ol.addEventListener("pointerenter", () => groupHL(i, true));
+        ol.addEventListener("pointerleave", () => groupHL(i, false));
+    });
+    let subOpenKey = "";
+    stage.append(svg, veil, titleEl, sunBtn, backBtn, chapNav, ...subLists.filter(Boolean), hint);
     document.body.append(stage);
 
     const dock = htmlEl("aside", {
@@ -920,15 +957,42 @@ function init(project) {
     function tocGeom() {
         const split = W >= 720;
         const n = Math.max(1, planetEls.length);
-        const top = split ? 340 : 100; // the orrery and its crumb sit above the TOC (satellites.js)
+        const top = split ? 400 : 100; // the orrery and its crumb sit above the TOC (satellites.js)
         const bottom = split ? H - 48 : H * 0.56 - 12;
         const gap = clamp((bottom - top) / n, 12, 44);
         return { x: split ? 64 : 40, y: top, floor: split ? H : H * 0.56, gap, n };
     }
 
     // Unit radius spacing every chapter down the column, with one empty slot left below the floor.
+    const subH = planets.map((p, i) => {
+        const k = (chapters[i]?.satellites ?? []).length;
+        return k ? k * SUB_GAP + 12 : 0; // one keyword line per satellite, plus the gap under the name
+    });
+    // Desktop only (W is read when called; the phone layout keeps its own spacing).
+    // When every keyword line would squeeze the chapter rows under SUB_MIN, only the current
+    // chapter keeps its line (subsAll false), so a short screen never crowds the list.
+    const SUB_MIN = 40;
+    let subsAll = true;
+    const curIdx = () => planetEls.findIndex((q) => q.id === plateId);
+    // The current chapter's name is drawn larger, so its list sits lower: rows below it get
+    // that much more room too (ACTIVE_EXTRA).
+    const ACTIVE_EXTRA = 10;
+    const subsBefore = (i) => {
+        if (W < 720) return 0;
+        const c = curIdx();
+        const extra = c >= 0 && c < i && subH[c] ? ACTIVE_EXTRA : 0;
+        if (subsAll) return subH.slice(0, i).reduce((a, b) => a + b, 0) + extra;
+        return c >= 0 && c < i ? subH[c] + extra : 0;
+    };
+
     function tocUnit(toc) {
-        return (toc.floor + TOC_OFFSCREEN - toc.y) / (toc.n + 1);
+        const room = toc.floor + TOC_OFFSCREEN - toc.y;
+        if (W < 720) return room / (toc.n + 1);
+        const all = (room - subH.reduce((a, b) => a + b, 0)) / (toc.n + 1);
+        subsAll = all >= SUB_MIN;
+        if (subsAll) return all;
+        const c = curIdx();
+        return (room - (c >= 0 ? subH[c] : 0)) / (toc.n + 1);
     }
 
     let azim = 0;
@@ -1036,10 +1100,24 @@ function init(project) {
         else if (storyTgt <= STORY_CLOSE && reading) closeSun();
     }
 
+    function setLabel(el, num, name) {
+        el.textContent = "";
+        if (num) {
+            const a = svgEl("tspan", { class: "sys__num" });
+            a.textContent = num;
+            el.append(a);
+        }
+        const b = svgEl("tspan", { class: "sys__name" });
+        b.textContent = name;
+        el.append(b);
+    }
+
     function numberLabels(on) {
-        const tag = (i) => (on ? `${String(i + 1).padStart(2, "0")}\u2003` : "");
-        sunLabel.textContent = tag(0) + (on ? sunLabelFit : cproj.title.toUpperCase());
-        for (const [i, p] of planetEls.entries()) p.label.textContent = tag(i + 1) + (on ? p.labelFit ?? p.label0 : p.label0);
+        const tag = (i) => (on ? `${String(i + 1).padStart(2, "0")} ` : "");
+        setLabel(sunLabel, tag(0), on ? cproj.title : cproj.title.toUpperCase());
+        for (const [i, p] of planetEls.entries()) {
+            setLabel(p.label, tag(i + 1), on ? chapters[i]?.label ?? p.label0 : p.label0);
+        }
     }
 
     function openSun() {
@@ -1372,7 +1450,7 @@ function init(project) {
             if (!L) continue;
             const ang = p.ang0 + (reduce || mobile ? 0 : (now - t0) / L.period * Math.PI * 2);
             const pt = project3(Math.cos(ang) * L.orbitR, 0, Math.sin(ang) * L.orbitR);
-            const R = (i + 1) * unit;
+            const R = (i + 1) * unit + subsBefore(i) * tocU;
             // The ellipse only changes with the camera, the sun or the TOC blend.
             const orbitKey = `${cam.elev}|${cam.azim}|${cam.dist}|${W}|${H}|${viewX}|${viewY}|${focal}|${L.orbitR}|${R}|${tocU}`;
             if (orbitKey !== p.orbitKey) {
@@ -1394,7 +1472,7 @@ function init(project) {
             setAttr(p.dot, "r", (p.rDot * sc).toFixed(2));
             for (const [k, m] of p.moonEls.entries()) {
                 const mr = (p.rDot * sc + 4.5) * 1.5;
-                const ma = (reduce ? 0 : t * 0.9) + (k * Math.PI * 2) / p.moonEls.length;
+                const ma = lerpAngShort((reduce ? 0 : t * 0.9) + (k * Math.PI * 2) / p.moonEls.length, -Math.PI / 4 + (k * Math.PI * 2) / p.moonEls.length, tocU);
                 setAttr(m, "cx", (Math.cos(ma) * mr).toFixed(2));
                 setAttr(m, "cy", (Math.sin(ma) * mr * 0.62).toFixed(2));
             }
@@ -1414,6 +1492,27 @@ function init(project) {
             placeRow(i + 1, x, y, rowH);
             bodies.push({ z: lerp(pt.z, 0, tocU), el: p.g });
         }
+
+        // Satellite lists sit under their chapter rows; the open one and the current chapter's
+        // read brighter.
+        const openSat = sat?.current() || "";
+        const nextOpenKey = `${openSat}|${plateId}`;
+        for (const [i, ol] of subLists.entries()) {
+            if (!ol) continue;
+            const p = planetEls[i];
+            const show = !mobile && tocU > 0.8 && p.sx != null && (subsAll || p.id === plateId);
+            // Indented to the chapter name (past the number), so they read as belonging to it.
+            // Clear of the chapter name, and further when the current chapter's name is drawn larger.
+            const grow = 1 + (HILITE - 1) * (p.hl || 0) * tocU;
+            if (show) setStyle(ol, "transform", `translate(${(p.sx + 52 * grow).toFixed(1)}px, ${(p.sy + 18 * grow + 2).toFixed(1)}px)`);
+            setStyle(ol, "opacity", show ? ((tocU - 0.8) / 0.2).toFixed(3) : "0");
+            ol.classList.toggle("is-on", show);
+            if (nextOpenKey !== subOpenKey) {
+                ol.classList.toggle("is-current", p.id === plateId);
+                for (const b of ol.querySelectorAll("[data-sat-of-row]")) b.classList.toggle("is-on", b.dataset.satOfRow === openSat);
+            }
+        }
+        subOpenKey = nextOpenKey;
 
         if (reading && tocU > 0.8) {
             setAttr(stackLine, "d", `M${sunP.x.toFixed(1)} ${sunP.y.toFixed(1)} L${sunP.x.toFixed(1)} ${stackY.toFixed(1)}`);

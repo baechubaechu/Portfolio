@@ -202,6 +202,33 @@ export function mountSatellites(api) {
     crumbNav.append(crumbEl);
     document.body.append(crumbNav);
     const ctx = canvas.getContext("2d");
+    // Bodies as drawn last frame, so a click or hover on the orrery can find a planet.
+    let hits = [];
+    let hoverId = null;
+    const nearest = (e) => {
+        const r = canvas.getBoundingClientRect();
+        const x = e.clientX - r.left, y = e.clientY - r.top;
+        let best = null, bestD = 14;
+        for (const h of hits) {
+            const d = Math.hypot(h.x - x, h.y - y);
+            if (d < bestD) { best = h; bestD = d; }
+        }
+        return best;
+    };
+    canvas.addEventListener("pointermove", (e) => {
+        const h = nearest(e);
+        hoverId = h ? h.id : null;
+        canvas.style.cursor = h ? "pointer" : "";
+    });
+    canvas.addEventListener("pointerleave", () => { hoverId = null; canvas.style.cursor = ""; });
+    canvas.addEventListener("click", (e) => {
+        const h = nearest(e);
+        if (!h) return;
+        if (openId) hide();
+        intended = h.id;
+        intendedAt = performance.now();
+        api.goPlate(h.id);
+    });
 
     const sunColor = getComputedStyle(document.querySelector(".sys") || document.body)
         .getPropertyValue("--sys-sun").trim() || "rgb(255, 214, 150)";
@@ -231,7 +258,7 @@ export function mountSatellites(api) {
     function layoutBox() {
         if (!mobile) {
             const left = parseFloat(dock.style.left) || 320;
-            box.style.width = `${Math.max(180, Math.min(300, left - 56))}px`;
+            box.style.width = `${Math.max(180, Math.min(360, left - 86))}px`;
             crumbNav.style.width = box.style.width;
         }
         size();
@@ -371,6 +398,7 @@ export function mountSatellites(api) {
 
         // Sun
         const sx = X(0), sy = Y(0);
+        hits = [{ id: "sun", x: sx, y: sy }];
         const sr = Math.min(8, Math.max(3, 0.03 * cam.s));
         const glow = ctx.createRadialGradient(sx, sy, 0, sx, sy, sr * 3);
         glow.addColorStop(0, sunColor);
@@ -403,6 +431,7 @@ export function mountSatellites(api) {
             ctx.stroke();
             const p = planetPos(b, t);
             const px = X(p.x), py = Y(p.y);
+            hits.push({ id: b.id, x: px, y: py });
             const pr = 2 + (Math.min(6, Math.max(3.2, 0.012 * cam.s)) - 2) * gl;
             ctx.beginPath(); ctx.arc(px, py, pr, 0, Math.PI * 2);
             ctx.fillStyle = "#0a0a0a"; ctx.fill();
@@ -435,8 +464,9 @@ export function mountSatellites(api) {
                     }
                 }
             }
-            if (gl > 0.02 && !mobile && !(focusMoon && i === pi)) {
-                ctx.fillStyle = `rgba(245,245,245,${(0.9 * gl).toFixed(3)})`;
+            const shown = Math.max(gl, hoverId === b.id ? 0.75 : 0);
+            if (shown > 0.02 && !mobile && !(focusMoon && i === pi)) {
+                ctx.fillStyle = `rgba(245,245,245,${(0.9 * shown).toFixed(3)})`;
                 ctx.fillText(b.label, px + pr + 7, py - (b.moons.length ? pr + 9 : 0));
             }
         });
@@ -451,6 +481,8 @@ export function mountSatellites(api) {
 
     return {
         isOpen: () => !!openId,
+        current: () => openId,
+        open: (id) => show(id),
         close: () => hide(),
         contains: (el) => panel.contains(el),
         orreryHeight: () => (mobile ? 0 : box.offsetHeight + crumbNav.offsetHeight + 28),
@@ -463,11 +495,12 @@ export function moonsHTML(chapter, esc) {
     const sats = chapter.satellites ?? [];
     if (!sats.length) return "";
     return `<nav class="sat-moons" data-sat-of="${esc(chapter.id)}" aria-label="More on ${esc(chapter.label)}">
-        <p class="sat-moons__label">Satellites · more on this chapter</p>
+        <p class="sat-moons__label">${sats.length === 1 ? "1 satellite" : `${sats.length} satellites`} · go deeper into this chapter</p>
         ${sats.map((s) => `<button type="button" class="sat-moon" data-sat="${esc(s.id)}">
-            <span class="sat-moon__dot" aria-hidden="true"></span>
-            <span class="sat-moon__text"><span class="sat-moon__title">${esc(s.label)}</span>${s.teaser ? `<span class="sat-moon__teaser">${esc(s.teaser)}</span>` : ""}</span>
-            <span class="sat-moon__go" aria-hidden="true">→</span>
+            <span class="sat-orbit" aria-hidden="true"><span></span></span>
+            <span class="sat-moon__title">${esc(s.label)}</span>
+            <span class="sat-moon__go">Open <span aria-hidden="true">→</span></span>
         </button>`).join("")}
     </nav>`;
 }
+
