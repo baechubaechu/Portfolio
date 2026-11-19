@@ -265,9 +265,9 @@ body.is-reading-sun .sat-crumb {
     color: var(--sys-ink);
 }
 
-/* While a satellite is open the dock behind it steps back. */
+/* The panel takes over from the dock, which steps fully out of the way behind it. */
 body.is-sat-open .sys-dock.is-open {
-    opacity: 0.25;
+    opacity: 0;
 }
 
 @media (max-width: 719px) {
@@ -322,27 +322,37 @@ body.is-sat-open .sys-dock.is-open {
     pointer-events: none;
 }
 
-/* Glass: the reading box and the satellite panel let the stars through, blurred, while the
-   text keeps a dark enough ground to read on. */
-.sys-dock {
-    background-color: rgba(24, 24, 28, 0.56);
-    -webkit-backdrop-filter: blur(18px) saturate(125%);
-    backdrop-filter: blur(18px) saturate(125%);
-    outline: 1px solid rgba(255, 255, 255, 0.09);
-    outline-offset: -1px;
+/* Panels: a flat dark tint with 10px corners and a hairline edge, no blur, so the stars
+   behind show through dimmed but sharp. The corner ticks belong to the square box, so they go. */
+.sys-dock,
+.sat-panel,
+.sat-orrery {
+    border-radius: 10px;
+    background-image: none;
+    outline: 0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
+.sys-dock {
+    background-color: rgba(14, 14, 16, 0.62);
+}
+
 .sat-panel {
-    background: rgba(26, 26, 30, 0.7);
-    -webkit-backdrop-filter: blur(22px) saturate(125%);
-    backdrop-filter: blur(22px) saturate(125%);
-    outline: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 24px 64px rgba(0, 0, 0, 0.45);
+    background-color: rgba(14, 14, 16, 0.78);
+}
+
+.sat-orrery {
+    background-color: rgba(14, 14, 16, 0.4);
 }
 
 .sat-panel__bar {
-    background: rgba(26, 26, 30, 0.55);
-    -webkit-backdrop-filter: blur(14px);
-    backdrop-filter: blur(14px);
+    background: rgba(14, 14, 16, 0.92);
+}
+
+/* A thin scrollbar that stays inside the round corners. */
+.sys-dock,
+.sat-panel {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
 }
