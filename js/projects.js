@@ -757,15 +757,15 @@ const projectsData = {
         {
             id: "sida",
             title: "Sida",
-            description: "A local web app for early design: site facts from government records, ten AI experts around a drafting table, and a site model ready for the laser cutter.",
+            description: "A local web app and Rhino plugin for early design: site facts and legal limits from government records, a live check of the massing against them, and ten AI experts around a drafting table.",
             thumbnail: "assets-web/SIDA-board.webp",
             tags: ["AI Design Assistant", "Site Facts From Public Records", "10 Expert Agents", "Drafting Table · 3D", "Local Web App · v0.2"],
             githubLink: "https://github.com/baechubaechu/Sida",
             visitLink: "https://sida-kr.duckdns.org",
             kind: "Code · In progress",
-            thesis: "Early design in studio starts with a week of collecting: the lot, the zoning, the ordinance, the buildings around it. A general chatbot answers all of that fluently and gets the numbers wrong. Sida (시다, the word Korean architecture schools use for a junior who assists) starts from one site address, pulls the lot, zoning and legal limits from government records, and shows every figure next to the line of law it was read from. Ten narrow AI experts then sit around a drafting table where the designer sketches, tests massing and asks questions. It does not design the building for them.",
+            thesis: "Early design in studio starts with a week of collecting: the lot, the zoning, the ordinance, the buildings around it. A general chatbot answers all of that fluently and gets the numbers wrong. Sida (시다, the word Korean architecture schools use for a junior who assists) starts from one site address, pulls the lot, zoning and legal limits from government records, and shows every figure next to the line of law it was read from. It then works out the largest volume those rules allow and checks the designer's massing against them, on its own drafting table or inside Rhino. Ten narrow AI experts sit around that table where the designer sketches, tests massing and asks questions. It does not design the building for them.",
             subtitle: "An assistant for early design that brings the evidence, not the answer",
-            category: "AI Tool / Local Web App",
+            category: "Design Automation / Web App + Rhino Plugin",
             role: "Lead developer (team project)",
             timeline: "2026.07 - in progress",
             cover: "assets-web/SIDA-board.webp",
@@ -801,6 +801,34 @@ const projectsData = {
                             ["A typo in the address", "Not corrected silently. The designer is asked to search again."],
                             ["Only what applies", "The regulation expert receives the parts of the ordinance that concern this lot. For Sejong-ro 1 in Seoul that cut the text from about 12,000 characters to 2,900."]
                         ] }
+                    ]
+                },
+                {
+                    id: "check",
+                    label: "Legal Check",
+                    lead: "From the site's limits to a check of the design itself: the largest volume the rules allow, and the coverage and floor area ratio of whatever the designer is modelling, on the table or in Rhino.",
+                    blocks: [
+                        { kind: "heading", body: "The legal envelope" },
+                        { kind: "text", body: "Sida works out the room the rules leave on the lot and shows it as a see-through volume on the table. Each limit is read by rule from the statute or the municipal ordinance as written. Two reference schemes fill it, one wide and low and one a tower to the south, as a first sense of scale, not a design." },
+                        { kind: "rules", items: [
+                            ["Sunlight to the north", "Building Act Article 61 as amended in November 2026, at the distances the local ordinance sets. A road, railway, river or park to the north is crossed and its far side used"],
+                            ["Building line", "Moved back on roads narrower than 4 m, with the corner cut where two narrow roads meet"],
+                            ["Open space on the lot", "Distances from the building line and from the neighbours, by the use the designer picks"],
+                            ["Daylight for housing", "Height capped by the distance to the lot line, for apartment uses"],
+                            ["Height districts", "From the published notices, copied once into a table and matched to the piece of map under the site"],
+                            ["Coverage and FAR", "The ordinance's figures where they were read, else the statutory caps"]
+                        ] },
+                        { kind: "text", body: "Where an input is missing, such as the building's use, the line reads 'to check' instead of assuming the lenient case. Where a rule is not applied yet, the stricter limit is kept." },
+                        { kind: "heading", body: "Checking the scheme" },
+                        { kind: "text", body: "While the designer edits a massing scheme, a band at the foot of the table shows its coverage and floor area ratio against the caps, with a gauge that turns red past the limit. Overlapping blocks are counted once. A block that rises above the legal envelope is tagged where it stands." },
+                        { kind: "heading", body: "The same check inside Rhino" },
+                        { kind: "steps", items: [
+                            "Pull: a C# plugin for Rhino 8 brings the site, the massing and the 3D surroundings into the Rhino file, in the same coordinates as Sida's exports, without touching the designer's own layers.",
+                            "Model: the designer gives each layer a meaning, such as housing or retail, and a floor height. Rhino measures each object's volume, footprint and floor areas.",
+                            "Check: a panel inside Rhino updates gross floor area, coverage and FAR against the site's caps about a second after each edit. It can send the model back to Sida's table, or ask the Conductor about the objects picked.",
+                            "Draw: Sida decides the diagrams (program massing, floor-by-floor areas, the legal figures) and the plugin draws them as Rhino geometry beside the model."
+                        ] },
+                        { kind: "note", body: "The plugin only measures and carries. Every rule and every ratio is computed in Sida's Python, where the tests are. An object Rhino cannot measure stays 'unmeasured' rather than estimated." }
                     ]
                 },
                 {
@@ -866,15 +894,17 @@ const projectsData = {
                         { kind: "rules", items: [
                             ["Jul 2026", "First command-line prototype: a Conductor and a fixed line of expert prompts"],
                             ["Sep – Oct", "Combinable experts, site facts from government APIs, ordinance figures by rule, a JSON API and a new screen from a teammate's Figma mock-up"],
-                            ["Late Oct – Nov", "Drafting table, massing editing, 3D surroundings, DXF/3dm export, laser-cut model, relay server"]
+                            ["Late Oct – early Nov", "Drafting table, massing editing, 3D surroundings, DXF/3dm export, laser-cut model, relay server"],
+                            ["Mid Nov", "Live coverage and FAR on the table, the Rhino plugin and its live link, the legal envelope, section and isometric views, sharing by link"]
                         ] },
                         { kind: "text", body: "Most of the code was written with AI coding agents, several at a time. Changes go through pull requests that merge automatically once lint and tests pass, which makes the tests the safety net: every feature or fix has to arrive with its own." },
                         { kind: "list", items: [
-                            "More than 650 Python tests and about 150 for the screen's logic run offline: model calls are replaced by a mock provider, and government APIs by recorded responses.",
+                            "Nearly 1,000 Python tests and about 150 for the screen's logic run offline: model calls are replaced by a mock provider, and government APIs by recorded responses.",
                             "A bug fix starts with a test that reproduces the bug. One example: an ordinance figure with a decimal was once read as the wrong whole number, and that case is now held in place by a test."
                         ] },
                         { kind: "techs", items: [
                             { name: "Python · FastAPI" }, { name: "Vanilla JS · Three.js · Leaflet", note: "no build step" },
+                            { name: "C# · RhinoCommon", note: "Rhino 8 plugin" },
                             { name: "OpenRouter · ChatGPT sign-in · Ollama", note: "model per role" },
                             { name: "V-World · data.go.kr · law.go.kr", note: "public records" },
                             { name: "pytest · ruff · GitHub Actions" }
