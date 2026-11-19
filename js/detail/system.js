@@ -671,7 +671,7 @@ function init(project) {
         if (c.id === "more-works") {
             const more = htmlEl("a", {
                 class: "sys-mobile-chaps__item is-more",
-                href: "index.html#school-works",
+                href: "index.html#other-works",
                 text: "MORE WORKS  →",
             });
             mobileChapRail.append(more);

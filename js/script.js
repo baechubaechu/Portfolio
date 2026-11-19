@@ -271,15 +271,16 @@ function renderProjects() {
     if (schoolWorksGrid && projectsData.schoolWorks) {
         let html = '';
         projectsData.schoolWorks.forEach(p => html += createCard(p, 'schoolWorks'));
+        // Competitions follow the studio projects; they keep their architecture card style.
+        (projectsData.competitions || []).forEach(p => html += createCard(p, 'competitions'));
         schoolWorksGrid.innerHTML = html;
     }
 
-    // Competitions are listed under Other Works; they keep their architecture card style.
+    // Design Technology: the tools and research (projectsData.otherWorks).
     const otherWorksGrid = document.getElementById('other-works-grid');
     if (otherWorksGrid) {
         let html = '';
         (projectsData.otherWorks || []).forEach(p => html += createCard(p, 'otherWorks'));
-        (projectsData.competitions || []).forEach(p => html += createCard(p, 'competitions'));
         otherWorksGrid.innerHTML = html;
     }
 
