@@ -10,7 +10,7 @@ import { portfolio } from "../constellation/data/portfolio.js?v=3.17";
 import {
     svgEl, htmlEl, mulberry32, hashString, prefersReducedMotion, esc, clamp,
 } from "../constellation/lib/utils.js?v=2.0";
-import { mountSatellites, moonsHTML } from "./satellites.js?v=1.1";
+import { mountSatellites, moonsHTML } from "./satellites.js?v=1.2";
 
 const ELEV = 0.56;
 const CAM_DIST = 3.12;
@@ -1393,7 +1393,7 @@ function init(project) {
             setAttr(p.g, "transform", `translate(${x.toFixed(2)} ${y.toFixed(2)}) scale(${grow.toFixed(3)})`);
             setAttr(p.dot, "r", (p.rDot * sc).toFixed(2));
             for (const [k, m] of p.moonEls.entries()) {
-                const mr = p.rDot * sc + 4.5;
+                const mr = (p.rDot * sc + 4.5) * 1.5;
                 const ma = (reduce ? 0 : t * 0.9) + (k * Math.PI * 2) / p.moonEls.length;
                 setAttr(m, "cx", (Math.cos(ma) * mr).toFixed(2));
                 setAttr(m, "cy", (Math.sin(ma) * mr * 0.62).toFixed(2));

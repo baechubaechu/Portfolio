@@ -13,7 +13,7 @@
 
 const TILT = 0.42;          // orbit ellipse: y = sin · r · TILT
 const OVERVIEW = 0.86;      // world radius that fits the box in overview
-const ZOOM_PLANET = 2.3;
+const ZOOM_PLANET = 3.0;
 const ZOOM_MOON = 5.6;
 
 export function mountSatellites(api) {
@@ -22,6 +22,62 @@ export function mountSatellites(api) {
     const satOf = new Map();       // satellite id → { sat, chapter, index, planetIndex }
     chapters.forEach((c, pi) => (c.satellites ?? []).forEach((s, si) =>
         satOf.set(s.id, { sat: s, chapter: c, index: si, planetIndex: pi })));
+
+    // ------------------------------------------------------------ stars
+    // A sparse, still field behind the system: a few brighter stars with a soft halo, the rest
+    // faint points, each breathing slowly. About one star per 9,000 px², so it never gets busy.
+    (function stars() {
+        const stage = document.querySelector(".sys");
+        if (!stage) return;
+        const cv = document.createElement("canvas");
+        cv.className = "sat-stars";
+        cv.setAttribute("aria-hidden", "true");
+        stage.prepend(cv);
+        const c2 = cv.getContext("2d");
+        let seed = 0;
+        for (const ch of project.id) seed = (seed * 31 + ch.charCodeAt(0)) >>> 0;
+        const rnd = () => ((seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296);
+        let list = [], SW = 0, SH = 0, sdpr = 1;
+        function build() {
+            sdpr = Math.min(2, window.devicePixelRatio || 1);
+            SW = window.innerWidth; SH = window.innerHeight;
+            cv.width = Math.round(SW * sdpr); cv.height = Math.round(SH * sdpr);
+            const n = Math.round((SW * SH) / 9000);
+            list = Array.from({ length: n }, () => {
+                const bright = rnd() < 0.08;
+                return {
+                    x: rnd() * SW, y: rnd() * SH,
+                    r: bright ? 0.9 + rnd() * 0.6 : 0.35 + rnd() ** 2 * 0.6,
+                    a: bright ? 0.55 + rnd() * 0.35 : 0.18 + rnd() * 0.32,
+                    ph: rnd() * Math.PI * 2, sp: 0.15 + rnd() * 0.45, bright,
+                    warm: rnd() < 0.25,
+                };
+            });
+        }
+        build();
+        window.addEventListener("resize", build);
+        const t0s = performance.now();
+        function paint(now) {
+            const t = (now - t0s) / 1000;
+            c2.setTransform(sdpr, 0, 0, sdpr, 0, 0);
+            c2.clearRect(0, 0, SW, SH);
+            for (const st of list) {
+                const a = st.a * (reduce ? 1 : 0.7 + 0.3 * Math.sin(t * st.sp + st.ph));
+                const col = st.warm ? "255, 236, 214" : "226, 236, 255";
+                if (st.bright) {
+                    const g = c2.createRadialGradient(st.x, st.y, 0, st.x, st.y, st.r * 5);
+                    g.addColorStop(0, `rgba(${col}, ${(a * 0.45).toFixed(3)})`);
+                    g.addColorStop(1, `rgba(${col}, 0)`);
+                    c2.fillStyle = g;
+                    c2.beginPath(); c2.arc(st.x, st.y, st.r * 5, 0, Math.PI * 2); c2.fill();
+                }
+                c2.fillStyle = `rgba(${col}, ${a.toFixed(3)})`;
+                c2.beginPath(); c2.arc(st.x, st.y, st.r, 0, Math.PI * 2); c2.fill();
+            }
+            if (!reduce) requestAnimationFrame(paint);
+        }
+        requestAnimationFrame(paint);
+    })();
 
     // ------------------------------------------------------------ panel
     const panel = document.createElement("aside");
@@ -159,7 +215,7 @@ export function mountSatellites(api) {
             r,
             ang0: i * 2.39996 + 0.6,
             w: 0.045 / r ** 1.5,
-            moons: sats.map((s, k) => ({ id: s.id, label: s.label, ang0: k * (Math.PI * 2 / Math.max(1, sats.length)), r: 0.055 + k * 0.022 })),
+            moons: sats.map((s, k) => ({ id: s.id, label: s.label, ang0: k * (Math.PI * 2 / Math.max(1, sats.length)), r: 0.06 + k * 0.024 })),
         };
     });
 
@@ -184,6 +240,34 @@ export function mountSatellites(api) {
 
     const cam = { x: 0, y: 0, s: 1 };
     let camReady = false;
+    // A move between chapters (or into a satellite) is one eased flight: slow off the mark,
+    // fast through the middle, slow into place. Between two planets the camera also pulls
+    // back a little mid-flight, so the jump reads as travel rather than a cut.
+    let flight = null;
+    let aimKey = "";
+    // While the dock scrolls past several chapters (a click on a far one), the chapter on
+    // screen changes many times; the camera waits until it holds still, then flies once.
+    let seenKey = "";
+    let seenAt = 0;
+    let aimPlate = null;
+    const SETTLE_MS = 160;
+    // A chapter picked from the list (or the crumb) is where the camera heads at once, while
+    // the dock is still scrolling through the chapters in between.
+    let intended = null;
+    let intendedAt = 0;
+    document.addEventListener("click", (e) => {
+        const pick = e.target.closest?.("[data-chap], [data-crumb]");
+        if (!pick) return;
+        intended = pick.dataset.chap || pick.dataset.crumb;
+        intendedAt = performance.now();
+    }, true);
+    let scrolledAt = 0;
+    dock.addEventListener("scroll", () => { scrolledAt = performance.now(); }, { passive: true });
+    // Flight length: 0.87 to 1.47 s by distance (the earlier 1.3 to 2.2 s, played 1.5× faster).
+    const FLIGHT_SPEED = 1.5;
+    const flightMs = (travel, zoomStep) =>
+        Math.min(2200, Math.max(1300, 1200 + travel * 1400 + zoomStep * 300)) / FLIGHT_SPEED;
+    const easeInOutCubic = (u) => (u < 0.5 ? 4 * u ** 3 : 1 - (-2 * u + 2) ** 3 / 2);
     const t0 = performance.now();
     let last = t0;
 
@@ -216,13 +300,20 @@ export function mountSatellites(api) {
 
     function draw(now) {
         const t = (now - t0) / 1000;
-        const dt = Math.max(0, (now - last) / 1000); // unclamped: a throttled tab still catches up
+        const dt = Math.min(0.1, Math.max(0, (now - last) / 1000));
         last = now;
         if (!W) layoutBox();
         const reading = document.body.classList.contains("is-reading-sun");
         if (!reading || !W) { requestAnimationFrame(draw); return; }
 
-        const plate = openId ? satOf.get(openId).chapter.id : api.getPlate();
+        // Arrived once the dock has stopped scrolling on the picked chapter.
+        if (intended && ((api.getPlate() === intended && now - scrolledAt > 200 && now - intendedAt > 200)
+            || now - intendedAt > 2500)) intended = null;
+        const livePlate = openId ? satOf.get(openId).chapter.id : intended || api.getPlate();
+        const liveKey = `${livePlate}|${openId || ""}`;
+        if (liveKey !== seenKey) { seenKey = liveKey; seenAt = now; }
+        if (aimPlate === null || !camReady || intended || now - seenAt >= SETTLE_MS) aimPlate = livePlate;
+        const plate = aimPlate;
         const pi = bodies.findIndex((b) => b.id === plate);
         const base = Math.min(W / 2, H / TILT / 2 * 0.86) / OVERVIEW;
         let tx = 0, ty = 0, ts = base;
@@ -230,16 +321,47 @@ export function mountSatellites(api) {
         if (pi >= 0) {
             const p = planetPos(bodies[pi], t);
             tx = p.x; ty = p.y; ts = base * ZOOM_PLANET;
-            if (openId) {
+            if (openId && satOf.get(openId).chapter.id === plate) {
                 focusMoon = bodies[pi].moons.find((m) => m.id === openId);
                 const mp = focusMoon ? moonPos(p, focusMoon, t) : p;
                 tx = (p.x + mp.x) / 2; ty = (p.y + mp.y) / 2; ts = base * ZOOM_MOON;
             }
         }
-        const k = reduce || !camReady ? 1 : 1 - Math.exp(-dt / 0.38);
-        cam.x += (tx - cam.x) * k;
-        cam.y += (ty - cam.y) * k;
-        cam.s *= Math.exp((Math.log(ts) - Math.log(cam.s)) * k);
+        const key = `${plate}|${openId && satOf.get(openId).chapter.id === plate ? openId : ""}`;
+        if (key !== aimKey) {
+            const leaving = aimKey.split("|")[0];
+            aimKey = key;
+            // Re-aimed just after take-off (a chapter passed on the way): keep flying, only the
+            // destination changes. Later on, a new flight starts from where the camera is.
+            const early = flight && (now - flight.t0) / flight.dur < 0.35;
+            if (camReady && !reduce && !early) {
+                const travel = Math.hypot(tx - cam.x, ty - cam.y);
+                const zoomStep = Math.abs(Math.log(ts / cam.s));
+                flight = {
+                    leaving: flight ? flight.leaving : leaving,
+                    from: { ...cam },
+                    t0: now,
+                    dur: flightMs(travel, zoomStep),
+                    dip: Math.min(0.2, travel * 0.45),
+                };
+            } else if (early) {
+                const travel = Math.hypot(tx - flight.from.x, ty - flight.from.y);
+                const zoomStep = Math.abs(Math.log(ts / flight.from.s));
+                flight.dur = flightMs(travel, zoomStep);
+                flight.dip = Math.min(0.2, travel * 0.45);
+            }
+        }
+        if (flight) {
+            const u = Math.min(1, (now - flight.t0) / flight.dur);
+            const e = easeInOutCubic(u);
+            cam.x = flight.from.x + (tx - flight.from.x) * e;
+            cam.y = flight.from.y + (ty - flight.from.y) * e;
+            cam.s = Math.exp(Math.log(flight.from.s) + (Math.log(ts) - Math.log(flight.from.s)) * e)
+                * (1 - flight.dip * Math.sin(Math.PI * e));
+            if (u >= 1) flight = null;
+        } else {
+            cam.x = tx; cam.y = ty; cam.s = ts; // settled: ride along with the planet
+        }
         camReady = true;
 
         const X = (x) => W / 2 + (x - cam.x) * cam.s;
@@ -263,40 +385,59 @@ export function mountSatellites(api) {
         ctx.font = "500 10px 'DM Mono', monospace";
         ctx.textBaseline = "middle";
         bodies.forEach((b, i) => {
-            const on = i === pi;
-            ctx.strokeStyle = on ? "rgba(255,255,255,0.28)" : `rgba(255,255,255,${(0.1 * Math.min(1, 2 * base / cam.s)).toFixed(3)})`;
+            // The highlight follows the camera, not the click: the planet being left stays lit
+            // for the whole flight and goes out once the camera has settled; the destination
+            // lights up as the camera comes in. Both fade rather than switch.
+            let lit = i === pi;
+            if (flight) {
+                const fu = easeInOutCubic(Math.min(1, (now - flight.t0) / flight.dur));
+                lit = b.id === flight.leaving || (i === pi && fu >= 0.8);
+            }
+            b.glow = b.glow ?? (lit ? 1 : 0);
+            b.glow += ((lit ? 1 : 0) - b.glow) * (reduce ? 1 : 1 - Math.exp(-dt / 0.15));
+            const gl = b.glow;
+            ctx.strokeStyle = `rgba(255,255,255,${(0.28 * gl + (1 - gl) * 0.1 * Math.min(1, 2 * base / cam.s)).toFixed(3)})`;
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.ellipse(sx, sy, b.r * cam.s, b.r * TILT * cam.s, 0, 0, Math.PI * 2);
             ctx.stroke();
             const p = planetPos(b, t);
             const px = X(p.x), py = Y(p.y);
-            const pr = on ? Math.min(6, Math.max(3.2, 0.012 * cam.s)) : 2;
+            const pr = 2 + (Math.min(6, Math.max(3.2, 0.012 * cam.s)) - 2) * gl;
             ctx.beginPath(); ctx.arc(px, py, pr, 0, Math.PI * 2);
-            if (on) { ctx.fillStyle = "#f5f5f5"; ctx.fill(); }
-            else { ctx.fillStyle = "#0a0a0a"; ctx.fill(); ctx.strokeStyle = "rgba(245,245,245,0.55)"; ctx.stroke(); }
+            ctx.fillStyle = "#0a0a0a"; ctx.fill();
+            ctx.strokeStyle = "rgba(245,245,245,0.55)"; ctx.stroke();
+            if (gl > 0.01) {
+                ctx.fillStyle = `rgba(245,245,245,${gl.toFixed(3)})`;
+                ctx.beginPath(); ctx.arc(px, py, pr, 0, Math.PI * 2); ctx.fill();
+            }
 
-            // Moons: drawn once the camera is close enough to tell them from the planet.
-            const moonA = Math.min(1, Math.max(0, (cam.s / base - 1.6) / 1.4)) * (on ? 1 : 0.35);
+            // Moons: only around the planet being read, and only once the camera is close
+            // enough to tell them apart (never in the overview).
+            const moonA = gl * Math.min(1, Math.max(0, (cam.s / base - 1.4) / 1.0));
             if (b.moons.length && moonA > 0.02) {
                 for (const m of b.moons) {
                     const mp = moonPos(p, m, t);
                     const mOn = focusMoon === m;
-                    ctx.strokeStyle = `rgba(255,255,255,${(0.14 * moonA).toFixed(3)})`;
+                    ctx.strokeStyle = `rgba(255,255,255,${(0.12 * moonA).toFixed(3)})`;
                     ctx.beginPath();
                     ctx.ellipse(px, py, m.r * cam.s, m.r * 0.62 * cam.s, 0, 0, Math.PI * 2);
                     ctx.stroke();
-                    ctx.fillStyle = mOn ? sunColor : `rgba(245,245,245,${(0.75 * moonA).toFixed(3)})`;
-                    ctx.beginPath(); ctx.arc(X(mp.x), Y(mp.y), mOn ? 3.2 : 1.8, 0, Math.PI * 2); ctx.fill();
+                    ctx.beginPath(); ctx.arc(X(mp.x), Y(mp.y), mOn ? 3.4 : 2.6, 0, Math.PI * 2);
+                    if (mOn) { ctx.fillStyle = sunColor; ctx.fill(); }
+                    else {
+                        ctx.fillStyle = "#0a0a0a"; ctx.fill();
+                        ctx.strokeStyle = `rgba(255,255,255,${(0.95 * moonA).toFixed(3)})`; ctx.stroke();
+                    }
                     if (mOn && !mobile) {
                         ctx.fillStyle = "rgba(245,245,245,0.9)";
                         ctx.fillText(m.label.toUpperCase(), X(mp.x) + 8, Y(mp.y));
                     }
                 }
             }
-            if (on && !mobile && !focusMoon) {
-                ctx.fillStyle = "rgba(245,245,245,0.9)";
-                ctx.fillText(b.label, px + pr + 7, py);
+            if (gl > 0.02 && !mobile && !(focusMoon && i === pi)) {
+                ctx.fillStyle = `rgba(245,245,245,${(0.9 * gl).toFixed(3)})`;
+                ctx.fillText(b.label, px + pr + 7, py - (b.moons.length ? pr + 9 : 0));
             }
         });
         if (pi < 0 && !mobile) {

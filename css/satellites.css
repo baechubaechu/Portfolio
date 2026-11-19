@@ -312,3 +312,37 @@ body.is-sat-open .sys-dock.is-open {
     fill: var(--sys-ink-2);
     pointer-events: none;
 }
+
+/* Star field behind the system (satellites.js). */
+.sat-stars {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+/* Glass: the reading box and the satellite panel let the stars through, blurred, while the
+   text keeps a dark enough ground to read on. */
+.sys-dock {
+    background-color: rgba(24, 24, 28, 0.56);
+    -webkit-backdrop-filter: blur(18px) saturate(125%);
+    backdrop-filter: blur(18px) saturate(125%);
+    outline: 1px solid rgba(255, 255, 255, 0.09);
+    outline-offset: -1px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.sat-panel {
+    background: rgba(26, 26, 30, 0.7);
+    -webkit-backdrop-filter: blur(22px) saturate(125%);
+    backdrop-filter: blur(22px) saturate(125%);
+    outline: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 24px 64px rgba(0, 0, 0, 0.45);
+}
+
+.sat-panel__bar {
+    background: rgba(26, 26, 30, 0.55);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+}
