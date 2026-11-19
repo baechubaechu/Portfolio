@@ -10,6 +10,7 @@ import { portfolio } from "../constellation/data/portfolio.js?v=3.17";
 import {
     svgEl, htmlEl, mulberry32, hashString, prefersReducedMotion, esc, clamp,
 } from "../constellation/lib/utils.js?v=2.0";
+import { mountSatellites, moonsHTML } from "./satellites.js?v=1.1";
 
 const ELEV = 0.56;
 const CAM_DIST = 3.12;
@@ -475,6 +476,7 @@ function chapterDossierHTML(chapter, idx) {
         <h2 class="sys-dock__title">${esc(String(chapter.title || chapter.label))}</h2>
         ${chapter.lead ? `<p class="sys-dock__quote">${esc(chapter.lead)}</p>` : ""}
         ${(chapter.blocks ?? []).map(blockHTML).join("")}
+        ${moonsHTML(chapter, esc)}
     `;
 }
 
@@ -569,9 +571,11 @@ function init(project) {
         const label = svgEl("text", { class: "sys__planet-label", y: 0 });
         label.textContent = p.label;
         g.append(dot, label);
+        const moonEls = (chapters[planets.indexOf(p)]?.satellites ?? []).map(() => svgEl("circle", { class: "sys__moon", r: 1.4 }));
+        g.append(...moonEls);
         orbitsG.append(orbit);
         bodiesG.append(g);
-        planetEls.push({ ...p, orbit, g, dot, label, label0: p.label });
+        planetEls.push({ ...p, orbit, g, dot, label, label0: p.label, moonEls });
     }
 
     const look = sunLook(cproj.id);
@@ -705,6 +709,7 @@ function init(project) {
         "aria-hidden": "true",
     });
     dock.inert = true;
+    let sat = null; // satellites and the orrery (satellites.js), mounted once the rest is in place
     // Story runs 0 → 1 (free system → TOC); the chapters themselves are one continuous scroll.
     const storyMax = 1;
     const plateHTML = (id, body) => `<section class="sys-dock__plate" data-plate="${esc(id)}">${body}</section>`;
@@ -907,6 +912,7 @@ function init(project) {
             syncMobileChapters(plateId);
         }
         applyFraming();
+        sat?.relayout();
     }
 
     // Top-view TOC: sun on the left, planet i on a circle of radius (i + 1) · unit.
@@ -914,7 +920,7 @@ function init(project) {
     function tocGeom() {
         const split = W >= 720;
         const n = Math.max(1, planetEls.length);
-        const top = split ? 140 : 100;
+        const top = split ? 340 : 100; // the orrery and its crumb sit above the TOC (satellites.js)
         const bottom = split ? H - 48 : H * 0.56 - 12;
         const gap = clamp((bottom - top) / n, 12, 44);
         return { x: split ? 64 : 40, y: top, floor: split ? H : H * 0.56, gap, n };
@@ -1184,6 +1190,11 @@ function init(project) {
             e.preventDefault();
             return;
         }
+        if (e.key === "Escape" && sat?.isOpen()) {
+            e.preventDefault();
+            sat.close();
+            return;
+        }
         if (e.key === "Escape" && (reading || storyTgt > 0)) {
             e.preventDefault();
             goSystem();
@@ -1238,6 +1249,11 @@ function init(project) {
     stage.addEventListener("pointercancel", endDrag);
     window.addEventListener("wheel", (e) => {
         if (e.ctrlKey) return;
+        if (sat?.contains(e.target)) return;
+        if (sat?.isOpen()) {
+            e.preventDefault();
+            return;
+        }
         if (lbOpen()) {
             e.preventDefault();
             return;
@@ -1376,6 +1392,12 @@ function init(project) {
             const grow = 1 + (HILITE - 1) * p.hl * tocU;
             setAttr(p.g, "transform", `translate(${x.toFixed(2)} ${y.toFixed(2)}) scale(${grow.toFixed(3)})`);
             setAttr(p.dot, "r", (p.rDot * sc).toFixed(2));
+            for (const [k, m] of p.moonEls.entries()) {
+                const mr = p.rDot * sc + 4.5;
+                const ma = (reduce ? 0 : t * 0.9) + (k * Math.PI * 2) / p.moonEls.length;
+                setAttr(m, "cx", (Math.cos(ma) * mr).toFixed(2));
+                setAttr(m, "cy", (Math.sin(ma) * mr * 0.62).toFixed(2));
+            }
             p.g.classList.toggle("is-focus", active);
             p.g.classList.toggle("is-lock", tocU > 0.55);
             setStyle(p.g, "opacity", lerp(pt.z > sunP.z ? 0.55 : 1, 1, tocU).toFixed(3));
@@ -1428,6 +1450,12 @@ function init(project) {
         raf = requestAnimationFrame(frame);
     }
 
+    sat = mountSatellites({
+        project, planets, dock, blockHTML, esc, reduce, mobile,
+        getPlate: () => plateId,
+        goPlate: (id) => goPlate(id),
+        readAt: (id) => { dismissGuide(); goPlate(id); },
+    });
     measure();
     window.addEventListener("resize", measure);
     document.fonts?.ready.then(measure);

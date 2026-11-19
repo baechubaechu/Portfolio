@@ -1,0 +1,314 @@
+/* Satellites and the orrery: see js/detail/satellites.js. */
+
+/* ---------------------------------------------------------------- orrery */
+.sat-orrery {
+    position: fixed;
+    left: 24px;
+    top: 112px;
+    z-index: 6;
+    width: 260px;
+    height: 150px;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 400ms ease, visibility 0s 400ms;
+    background-image:
+        linear-gradient(var(--sys-hair-strong), var(--sys-hair-strong)),
+        linear-gradient(var(--sys-hair-strong), var(--sys-hair-strong)),
+        linear-gradient(var(--sys-hair-strong), var(--sys-hair-strong)),
+        linear-gradient(var(--sys-hair-strong), var(--sys-hair-strong)),
+        linear-gradient(var(--sys-hair-strong), var(--sys-hair-strong)),
+        linear-gradient(var(--sys-hair-strong), var(--sys-hair-strong)),
+        linear-gradient(var(--sys-hair-strong), var(--sys-hair-strong)),
+        linear-gradient(var(--sys-hair-strong), var(--sys-hair-strong));
+    background-size: 8px 1px, 1px 8px, 8px 1px, 1px 8px, 8px 1px, 1px 8px, 8px 1px, 1px 8px;
+    background-position: left top, left top, right top, right top, left bottom, left bottom, right bottom, right bottom;
+    background-repeat: no-repeat;
+}
+
+.sat-orrery__canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+body.is-reading-sun .sat-orrery,
+body.is-reading-sun .sat-crumb {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 400ms ease 200ms, visibility 0s;
+}
+
+.sat-crumb {
+    position: fixed;
+    left: 24px;
+    top: 268px;
+    z-index: 6;
+    width: 260px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 400ms ease, visibility 0s 400ms;
+}
+
+.sat-orrery__crumb {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 2px 6px;
+    font-family: var(--sys-font-mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    line-height: 1.5;
+    color: var(--sys-ink-3);
+    text-transform: uppercase;
+}
+
+.sat-orrery__crumb i {
+    font-style: normal;
+    color: var(--sys-ink-3);
+}
+
+.sat-orrery__crumb button {
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+    color: var(--sys-ink-2);
+    cursor: pointer;
+}
+
+.sat-orrery__crumb button:hover,
+.sat-orrery__crumb button:focus-visible {
+    color: var(--sys-ink);
+}
+
+.sat-orrery__crumb span {
+    color: var(--sys-sun, var(--sys-ink));
+}
+
+/* ---------------------------------------------------------------- moons in the dock */
+.sat-moons {
+    margin-top: 48px;
+    max-width: var(--measure);
+    border-top: 1px solid var(--sys-hair);
+}
+
+.sat-moons__label {
+    margin: 16px 0 8px;
+    font-family: var(--sys-font-mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--sys-ink-3);
+}
+
+.sat-moon {
+    display: grid;
+    grid-template-columns: 16px 1fr auto;
+    align-items: start;
+    gap: 12px;
+    width: 100%;
+    padding: 16px 0;
+    border: 0;
+    border-bottom: 1px solid var(--sys-hair);
+    background: none;
+    color: var(--sys-ink);
+    text-align: left;
+    cursor: pointer;
+}
+
+.sat-moon__dot {
+    width: 7px;
+    height: 7px;
+    margin: 8px 0 0 4px;
+    border-radius: 50%;
+    border: 1px solid var(--sys-ink-2);
+    transition: background-color 200ms ease, border-color 200ms ease;
+}
+
+.sat-moon__text {
+    display: grid;
+    gap: 4px;
+}
+
+.sat-moon__title {
+    font-family: var(--sys-font-sans);
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.sat-moon__teaser {
+    font-family: var(--sys-font-serif);
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--sys-ink-2);
+}
+
+.sat-moon__go {
+    padding-top: 2px;
+    font-family: var(--sys-font-mono);
+    font-size: 14px;
+    color: var(--sys-ink-3);
+    transition: transform 200ms ease, color 200ms ease;
+}
+
+.sat-moon:hover .sat-moon__dot,
+.sat-moon:focus-visible .sat-moon__dot {
+    background: var(--sys-sun, var(--sys-ink));
+    border-color: var(--sys-sun, var(--sys-ink));
+}
+
+.sat-moon:hover .sat-moon__go,
+.sat-moon:focus-visible .sat-moon__go {
+    color: var(--sys-ink);
+    transform: translateX(4px);
+}
+
+.sat-moon:focus-visible {
+    outline: 1px solid var(--sys-hair-strong);
+    outline-offset: 4px;
+}
+
+/* ---------------------------------------------------------------- satellite panel */
+.sat-panel {
+    --measure: 720px;
+    position: fixed;
+    top: 88px;
+    right: 28px;
+    bottom: 28px;
+    left: 320px;
+    z-index: 7;
+    padding: 0 clamp(28px, 4vw, 64px) 40px;
+    overflow: auto;
+    color: var(--sys-ink);
+    background: rgba(12, 12, 12, 0.985);
+    outline: 1px solid var(--sys-hair-strong);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(16px);
+    transition: opacity 280ms ease, transform 280ms ease, visibility 0s 280ms;
+}
+
+.sat-panel.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition: opacity 280ms ease, transform 280ms ease, visibility 0s;
+}
+
+.sat-panel__bar {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: var(--measure);
+    margin: 0 auto 32px;
+    padding: 16px 0 12px;
+    background: rgba(12, 12, 12, 0.985);
+    border-bottom: 1px solid var(--sys-hair);
+}
+
+.sat-panel__back,
+.sat-panel__close,
+.sat-panel__foot-btn {
+    padding: 4px 0;
+    border: 0;
+    background: none;
+    font-family: var(--sys-font-mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--sys-ink-2);
+    cursor: pointer;
+}
+
+.sat-panel__close {
+    font-size: 20px;
+    line-height: 1;
+    padding: 0 4px;
+}
+
+.sat-panel__back:hover,
+.sat-panel__close:hover,
+.sat-panel__foot-btn:hover,
+.sat-panel__back:focus-visible,
+.sat-panel__close:focus-visible,
+.sat-panel__foot-btn:focus-visible {
+    color: var(--sys-ink);
+}
+
+.sat-panel__plate {
+    min-height: 0;
+}
+
+.sat-panel .sys-dock__figure img {
+    cursor: default;
+}
+
+.sat-panel__foot {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 48px;
+    padding-top: 16px;
+    border-top: 1px solid var(--sys-hair);
+}
+
+.sat-panel__foot-btn--next {
+    margin-left: auto;
+    color: var(--sys-ink);
+}
+
+/* While a satellite is open the dock behind it steps back. */
+body.is-sat-open .sys-dock.is-open {
+    opacity: 0.25;
+}
+
+@media (max-width: 719px) {
+    /* Mobile gets its own navigator later; until then the chapter rail shows the place. */
+    .sat-orrery {
+        display: none;
+    }
+
+    .sat-crumb {
+        display: none;
+    }
+
+    .sat-panel {
+        top: 60px;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 9;
+        padding: 0 20px 96px;
+        outline: 0;
+        transform: translateY(16px);
+    }
+
+    .sat-moon__title,
+    .sat-moon__teaser {
+        font-size: 16px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sat-orrery,
+    .sat-crumb,
+    .sat-panel,
+    .sat-panel.is-open {
+        transition: none;
+        transform: none;
+    }
+}
+
+/* Moons on the TOC planets (system.js). */
+.sys__moon {
+    fill: var(--sys-ink-2);
+    pointer-events: none;
+}

@@ -8,6 +8,8 @@
  *   kind, thesis, subtitle, category, role, timeline, overview, team, organizer, cover
  *                the opening plate of the detail page
  *   chapters     the detail page body: [{ id, label, title, lead, blocks: [...] }]
+ *                a chapter may add satellites: [{ id, label, teaser, title, lead, blocks }], deeper pages
+ *                that open over the dock at #<id> (js/detail/satellites.js)
  *   sections     legacy block list, only rendered for a project that is not on the home sky
  */
 const projectsData = {
@@ -789,18 +791,34 @@ const projectsData = {
                     label: "Site Facts",
                     lead: "Type an address, or click a lot on the cadastral map, and the site sheet fills in from public records.",
                     blocks: [
-                        { kind: "steps", items: [
-                            "Find the lot: type or paste an address, or click the cadastral map. Several lots can be merged into one site.",
-                            "Look it up: lot boundary, land category, area and zoning from V-World, and the existing buildings from the national building register.",
-                            "Attach the limits: the statutory building coverage and floor area ratio for that zone, then every article of the municipal ordinance that deals with them.",
-                            "Save it to the project as one file that the site sheet, the experts and the 3D view all read."
-                        ] },
-                        { kind: "text", body: "National law gives a range for each zone; the municipal ordinance fixes the actual figure, sometimes in running text and sometimes in a table inside an HWP file. Sida reads that article or table row by fixed rules, not with a model. If the text does not resolve to one figure, or the figure falls outside the statutory range, Sida gives no number and shows the text instead." },
+                        { kind: "text", body: "One address fills the site sheet: the lot and zoning from V-World, the existing buildings from the building register, and the coverage and floor area limits with every ordinance article that sets them. The figures are read by fixed rules, not by a language model, and anything that could not be confirmed stays marked as unconfirmed." },
                         { kind: "rules", items: [
-                            ["A record could not be fetched", "The site is still saved, and that item reads 'unconfirmed'. No estimate is filled in."],
-                            ["A typo in the address", "Not corrected silently. The designer is asked to search again."],
-                            ["Only what applies", "The regulation expert receives the parts of the ordinance that concern this lot. For Sejong-ro 1 in Seoul that cut the text from about 12,000 characters to 2,900."]
+                            ["Sources", "V-World · national building register · law.go.kr · municipal ordinances"],
+                            ["Only what applies", "For Sejong-ro 1, Seoul, the ordinance text an expert reads drops from about 12,000 to 2,900 characters"]
                         ] }
+                    ],
+                    satellites: [
+                        {
+                            id: "site-sheet",
+                            label: "Reading the ordinance by rule",
+                            teaser: "Four steps from an address to a saved site, and what happens when a record is missing.",
+                            title: "Reading the ordinance by rule",
+                            lead: "National law gives a range; the municipal ordinance fixes the figure, sometimes in a table inside an HWP file.",
+                            blocks: [
+                                { kind: "steps", items: [
+                                    "Find the lot: type or paste an address, or click the cadastral map. Several lots can be merged into one site.",
+                                    "Look it up: lot boundary, land category, area and zoning from V-World, and the existing buildings from the national building register.",
+                                    "Attach the limits: the statutory building coverage and floor area ratio for that zone, then every article of the municipal ordinance that deals with them.",
+                                    "Save it to the project as one file that the site sheet, the experts and the 3D view all read."
+                                ] },
+                                { kind: "text", body: "National law gives a range for each zone; the municipal ordinance fixes the actual figure, sometimes in running text and sometimes in a table inside an HWP file. Sida reads that article or table row by fixed rules, not with a model. If the text does not resolve to one figure, or the figure falls outside the statutory range, Sida gives no number and shows the text instead." },
+                                { kind: "rules", items: [
+                                    ["A record could not be fetched", "The site is still saved, and that item reads 'unconfirmed'. No estimate is filled in."],
+                                    ["A typo in the address", "Not corrected silently. The designer is asked to search again."],
+                                    ["Only what applies", "The regulation expert receives the parts of the ordinance that concern this lot. For Sejong-ro 1 in Seoul that cut the text from about 12,000 characters to 2,900."]
+                                ] }
+                            ]
+                        }
                     ]
                 },
                 {
@@ -808,27 +826,51 @@ const projectsData = {
                     label: "Legal Check",
                     lead: "From the site's limits to a check of the design itself: the largest volume the rules allow, and the coverage and floor area ratio of whatever the designer is modelling, on the table or in Rhino.",
                     blocks: [
-                        { kind: "heading", body: "The legal envelope" },
-                        { kind: "text", body: "Sida works out the room the rules leave on the lot and shows it as a see-through volume on the table. Each limit is read by rule from the statute or the municipal ordinance as written. Two reference schemes fill it, one wide and low and one a tower to the south, as a first sense of scale, not a design." },
-                        { kind: "rules", items: [
-                            ["Sunlight to the north", "Building Act Article 61 as amended in November 2026, at the distances the local ordinance sets. A road, railway, river or park to the north is crossed and its far side used"],
-                            ["Building line", "Moved back on roads narrower than 4 m, with the corner cut where two narrow roads meet"],
-                            ["Open space on the lot", "Distances from the building line and from the neighbours, by the use the designer picks"],
-                            ["Daylight for housing", "Height capped by the distance to the lot line, for apartment uses"],
-                            ["Height districts", "From the published notices, copied once into a table and matched to the piece of map under the site"],
-                            ["Coverage and FAR", "The ordinance's figures where they were read, else the statutory caps"]
+                        { kind: "rules", strong: true, items: [
+                            ["Legal envelope", "The largest volume six limits allow on the lot, each read by rule from the statute or the ordinance"],
+                            ["Live check", "Coverage and FAR against the caps while the massing is edited; a block above the envelope is tagged"],
+                            ["Inside Rhino", "The same check in a C# plugin panel, about a second after each edit"]
                         ] },
-                        { kind: "text", body: "Where an input is missing, such as the building's use, the line reads 'to check' instead of assuming the lenient case. Where a rule is not applied yet, the stricter limit is kept." },
-                        { kind: "heading", body: "Checking the scheme" },
-                        { kind: "text", body: "While the designer edits a massing scheme, a band at the foot of the table shows its coverage and floor area ratio against the caps, with a gauge that turns red past the limit. Overlapping blocks are counted once. A block that rises above the legal envelope is tagged where it stands." },
-                        { kind: "heading", body: "The same check inside Rhino" },
-                        { kind: "steps", items: [
-                            "Pull: a C# plugin for Rhino 8 brings the site, the massing and the 3D surroundings into the Rhino file, in the same coordinates as Sida's exports, without touching the designer's own layers.",
-                            "Model: the designer gives each layer a meaning, such as housing or retail, and a floor height. Rhino measures each object's volume, footprint and floor areas.",
-                            "Check: a panel inside Rhino updates gross floor area, coverage and FAR against the site's caps about a second after each edit. It can send the model back to Sida's table, or ask the Conductor about the objects picked.",
-                            "Draw: Sida decides the diagrams (program massing, floor-by-floor areas, the legal figures) and the plugin draws them as Rhino geometry beside the model."
-                        ] },
-                        { kind: "note", body: "The plugin only measures and carries. Every rule and every ratio is computed in Sida's Python, where the tests are. An object Rhino cannot measure stays 'unmeasured' rather than estimated." }
+                        { kind: "text", body: "The site sheet says what the rules are; this step says whether the design meets them, without leaving the tool the designer is already working in." }
+                    ],
+                    satellites: [
+                        {
+                            id: "legal-envelope",
+                            label: "The legal envelope",
+                            teaser: "Sunlight to the north, building line, open space, daylight, height districts and ratios, and the live check on the table.",
+                            title: "The legal envelope",
+                            lead: "The room the rules leave on the lot, and a check of the massing against it.",
+                            blocks: [
+                                { kind: "text", body: "Sida works out the room the rules leave on the lot and shows it as a see-through volume on the table. Each limit is read by rule from the statute or the municipal ordinance as written. Two reference schemes fill it, one wide and low and one a tower to the south, as a first sense of scale, not a design." },
+                                { kind: "rules", items: [
+                                    ["Sunlight to the north", "Building Act Article 61 as amended in November 2026, at the distances the local ordinance sets. A road, railway, river or park to the north is crossed and its far side used"],
+                                    ["Building line", "Moved back on roads narrower than 4 m, with the corner cut where two narrow roads meet"],
+                                    ["Open space on the lot", "Distances from the building line and from the neighbours, by the use the designer picks"],
+                                    ["Daylight for housing", "Height capped by the distance to the lot line, for apartment uses"],
+                                    ["Height districts", "From the published notices, copied once into a table and matched to the piece of map under the site"],
+                                    ["Coverage and FAR", "The ordinance's figures where they were read, else the statutory caps"]
+                                ] },
+                                { kind: "text", body: "Where an input is missing, such as the building's use, the line reads 'to check' instead of assuming the lenient case. Where a rule is not applied yet, the stricter limit is kept." },
+                                { kind: "heading", body: "Checking the scheme" },
+                                { kind: "text", body: "While the designer edits a massing scheme, a band at the foot of the table shows its coverage and floor area ratio against the caps, with a gauge that turns red past the limit. Overlapping blocks are counted once. A block that rises above the legal envelope is tagged where it stands." }
+                            ]
+                        },
+                        {
+                            id: "rhino-plugin",
+                            label: "The Rhino plugin",
+                            teaser: "Pull, model, check, draw: the same check inside Rhino 8.",
+                            title: "The same check inside Rhino",
+                            lead: "A C# plugin that only measures and carries; every rule stays in Sida.",
+                            blocks: [
+                                { kind: "steps", items: [
+                                    "Pull: a C# plugin for Rhino 8 brings the site, the massing and the 3D surroundings into the Rhino file, in the same coordinates as Sida's exports, without touching the designer's own layers.",
+                                    "Model: the designer gives each layer a meaning, such as housing or retail, and a floor height. Rhino measures each object's volume, footprint and floor areas.",
+                                    "Check: a panel inside Rhino updates gross floor area, coverage and FAR against the site's caps about a second after each edit. It can send the model back to Sida's table, or ask the Conductor about the objects picked.",
+                                    "Draw: Sida decides the diagrams (program massing, floor-by-floor areas, the legal figures) and the plugin draws them as Rhino geometry beside the model."
+                                ] },
+                                { kind: "note", body: "The plugin only measures and carries. Every rule and every ratio is computed in Sida's Python, where the tests are. An object Rhino cannot measure stays 'unmeasured' rather than estimated." }
+                            ]
+                        }
                     ]
                 },
                 {
@@ -836,22 +878,34 @@ const projectsData = {
                     label: "Experts",
                     lead: "Ten independent lenses, each with declared inputs and things it must not do, and one Conductor who decides which to call.",
                     blocks: [
-                        { kind: "rules", items: [
-                            ["Site Reader", "Facts, interpretation and unknowns kept apart. No program or form proposals, no estimated figures"],
-                            ["Program Analyst", "Users and rhythms, adjacency, the public–private gradient. No invented areas"],
-                            ["Regulation Checker", "Governing laws and a table of what to verify and where. Never states a figure as settled"],
-                            ["Precedent Scout", "3–6 precedents matched to the problem, each with a lesson and a caution"],
-                            ["Design Critic", "Jury-style critique against the core problem"],
-                            ["Representation Planner", "Which diagrams prove the concept, in what order; recommends the physical site model"],
-                            ["Presentation Editor", "Review story, portfolio structure, likely questions"],
-                            ["On hold", "Concept Framer, Spatial Reviewer, Systems Advisor. They run only when the designer asks by name"]
-                        ] },
-                        { kind: "text", body: "Design does not run in one order, so each expert is a lens that can run alone and says what it is missing. The Conductor is the one colleague in the chat: it picks the entry point from where the designer is actually stuck, calls no more than one expert per reply, and prefers asking one focused question over running anything." },
-                        { kind: "rules", items: [
-                            ["Conditions", "Hard (legal, physical, given by the brief) or soft (intentions), each with its source"],
-                            ["Conflicts", "Where two experts' outputs pull against each other, naming both"],
-                            ["Decisions due now", "The options, what each costs, and which outputs it rests on. A decision is settled only when the designer confirms it"]
-                        ] }
+                        { kind: "text", body: "Design does not run in one order, so each expert is a lens that can run alone and says what it is missing. The Conductor is the one colleague in the chat: it picks the entry point from where the designer is actually stuck, calls no more than one expert per reply, and prefers asking one focused question over running anything." }
+                    ],
+                    satellites: [
+                        {
+                            id: "expert-roster",
+                            label: "The ten experts",
+                            teaser: "What each expert reads, what it must not do, and what the experts hand back.",
+                            title: "The ten experts",
+                            lead: "Each expert is a narrow lens with declared inputs and things it must not do.",
+                            blocks: [
+                                { kind: "rules", items: [
+                                    ["Site Reader", "Facts, interpretation and unknowns kept apart. No program or form proposals, no estimated figures"],
+                                    ["Program Analyst", "Users and rhythms, adjacency, the public–private gradient. No invented areas"],
+                                    ["Regulation Checker", "Governing laws and a table of what to verify and where. Never states a figure as settled"],
+                                    ["Precedent Scout", "3–6 precedents matched to the problem, each with a lesson and a caution"],
+                                    ["Design Critic", "Jury-style critique against the core problem"],
+                                    ["Representation Planner", "Which diagrams prove the concept, in what order; recommends the physical site model"],
+                                    ["Presentation Editor", "Review story, portfolio structure, likely questions"],
+                                    ["On hold", "Concept Framer, Spatial Reviewer, Systems Advisor. They run only when the designer asks by name"]
+                                ] },
+                                { kind: "heading", body: "What comes back" },
+                                { kind: "rules", items: [
+                                    ["Conditions", "Hard (legal, physical, given by the brief) or soft (intentions), each with its source"],
+                                    ["Conflicts", "Where two experts' outputs pull against each other, naming both"],
+                                    ["Decisions due now", "The options, what each costs, and which outputs it rests on. A decision is settled only when the designer confirms it"]
+                                ] }
+                            ]
+                        }
                     ]
                 },
                 {
@@ -860,13 +914,24 @@ const projectsData = {
                     lead: "The centre of the screen is a table of papers on the site drawing, in plan and in 3D.",
                     blocks: [
                         { kind: "image", url: "assets-web/SIDA-board.webp", caption: "The workspace: the Conductor on the left, the drafting table with a massing scheme among the surrounding buildings in the middle, and layers, experts and properties on the right." },
-                        { kind: "rules", items: [
-                            ["Site", "The lot drawn from the cadastral boundary. Always on the table"],
-                            ["Massing scheme", "Up to 20 blocks with width, depth, floors and rotation, edited with a gumball and push–pull tools"],
-                            ["Note · Tracing paper · Photo", "Text, pen strokes over the site, and images or PDF pages"],
-                            ["Expert result", "Arrives in a separate AI section when an expert finishes"]
-                        ] },
                         { kind: "text", body: "The designer selects papers and sends them along with a question, and can see exactly what text the model receives. What the AI makes, such as an alternative massing scheme, is placed in the AI section beside the table. It reaches the table only if the designer moves it there, and a changed scheme never overwrites the original." }
+                    ],
+                    satellites: [
+                        {
+                            id: "table-papers",
+                            label: "What goes on the table",
+                            teaser: "Site, massing schemes, notes, tracing paper, photos and expert results.",
+                            title: "What goes on the table",
+                            lead: "Every paper on the table is something the designer placed or chose.",
+                            blocks: [
+                                { kind: "rules", items: [
+                                    ["Site", "The lot drawn from the cadastral boundary. Always on the table"],
+                                    ["Massing scheme", "Up to 20 blocks with width, depth, floors and rotation, edited with a gumball and push–pull tools"],
+                                    ["Note · Tracing paper · Photo", "Text, pen strokes over the site, and images or PDF pages"],
+                                    ["Expert result", "Arrives in a separate AI section when an expert finishes"]
+                                ] }
+                            ]
+                        }
                     ]
                 },
                 {
@@ -874,16 +939,28 @@ const projectsData = {
                     label: "Surroundings & Model",
                     lead: "The same site data becomes a 3D context, a CAD file and the cutting sheets for a physical model.",
                     blocks: [
-                        { kind: "steps", items: [
-                            "Context: terrain, contours, roads, water, neighbouring buildings and lots within 100, 200 or 300 m of the site, built from public map data.",
-                            "Export: the table goes out as DXF for CAD or 3dm for Rhino, in metres, with the surroundings on their own layer.",
-                            "Site model: the ground is sliced into contour layers at sheet thickness × scale (3 mm at 1:500 is 1.5 m), buildings are stacked from the same sheets, and the pieces are nested onto the designer's sheet size as DXF, PDF and SVG."
-                        ] },
-                        { kind: "rules", items: [
-                            ["Building height unknown", "Only the footprint is engraved. No height is made up"],
-                            ["Height estimated from floors", "Marked as estimated in the piece list and coloured differently in the assembly drawing"],
-                            ["Not a survey", "The 3D context carries its sources, their dates and a disclaimer on screen"]
-                        ] }
+                        { kind: "text", body: "The same site data becomes a 3D context within 100 to 300 m, DXF and 3dm files for CAD and Rhino, and nested cutting sheets for a laser-cut site model. A height that is not on record is never made up: the piece is engraved as a footprint, or marked as estimated." }
+                    ],
+                    satellites: [
+                        {
+                            id: "site-model",
+                            label: "From data to a laser-cut model",
+                            teaser: "Context, export and model sheets, and how unknown heights are handled.",
+                            title: "From data to a laser-cut model",
+                            lead: "Sheet thickness × scale sets the contour step: 3 mm at 1:500 is 1.5 m.",
+                            blocks: [
+                                { kind: "steps", items: [
+                                    "Context: terrain, contours, roads, water, neighbouring buildings and lots within 100, 200 or 300 m of the site, built from public map data.",
+                                    "Export: the table goes out as DXF for CAD or 3dm for Rhino, in metres, with the surroundings on their own layer.",
+                                    "Site model: the ground is sliced into contour layers at sheet thickness × scale (3 mm at 1:500 is 1.5 m), buildings are stacked from the same sheets, and the pieces are nested onto the designer's sheet size as DXF, PDF and SVG."
+                                ] },
+                                { kind: "rules", items: [
+                                    ["Building height unknown", "Only the footprint is engraved. No height is made up"],
+                                    ["Height estimated from floors", "Marked as estimated in the piece list and coloured differently in the assembly drawing"],
+                                    ["Not a survey", "The 3D context carries its sources, their dates and a disclaimer on screen"]
+                                ] }
+                            ]
+                        }
                     ]
                 },
                 {
@@ -891,17 +968,7 @@ const projectsData = {
                     label: "Build & Verification",
                     lead: "A solo terminal prototype became a team web app in three months, built by pairing with coding agents and held in place by tests.",
                     blocks: [
-                        { kind: "rules", items: [
-                            ["Jul 2026", "First command-line prototype: a Conductor and a fixed line of expert prompts"],
-                            ["Sep – Oct", "Combinable experts, site facts from government APIs, ordinance figures by rule, a JSON API and a new screen from a teammate's Figma mock-up"],
-                            ["Late Oct – early Nov", "Drafting table, massing editing, 3D surroundings, DXF/3dm export, laser-cut model, relay server"],
-                            ["Mid Nov", "Live coverage and FAR on the table, the Rhino plugin and its live link, the legal envelope, section and isometric views, sharing by link"]
-                        ] },
-                        { kind: "text", body: "Most of the code was written with AI coding agents, several at a time. Changes go through pull requests that merge automatically once lint and tests pass, which makes the tests the safety net: every feature or fix has to arrive with its own." },
-                        { kind: "list", items: [
-                            "Nearly 1,000 Python tests and about 150 for the screen's logic run offline: model calls are replaced by a mock provider, and government APIs by recorded responses.",
-                            "A bug fix starts with a test that reproduces the bug. One example: an ordinance figure with a decimal was once read as the wrong whole number, and that case is now held in place by a test."
-                        ] },
+                        { kind: "text", body: "A solo terminal prototype in July became a team web app and a Rhino plugin by November. Most of the code was written with AI coding agents, and pull requests merge only once lint and nearly 1,000 Python tests pass, so every feature or fix arrives with its own test." },
                         { kind: "techs", items: [
                             { name: "Python · FastAPI" }, { name: "Vanilla JS · Three.js · Leaflet", note: "no build step" },
                             { name: "C# · RhinoCommon", note: "Rhino 8 plugin" },
@@ -910,6 +977,28 @@ const projectsData = {
                             { name: "pytest · ruff · GitHub Actions" }
                         ] },
                         { kind: "note", body: "In progress — v0.2, in closed testing with a small group. Regulation and precedent outputs are lists to verify, not confirmed facts. Experts read text, site data and the table's papers, but not drawings as images." }
+                    ],
+                    satellites: [
+                        {
+                            id: "build-log",
+                            label: "Timeline and tests",
+                            teaser: "Four months of releases, and how the tests run offline.",
+                            title: "Timeline and tests",
+                            lead: "Tests are the safety net when several coding agents work at once.",
+                            blocks: [
+                                { kind: "rules", items: [
+                                    ["Jul 2026", "First command-line prototype: a Conductor and a fixed line of expert prompts"],
+                                    ["Sep – Oct", "Combinable experts, site facts from government APIs, ordinance figures by rule, a JSON API and a new screen from a teammate's Figma mock-up"],
+                                    ["Late Oct – early Nov", "Drafting table, massing editing, 3D surroundings, DXF/3dm export, laser-cut model, relay server"],
+                                    ["Mid Nov", "Live coverage and FAR on the table, the Rhino plugin and its live link, the legal envelope, section and isometric views, sharing by link"]
+                                ] },
+                                { kind: "text", body: "Most of the code was written with AI coding agents, several at a time. Changes go through pull requests that merge automatically once lint and tests pass, which makes the tests the safety net: every feature or fix has to arrive with its own." },
+                                { kind: "list", items: [
+                                    "Nearly 1,000 Python tests and about 150 for the screen's logic run offline: model calls are replaced by a mock provider, and government APIs by recorded responses.",
+                                    "A bug fix starts with a test that reproduces the bug. One example: an ordinance figure with a decimal was once read as the wrong whole number, and that case is now held in place by a test."
+                                ] }
+                            ]
+                        }
                     ]
                 }
             ]
