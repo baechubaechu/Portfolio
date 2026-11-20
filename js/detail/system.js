@@ -943,11 +943,22 @@ function init(project) {
             sunLabelFit = fitLabel(cproj.title.toUpperCase(), prefix, room - sunX);
             for (const p of planetEls) p.labelFit = fitLabel(p.label0, prefix, (room - planetX) / HILITE);
             if (reading) numberLabels(true);
-            const avail = W - left0 - DOCK_EDGE;
-            const width = Math.min(avail, DOCK_MAX);
-            const availableCenter = Math.round(left0 + (avail - width) / 2);
-            const viewportCenter = Math.round((W - width) / 2);
-            const left = viewportCenter >= left0 ? viewportCenter : availableCenter;
+            // Centred in the room right of the navigator: the gap between the orrery's right
+            // edge and the box equals the gap between the box and the window's edge. The orrery
+            // is 54px in and up to 360px wide (satellites.js).
+            // The orrery's width follows the box's left (left - 86, 180 to 360), so settle the two
+            // together: start from the widest orrery and narrow it if the box lands closer.
+            let navRight = 54 + 360;
+            let width = 0;
+            let left = 0;
+            for (let pass = 0; pass < 3; pass++) {
+                const space = W - navRight;
+                width = Math.min(space - 2 * DOCK_EDGE, DOCK_MAX);
+                left = Math.max(left0, Math.round(navRight + (space - width) / 2));
+                const next = 54 + Math.max(180, Math.min(360, left - 86));
+                if (next === navRight) break;
+                navRight = next;
+            }
             dock.style.left = `${left}px`;
             dock.style.right = `${Math.round(W - left - width)}px`;
         } else {
