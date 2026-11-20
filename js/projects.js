@@ -18,11 +18,11 @@ const projectsData = {
         {
             id: "xtra-space",
             title: "X-tra Space",
-            description: "A graduation project that re-layers Geumjeong Station's transfer hub so fast and slow flows cross, with an AI operating layer that runs light, sound and display by situation.",
+            description: "A graduation project that re-layers Geumjeong Station's transfer hub so fast and slow flows cross, under a roof generated in Grasshopper from those flows, with an AI operating layer that runs light, sound and display by situation.",
             thumbnail: "assets-web/XS-thumbnail.v2.webp",
-            tags: ["Transit Hub Remodel", "Geumjeong Station, Gunpo", "Stacked Circulation Layers", "Sanbon Stream Reopening", "AI-Operated Space", "Graduation Project"],
+            tags: ["Transit Hub Remodel", "Geumjeong Station, Gunpo", "Stacked Circulation Layers", "Parametric Roof (Grasshopper)", "AI-Operated Space", "Graduation Project"],
             kind: "Architecture",
-            thesis: "Geumjeong Station is a transfer hub people only pass through. X-tra Space stacks transfer, promenade, urban and auxiliary circulation layers so they cross, and the crossings become new public space. An AI operating layer then manages that space, switching light, sound and display modes from what it senses, and a working version ran live at the graduation show.",
+            thesis: "Geumjeong Station is a transfer hub people only pass through. X-tra Space stacks transfer, promenade, urban and auxiliary circulation layers so they cross, and the crossings become new public space. The roof is generated in Grasshopper from the flow lines, so it is redrawn whenever the plan changes. An AI operating layer then manages the space, switching light, sound and display modes from what it senses, and a working version ran live at the graduation show.",
             githubLink: "https://github.com/baechubaechu/Spatial-Environment-Agent",
             subtitle: "Transfer and promenade, fast and slow, moving and staying. Where they cross, an extra space appears.",
             category: "Architecture / Graduation Project",
@@ -43,24 +43,33 @@ const projectsData = {
                     title: "A station people only pass through",
                     lead: "Geumjeong Station is transfer infrastructure planned for speed, and it cuts the city and its green axis in two.",
                     blocks: [
-                        { kind: "heading", body: "The station as a pass-through device" },
-                        { kind: "text", body: "Modern stations are planned around fast movement, clear guidance and transfer efficiency. In the process the station becomes a pass-through device." },
-                        { kind: "text", body: "People rarely stop, notice the space, or stay. I chose a transfer hub because it is the most everyday and most functional public space there is." },
-                        { kind: "heading", body: "Why Geumjeong" },
-                        { kind: "text", body: "I compared bed-town stations served by GTX and three or more lines: Daegok, Bupyeong and Geumjeong." },
-                        { kind: "text", body: "Geumjeong, in Gunpo, a bed town that depends on Seoul and Anyang, had the most severance: the rail corridor splits the city, and Sanbon Stream, covered in 1995, is cut along with it. The project builds on the plan to reopen the stream." },
-                        { kind: "rules", items: [
-                            ["Location", "Geumjeong Station, Gunpo, Gyeonggi-do"],
-                            ["Lines", "Seoul Subway Lines 1 and 4, with GTX-C planned"],
-                            ["Compared with", "Daegok and Bupyeong, two other bed-town hubs with GTX and three or more lines"],
-                            ["Severance", "The rail corridor splits the city; Sanbon Stream, covered in 1995, is cut with it"],
-                            ["Given plan", "Reopening Sanbon Stream"]
-                        ] },
+                        { kind: "text", body: "Modern stations are planned for speed, and a station becomes a pass-through device: people rarely stop, notice the space or stay. At Geumjeong, the rail corridor also splits the city, and Sanbon Stream, covered in 1995, is cut along with it. The project builds on the plan to reopen the stream." },
                         { kind: "gallery", images: [
                             { url: "assets-web/XS-site.v2.webp", caption: "Site diagram. The rail corridor splits the city into two edges; street views from either side." },
                             { url: "assets-web/XS-site-axis.v2.webp", caption: "Green axis within 1 to 3 km. Hills in green, streams in blue; the red dashed line is the covered section of Sanbon Stream meeting the station." }
-                        ] },
-                        { kind: "image", url: "assets-web/XS-site-context.v2.webp", caption: "Site model with street photos, historical aerials, and a collage of the transfer environment around the station." }
+                        ] }
+                    ],
+                    satellites: [
+                        {
+                            id: "site-choice",
+                            key: "Site choice",
+                            label: "Why Geumjeong",
+                            teaser: "Three bed-town hubs compared, and the severance that decided it.",
+                            title: "Why Geumjeong",
+                            lead: "Of three bed-town hubs with GTX and three or more lines, Geumjeong had the most severance.",
+                            blocks: [
+                                { kind: "text", body: "I compared bed-town stations served by GTX and three or more lines: Daegok, Bupyeong and Geumjeong." },
+                                { kind: "text", body: "Geumjeong, in Gunpo, a bed town that depends on Seoul and Anyang, had the most severance: the rail corridor splits the city, and Sanbon Stream, covered in 1995, is cut along with it. The project builds on the plan to reopen the stream." },
+                                { kind: "rules", items: [
+                                    ["Location", "Geumjeong Station, Gunpo, Gyeonggi-do"],
+                                    ["Lines", "Seoul Subway Lines 1 and 4, with GTX-C planned"],
+                                    ["Compared with", "Daegok and Bupyeong, two other bed-town hubs with GTX and three or more lines"],
+                                    ["Severance", "The rail corridor splits the city; Sanbon Stream, covered in 1995, is cut with it"],
+                                    ["Given plan", "Reopening Sanbon Stream"]
+                                ] },
+                                { kind: "image", url: "assets-web/XS-site-context.v2.webp", caption: "Site model with street photos, historical aerials, and a collage of the transfer environment around the station." }
+                            ]
+                        }
                     ]
                 },
                 {
@@ -75,11 +84,6 @@ const projectsData = {
                             ["Low ceiling / narrow passage", "Compression: tension and focus"],
                             ["Height change / crossing flows", "Transition: curiosity and alertness"],
                             ["Void / diffuse light", "Expansion: relief and lingering"]
-                        ] },
-                        { kind: "list", items: [
-                            "Compression: tighten section and width before a crossing.",
-                            "Crossing: let the transfer and walking layers meet at a height change.",
-                            "Release: open into a void with diffuse light where people can stay."
                         ] }
                     ]
                 },
@@ -96,14 +100,26 @@ const projectsData = {
                             ["Auxiliary circulation layer", "Shapes the sense of space, varies the floor levels"],
                             ["X-tra Space", "Sensory transition, where the layers overlap"]
                         ] },
-                        { kind: "text", body: "The massing splits the station into two levels: 1F Transfer and 2F Extra. In the final second-floor plan, the transit layer and the walking layer run side by side, and X-tra Space sits at the points where they meet." },
                         { kind: "image", url: "assets-web/XS-plan.v2.webp", caption: "Second floor plan. 1 Transit layer, 2 Walking layer, 3 X-tra Space, 4 Exit, 5 Platform, 6 Concourse, 7 Cafe/Lounge, 8 Observatory deck, 9 Bicycle storage, 10 Station operations, 11 Restroom, 12 Service." },
-                        { kind: "image", url: "assets-web/XS-long-section.v2.webp", caption: "Long section along the tracks. Transfer below, the walking level and planted deck above, under one roof." },
-                        { kind: "gallery", images: [
-                            { url: "assets-web/XS-section1.v2.webp", caption: "Section 1: the X-tra Space above the tracks." },
-                            { url: "assets-web/XS-section2.v2.webp", caption: "Section 2: the station body, transfer below and the walking level above." }
-                        ] },
                         { kind: "text", body: "X-tra Space is where the layers overlap. Above the tracks, the transfer layer and the walking layer meet at a change in height: people moving fast to their trains pass people walking slowly toward the stream. The section tightens before each crossing and opens after it into a void with diffuse light under the roof, so a space built for passing through gains places to notice the surroundings and stay." }
+                    ],
+                    satellites: [
+                        {
+                            id: "sections",
+                            key: "Sections",
+                            label: "Levels and sections",
+                            teaser: "Two levels, the long section along the tracks and two cross sections.",
+                            title: "Levels and sections",
+                            lead: "Transfer below, the walking level and a planted deck above, under one roof.",
+                            blocks: [
+                                { kind: "text", body: "The massing splits the station into two levels: 1F Transfer and 2F Extra. In the final second-floor plan, the transit layer and the walking layer run side by side, and X-tra Space sits at the points where they meet." },
+                                { kind: "image", url: "assets-web/XS-long-section.v2.webp", caption: "Long section along the tracks. Transfer below, the walking level and planted deck above, under one roof." },
+                                { kind: "gallery", images: [
+                                    { url: "assets-web/XS-section1.v2.webp", caption: "Section 1: the X-tra Space above the tracks." },
+                                    { url: "assets-web/XS-section2.v2.webp", caption: "Section 2: the station body, transfer below and the walking level above." }
+                                ] }
+                            ]
+                        }
                     ]
                 },
                 {
@@ -114,23 +130,35 @@ const projectsData = {
                     blocks: [
                         { kind: "text", body: "The roof is not modelled by hand. Each of its four bands is defined only by two edge curves drawn along a flow in plan. A Grasshopper definition turns every pair into a vaulted band with ribs, so when a flow moves, its band is regenerated with it. Where the transfer and walking flows swap sides, the bands cross over each other, and the roof above shows the same crossing as the plan below." },
                         { kind: "image", url: "assets-web/XS-roof-plan.v2.webp", caption: "Roof plan generated by the definition: four bands crossing at both ends of the station." },
-                        { kind: "steps", items: [
-                            "Edges: two curves per band, drawn along the transfer or walking flow it covers.",
-                            "Stations: Tween Curve fills 50 curves between the edges, and lines across the band mark stations along its length.",
-                            "Arches: at each station the midpoint is lifted by the roof curvature (2,000 to 3,000 mm) and Arc 3Pt draws an arch through the two edge points and the lifted midpoint.",
-                            "Vault: the arches are lofted into one surface, offset for thickness and closed into a solid band.",
-                            "Panels: the band is split into panels and lifted 400 mm, leaving slits for light between them.",
-                            "Ribs: 50 mm rib profiles are placed every 1,000 mm on perpendicular frames and lofted under the vault."
-                        ] },
-                        { kind: "image", url: "assets-web/XS-roof-arches.v2.webp", caption: "View along the tracks: each band is an arch of its own curvature, and the bands pass over one another at the crossings." },
-                        { kind: "text", body: "The columns come from the same file. Twenty-one columns stand on a 12,000 mm grid; each rises 10,767 mm through the first floor, meets a 400 mm box girder, and continues as a 300 mm-radius pipe that branches into 160 mm pipes to pick up the roof." },
-                        { kind: "rules", items: [
-                            ["Roof curvature", "2,000 to 3,000 mm rise, set per band"],
-                            ["Ribs", "50 mm profile every 1,000 mm"],
-                            ["Panel lift", "400 mm"],
-                            ["Columns", "21 on a 12,000 mm grid, 10,767 mm to the box girder"],
-                            ["Branches", "2F pipe r 300 mm, 8,000 mm long, branching into r 160 mm pipes"]
-                        ] }
+                        { kind: "image", url: "assets-web/XS-roof-arches.v2.webp", caption: "View along the tracks: each band is an arch of its own curvature, and the bands pass over one another at the crossings." }
+                    ],
+                    satellites: [
+                        {
+                            id: "roof-definition",
+                            key: "Grasshopper definition",
+                            label: "Grasshopper definition",
+                            teaser: "Six steps from two edge curves to a ribbed vault, and the branching columns.",
+                            title: "Grasshopper definition",
+                            lead: "Two edge curves per band are all the definition needs; the rest is regenerated.",
+                            blocks: [
+                                { kind: "steps", items: [
+                                    "Edges: two curves per band, drawn along the transfer or walking flow it covers.",
+                                    "Stations: Tween Curve fills 50 curves between the edges, and lines across the band mark stations along its length.",
+                                    "Arches: at each station the midpoint is lifted by the roof curvature (2,000 to 3,000 mm) and Arc 3Pt draws an arch through the two edge points and the lifted midpoint.",
+                                    "Vault: the arches are lofted into one surface, offset for thickness and closed into a solid band.",
+                                    "Panels: the band is split into panels and lifted 400 mm, leaving slits for light between them.",
+                                    "Ribs: 50 mm rib profiles are placed every 1,000 mm on perpendicular frames and lofted under the vault."
+                                ] },
+                                { kind: "text", body: "The columns come from the same file. Twenty-one columns stand on a 12,000 mm grid; each rises 10,767 mm through the first floor, meets a 400 mm box girder, and continues as a 300 mm-radius pipe that branches into 160 mm pipes to pick up the roof." },
+                                { kind: "rules", items: [
+                                    ["Roof curvature", "2,000 to 3,000 mm rise, set per band"],
+                                    ["Ribs", "50 mm profile every 1,000 mm"],
+                                    ["Panel lift", "400 mm"],
+                                    ["Columns", "21 on a 12,000 mm grid, 10,767 mm to the box girder"],
+                                    ["Branches", "2F pipe r 300 mm, 8,000 mm long, branching into r 160 mm pipes"]
+                                ] }
+                            ]
+                        }
                     ]
                 },
                 {
@@ -147,7 +175,18 @@ const projectsData = {
                             ["Rain", "Sound and illuminance adjusted differently"],
                             ["Event", "X-tra Space activated more strongly"]
                         ] },
-                        { kind: "code", filename: "config/auto_strategy.yaml", language: "yaml", caption: "Rules are checked top to bottom and the first match wins. Thresholds were tuned for a small booth.", code: `version: 2
+                        { kind: "image", url: "assets-web/XS-monitor-states.v2.webp", caption: "Four of the ten pre-rendered states of the same interior, varying light level, colour temperature and occupancy. The monitor picks one from the live head count, sound level and current scene." }
+                    ],
+                    satellites: [
+                        {
+                            id: "scene-rules",
+                            key: "Scene rules",
+                            label: "Scene rules",
+                            teaser: "The rule file that picks a scene, and the four scenes' light settings.",
+                            title: "Scene rules",
+                            lead: "Rules are checked top to bottom; the first match picks the scene.",
+                            blocks: [
+                                { kind: "code", filename: "config/auto_strategy.yaml", language: "yaml", caption: "Rules are checked top to bottom and the first match wins. Thresholds were tuned for a small booth.", code: `version: 2
         rules:
           - id: auto_loud
             scene_id: dense_flux
@@ -166,13 +205,14 @@ const projectsData = {
             match_all: true
             scene_id: calm_gallery
             reason: auto:default` },
-                        { kind: "rules", items: [
-                            ["dense_flux", "5100 K, 450 ms transition. Crowded, energetic."],
-                            ["calm_gallery", "4200 K, 900 ms transition. Calm default."],
-                            ["critical_focus", "5900 K, 600 ms transition. Focus on the section and diagrams."],
-                            ["night_reflect", "2900 K, 1400 ms transition. Low, warm."]
-                        ] },
-                        { kind: "image", url: "assets-web/XS-monitor-states.v2.webp", caption: "Four of the ten pre-rendered states of the same interior, varying light level, colour temperature and occupancy. The monitor picks one from the live head count, sound level and current scene." }
+                                { kind: "rules", items: [
+                                    ["dense_flux", "5100 K, 450 ms transition. Crowded, energetic."],
+                                    ["calm_gallery", "4200 K, 900 ms transition. Calm default."],
+                                    ["critical_focus", "5900 K, 600 ms transition. Focus on the section and diagrams."],
+                                    ["night_reflect", "2900 K, 1400 ms transition. Low, warm."]
+                                ] }
+                            ]
+                        }
                     ]
                 },
                 {
@@ -182,23 +222,35 @@ const projectsData = {
                     lead: "For the show I built a small real-time version: sense, decide, act, in one room.",
                     blocks: [
                         { kind: "text", body: "I built the system by directing coding agents: I defined the architecture, the event contract, the rules and the scenes, and tested it on site. I did not hand-write the code. The key result is that one laptop server kept a tablet page, the exhibition monitor, a camera and ESP32 NeoPixel lights in sync in real time." },
-                        { kind: "steps", items: [
-                            "Sense: the camera counts faces locally with MediaPipe and the microphone gives a sound level in dB. Visitors can also touch pins on the tablet floor plan.",
-                            "Publish: inputs go onto a Next.js event bus as sensor.state or scene.execute events (60 s TTL; a service counts as stale after 20 s without a heartbeat).",
-                            "Decide: a FastAPI scene engine applies the first matching rule and picks a scene. A manual override returns to automatic mode after a timeout.",
-                            "Act: the ESP32 boards receive the scene's light settings (push: POST /light/scene, or pull: GET /device/light/next), and the monitor switches to the matching space image and diagram."
-                        ] },
-                        { kind: "techs", items: [
-                            { name: "Next.js", note: "Event bus API, tablet floor plan page, monitor page" },
-                            { name: "FastAPI", note: "Event polling, scene engine, light and display drivers" },
-                            { name: "ESP32 + NeoPixel", note: "Scene lighting in the models, push or pull mode" },
-                            { name: "MediaPipe", note: "Face detection in the browser, no cloud call" },
-                            { name: "YAML config", note: "auto_strategy.yaml rules, scenes.yaml per-scene light, sound and display" }
-                        ] },
                         { kind: "image", url: "assets-web/XS-ui.webp", caption: "Monitor page, re-run on a laptop after the show with no camera attached. Mode, crowd, noise and flow status on top; the live camera view on the left; the space response render on the right." },
                         { kind: "links", items: [
                             { label: "Source code on GitHub", url: "https://github.com/baechubaechu/Spatial-Environment-Agent" }
                         ] }
+                    ],
+                    satellites: [
+                        {
+                            id: "live-stack",
+                            key: "System stack",
+                            label: "System stack",
+                            teaser: "Sense, publish, decide, act: the four steps and the parts that run them.",
+                            title: "System stack",
+                            lead: "One laptop server kept a tablet, a monitor, a camera and the lights in sync.",
+                            blocks: [
+                                { kind: "steps", items: [
+                                    "Sense: the camera counts faces locally with MediaPipe and the microphone gives a sound level in dB. Visitors can also touch pins on the tablet floor plan.",
+                                    "Publish: inputs go onto a Next.js event bus as sensor.state or scene.execute events (60 s TTL; a service counts as stale after 20 s without a heartbeat).",
+                                    "Decide: a FastAPI scene engine applies the first matching rule and picks a scene. A manual override returns to automatic mode after a timeout.",
+                                    "Act: the ESP32 boards receive the scene's light settings (push: POST /light/scene, or pull: GET /device/light/next), and the monitor switches to the matching space image and diagram."
+                                ] },
+                                { kind: "techs", items: [
+                                    { name: "Next.js", note: "Event bus API, tablet floor plan page, monitor page" },
+                                    { name: "FastAPI", note: "Event polling, scene engine, light and display drivers" },
+                                    { name: "ESP32 + NeoPixel", note: "Scene lighting in the models, push or pull mode" },
+                                    { name: "MediaPipe", note: "Face detection in the browser, no cloud call" },
+                                    { name: "YAML config", note: "auto_strategy.yaml rules, scenes.yaml per-scene light, sound and display" }
+                                ] }
+                            ]
+                        }
                     ]
                 },
                 {
