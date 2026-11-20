@@ -29,7 +29,7 @@ const TOC_OFFSCREEN = 28;
 const HILITE = 1.5;
 const STORY_OPEN = 0.56;
 const STORY_CLOSE = 0.4;
-const DOCK_MAX = 1280;
+const DOCK_MAX = 920; // the 720px text column plus at most 100px each side
 const DOCK_EDGE = 28;
 const SUB_GAP = 22; // the keyword line under a chapter row (px)
 
