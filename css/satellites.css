@@ -322,6 +322,79 @@ body.is-reading-sun .sat-crumb {
     .sat-moon:hover, .sat-moon:focus-visible { transform: none; }
 }
 
+/* ---------------------------------------------------------------- photo slider (system.js "slides") */
+.sys-dock__slides {
+    position: relative;
+    max-width: var(--measure);
+    margin-top: 24px;
+}
+
+.sys-dock__slides-track {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    outline: none;
+}
+
+.sys-dock__slides-track::-webkit-scrollbar {
+    display: none;
+}
+
+.sys-dock__slide {
+    flex: 0 0 100%;
+    margin: 0;
+    scroll-snap-align: start;
+}
+
+.sys-dock__slide img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    border-radius: 6px;
+    cursor: zoom-in;
+}
+
+.sys-dock__slide figcaption {
+    margin-top: 10px;
+    font-family: var(--sys-font-serif);
+    font-size: 15px;
+    color: var(--sys-ink-2);
+}
+
+.sys-dock__slide figcaption span {
+    margin-right: 10px;
+    font-family: var(--sys-font-mono);
+    font-size: 12px;
+    color: var(--sys-ink-3);
+}
+
+.sys-dock__slides-btn {
+    position: absolute;
+    top: calc((100% - 34px) / 2);
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 50%;
+    background: rgba(10, 10, 10, 0.6);
+    color: var(--sys-ink);
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.sys-dock__slides-btn[data-slide="-1"] { left: 12px; }
+.sys-dock__slides-btn[data-slide="1"] { right: 12px; }
+
+.sys-dock__slides-btn:hover,
+.sys-dock__slides-btn:focus-visible {
+    background: rgba(10, 10, 10, 0.85);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
 /* ---------------------------------------------------------------- satellite panel */
 .sat-panel {
     --measure: 720px;

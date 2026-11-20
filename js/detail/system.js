@@ -460,6 +460,16 @@ function blockHTML(b) {
             return `<div class="sys-dock__gallery">${rows.map((row) => `<div class="sys-dock__row">${row.map((im) =>
                 `<img src="${esc(im.url || im)}" alt="${esc(im.caption || "")}" loading="lazy">`).join("")}</div>`).join("")}</div>`;
         }
+        case "slides": {
+            // A row of photos the reader swipes or steps through, one in view at a time.
+            const n = b.images.length;
+            return `<div class="sys-dock__slides" data-slides>
+                <div class="sys-dock__slides-track" tabindex="0" aria-label="${esc(b.label || "Photos")}">${b.images.map((im, i) =>
+                    `<figure class="sys-dock__slide"><img src="${esc(im.url)}" alt="${esc(im.caption || "")}" loading="lazy"><figcaption><span>${i + 1} / ${n}</span>${esc(im.caption || "")}</figcaption></figure>`).join("")}</div>
+                <button type="button" class="sys-dock__slides-btn" data-slide="-1" aria-label="Previous photo">‹</button>
+                <button type="button" class="sys-dock__slides-btn" data-slide="1" aria-label="Next photo">›</button>
+            </div>`;
+        }
         case "links":
             return `<p class="sys-dock__links">${b.items.map((l) =>
                 `<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)} ↗</a>`).join("")}</p>`;
@@ -1244,6 +1254,13 @@ function init(project) {
         lightbox.hidden = true;
         lbImg.removeAttribute("src");
     }
+    // Slider buttons step one photo at a time.
+    dock.addEventListener("click", (e) => {
+        const btn = e.target.closest?.("[data-slide]");
+        if (!btn) return;
+        const track = btn.closest("[data-slides]").querySelector(".sys-dock__slides-track");
+        track.scrollBy({ left: Number(btn.dataset.slide) * track.clientWidth, behavior: reduce ? "auto" : "smooth" });
+    });
     dock.addEventListener("click", (e) => {
         const img = e.target.closest?.("img");
         if (!img || !dock.contains(img)) return;
