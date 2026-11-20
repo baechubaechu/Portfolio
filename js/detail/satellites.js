@@ -195,6 +195,14 @@ export function mountSatellites(api) {
     const crumbEl = document.createElement("p");
     crumbEl.className = "sat-orrery__crumb";
     box.append(canvas);
+    // Back to the free system view, inside the navigator at its foot (the old link above the
+    // box is hidden on wide screens, so the box can start on the reading box's top edge).
+    const sysBtn = document.createElement("button");
+    sysBtn.type = "button";
+    sysBtn.className = "sat-orrery__system";
+    sysBtn.textContent = "← System";
+    sysBtn.addEventListener("click", () => { if (openId) hide(); document.querySelector(".sys__back")?.click(); });
+    box.append(sysBtn);
     document.body.append(box);
     const crumbNav = document.createElement("nav");
     crumbNav.className = "sat-crumb";

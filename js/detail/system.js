@@ -10,7 +10,7 @@ import { portfolio } from "../constellation/data/portfolio.js?v=3.17";
 import {
     svgEl, htmlEl, mulberry32, hashString, prefersReducedMotion, esc, clamp,
 } from "../constellation/lib/utils.js?v=2.0";
-import { mountSatellites, moonsHTML } from "./satellites.js?v=1.3";
+import { mountSatellites, moonsHTML } from "./satellites.js?v=1.4";
 
 const ELEV = 0.56;
 const CAM_DIST = 3.12;
@@ -957,7 +957,7 @@ function init(project) {
     function tocGeom() {
         const split = W >= 720;
         const n = Math.max(1, planetEls.length);
-        const top = split ? 400 : 100; // the orrery and its crumb sit above the TOC (satellites.js)
+        const top = split ? 376 : 100; // the orrery and its crumb sit above the TOC (satellites.js)
         const bottom = split ? H - 48 : H * 0.56 - 12;
         const gap = clamp((bottom - top) / n, 12, 44);
         return { x: split ? 64 : 40, y: top, floor: split ? H : H * 0.56, gap, n };

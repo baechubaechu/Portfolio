@@ -2,11 +2,12 @@
 
 /* ---------------------------------------------------------------- orrery */
 /* One left edge for the whole navigator: the chapter list's sun sits at x 64 with a 10px
-   radius, so the orrery, the line under it and the back link (.sys__back) start at 54px. */
+   radius, so the orrery and the line under it start at 54px. Its top is the reading box's
+   (88px); the way back to the system sits inside it, at its foot. */
 .sat-orrery {
     position: fixed;
     left: 54px;
-    top: 112px;
+    top: 88px;
     z-index: 6;
     width: 300px;
     height: 210px;
@@ -37,7 +38,7 @@ body.is-reading-sun .sat-crumb {
 .sat-crumb {
     position: fixed;
     left: 54px;
-    top: 330px;
+    top: 306px;
     z-index: 6;
     width: 300px;
     opacity: 0;
@@ -45,8 +46,34 @@ body.is-reading-sun .sat-crumb {
     transition: opacity 400ms ease, visibility 0s 400ms;
 }
 
-.sys__back {
-    left: 54px;
+.sat-orrery__system {
+    position: absolute;
+    left: 12px;
+    bottom: 10px;
+    z-index: 1;
+    padding: 2px 0;
+    border: 0;
+    background: none;
+    font-family: var(--sys-font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--sys-ink-3);
+    cursor: pointer;
+    pointer-events: auto;
+    transition: color 180ms ease;
+}
+
+.sat-orrery__system:hover,
+.sat-orrery__system:focus-visible {
+    color: var(--sys-ink);
+}
+
+/* On wide screens the button inside the orrery replaces the back link above it. */
+@media (min-width: 720px) {
+    .sys__back {
+        display: none;
+    }
 }
 
 .sat-orrery__crumb {

@@ -1076,7 +1076,7 @@ const projectsData = {
             category: "Research / Conference Paper",
             role: "Researcher (lead author): all code, audits and writing",
             timeline: "2026.10 - 2026.11",
-            cover: "assets-web/BMA-results.svg",
+            cover: "assets-web/BMA-results.v2.svg",
             chapters: [
                 {
                     id: "question",
@@ -1097,12 +1097,24 @@ const projectsData = {
                             ["2 · Ground truth", "Does the answer key itself do what the instruction asks?"],
                             ["3 · Target ID", "Does the object the instruction and the scorer refer to exist in the input file?"],
                             ["4 · Independent check", "Open the result files directly. Do the scores agree with what is in them, and do wrong answers lose points?"]
-                        ] },
-                        { kind: "steps", items: [
-                            "BIM-Edit: read the public scoring logs of seven models (2,267 records) and judge every deletion directly from the result IFC files of the four models that published them.",
-                            "BIBIMBAP: run the original scorer on reference answers built with the IfcOpenShell API, including equally valid alternative modelling choices.",
-                            "Score 401 deliberately wrong answers across the 45 editing tasks, such as a column floating 10 m above the floor."
                         ] }
+                    ],
+                    satellites: [
+                        {
+                            id: "audit-method",
+                            key: "Method",
+                            label: "How each benchmark was audited",
+                            teaser: "Scoring logs, result files, reference answers and 401 deliberately wrong edits.",
+                            title: "How each benchmark was audited",
+                            lead: "BIM-Edit was checked through its public logs and result files; BIBIMBAP by running its own scorer.",
+                            blocks: [
+                                { kind: "steps", items: [
+                                    "BIM-Edit: read the public scoring logs of seven models (2,267 records) and judge every deletion directly from the result IFC files of the four models that published them.",
+                                    "BIBIMBAP: run the original scorer on reference answers built with the IfcOpenShell API, including equally valid alternative modelling choices.",
+                                    "Score 401 deliberately wrong answers across the 45 editing tasks, such as a column floating 10 m above the floor."
+                                ] }
+                            ]
+                        }
                     ]
                 },
                 {
@@ -1110,14 +1122,26 @@ const projectsData = {
                     label: "Results",
                     lead: "A correct deletion could not pass. Re-scored by the benchmark's own definition, the fully solved share rises from 0.77% to 10.03%.",
                     blocks: [
-                        { kind: "image", url: "assets-web/BMA-results.svg", caption: "BIM-Edit: fully solved tasks per model, as published and re-scored. Across seven models, 38 records (1.7%) become 257 (11.7%), an upper bound; on the four models with result files the file-checked figure is 5 to 65 of 648 (0.77% to 10.03%)." },
-                        { kind: "rules", items: [
-                            ["BIM-Edit · deletions", "Of 532 records that did delete the target, none scored above zero on meaning, while 40 of 46 records that deleted nothing scored one."],
-                            ["BIM-Edit · answer key", "In 3 tasks the answer key still contains the object it should delete; in 7 the scorer found no target object for any model."],
-                            ["BIBIMBAP · correct answers", "In 23 of 100 tasks a correct answer loses points or the answer key is wrong. A clean deletion scores full marks in 0 of 15 tasks."],
-                            ["BIBIMBAP · wrong answers", "In 36 of 45 editing tasks a clearly wrong answer scores 0.9 or more; in 34 it scores full marks."]
-                        ] },
+                        { kind: "image", url: "assets-web/BMA-results.v2.svg", caption: "BIM-Edit: fully solved tasks per model, as published and re-scored. Across seven models, 38 records (1.7%) become 257 (11.7%), an upper bound; on the four models with result files the file-checked figure is 5 to 65 of 648 (0.77% to 10.03%)." },
                         { kind: "text", body: "The average score used for the public ranking barely reorders the models, but every model gains 6 to 10 points, and five of seven move above 50%. The error changes less who is ahead than how capable AI appears." }
+                    ],
+                    satellites: [
+                        {
+                            id: "audit-findings",
+                            key: "Findings",
+                            label: "Findings by benchmark",
+                            teaser: "Deletions, answer keys, correct answers losing points and wrong answers passing.",
+                            title: "Findings by benchmark",
+                            lead: "In both benchmarks a correct edit could lose points, and a clearly wrong one could pass.",
+                            blocks: [
+                                { kind: "rules", items: [
+                                    ["BIM-Edit · deletions", "Of 532 records that did delete the target, none scored above zero on meaning, while 40 of 46 records that deleted nothing scored one."],
+                                    ["BIM-Edit · answer key", "In 3 tasks the answer key still contains the object it should delete; in 7 the scorer found no target object for any model."],
+                                    ["BIBIMBAP · correct answers", "In 23 of 100 tasks a correct answer loses points or the answer key is wrong. A clean deletion scores full marks in 0 of 15 tasks."],
+                                    ["BIBIMBAP · wrong answers", "In 36 of 45 editing tasks a clearly wrong answer scores 0.9 or more; in 34 it scores full marks."]
+                                ] }
+                            ]
+                        }
                     ]
                 },
                 {
@@ -1125,6 +1149,7 @@ const projectsData = {
                     label: "Limits",
                     lead: "What the audit does not claim.",
                     blocks: [
+                        { kind: "text", strong: true, body: "For practice: a firm weighing an AI tool for its BIM work faces the same question. Before trusting the tool's reported accuracy, its test should pass these four checks." },
                         { kind: "list", items: [
                             "The re-scored figures are an upper bound: the full check for side effects ran only where result files were public.",
                             "Model answer files for BIBIMBAP are not public, so the audit claims only how many tasks mis-score a correct answer, not how the ranking would change.",
