@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>Audit chart | Jihun Park</title>
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>if (new URLSearchParams(location.search).has("embed")) document.documentElement.classList.add("is-embed");</script>
+    <style>
+        /*
+            Audit chart mock for BIM Benchmark Audit: the results chart, with a switch between
+            the score as published and the score once deletions are judged by the benchmark's
+            own definition. The counts are the ones drawn in assets-web/BMA-results.v2.svg.
+        */
+        :root {
+            color-scheme: dark;
+            --bg: #0a0a0a;
+            --plate: #111111;
+            --line: #e5e5e5;
+            --ink: #f5f5f5;
+            --ink-2: #b5b5b5;
+            --ink-3: #808080;
+            --hair: rgba(255, 255, 255, 0.13);
+            --pub: #8f8c86;
+            --re: #ffc47a;
+            --sans: 'Schibsted Grotesk', 'Inter', -apple-system, "Segoe UI", sans-serif;
+            --serif: 'Newsreader', Georgia, serif;
+            --mono: 'DM Mono', Consolas, Menlo, monospace;
+            --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+        }
+
+        * { box-sizing: border-box; }
+        html { background: var(--bg); }
+        body { margin: 0; color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+
+        .wrap { max-width: 1000px; margin: 0 auto; padding: 56px 24px 96px; }
+
+        .kicker {
+            margin: 0;
+            font-family: var(--mono);
+            font-size: 11.5px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--ink-3);
+        }
+
+        h1 { margin: 14px 0 0; font-size: 38px; font-weight: 500; line-height: 1.1; letter-spacing: -0.015em; }
+
+        .lead {
+            margin: 14px 0 0;
+            max-width: 34em;
+            font-family: var(--serif);
+            font-size: 21px;
+            line-height: 1.42;
+            color: var(--ink-2);
+        }
+
+        .fig { margin: 36px 0 0; }
+
+        .plate { background: var(--plate); border: 1px solid var(--hair); padding: 26px 28px 24px; }
+
+        .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        /* the switch: which scorer the chart is read by */
+        .switch {
+            display: inline-flex;
+            border: 1px solid var(--hair);
+            border-radius: 999px;
+            padding: 3px;
+        }
+
+        .switch button {
+            padding: 8px 16px;
+            font-family: var(--mono);
+            font-size: 12px;
+            color: var(--ink-2);
+            background: none;
+            border: 0;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: background 0.2s var(--ease), color 0.2s var(--ease);
+        }
+
+        .switch button:hover { color: var(--ink); }
+        .switch button[aria-pressed="true"] { background: var(--line); color: #0a0a0a; }
+        .switch button:focus-visible { outline: 1px solid var(--line); outline-offset: 2px; }
+
+        .big { text-align: right; }
+
+        .big__n {
+            font-size: 44px;
+            font-weight: 500;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -0.02em;
+        }
+
+        .big__what {
+            margin-top: 6px;
+            font-family: var(--mono);
+            font-size: 11.5px;
+            color: var(--ink-3);
+        }
+
+        .rows { list-style: none; margin: 26px 0 0; padding: 0; }
+
+        .row {
+            display: grid;
+            grid-template-columns: 150px minmax(0, 1fr) 44px;
+            gap: 14px;
+            align-items: center;
+            padding: 9px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .row__name { font-family: var(--mono); font-size: 12.5px; color: var(--ink-2); }
+
+        .row__track { position: relative; height: 22px; }
+
+        .row__bar {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            background: var(--pub);
+            transition: width 0.7s var(--ease), background 0.5s var(--ease);
+        }
+
+        /* where the published score stood, kept as a mark once the chart is re-scored */
+        .row__was {
+            position: absolute;
+            top: -3px;
+            bottom: -3px;
+            width: 1px;
+            background: var(--line);
+            opacity: 0;
+            transition: opacity 0.4s var(--ease);
+        }
+
+        .is-re .row__bar { background: var(--re); }
+        .is-re .row__was { opacity: 0.75; }
+
+        .row__n { font-size: 16px; font-variant-numeric: tabular-nums; text-align: right; }
+
+        .axis {
+            display: grid;
+            grid-template-columns: 150px minmax(0, 1fr) 44px;
+            gap: 14px;
+            margin-top: 6px;
+            font-family: var(--mono);
+            font-size: 10.5px;
+            color: var(--ink-3);
+        }
+
+        .axis__ticks { position: relative; height: 16px; }
+        .axis__ticks span { position: absolute; transform: translateX(-50%); }
+        .axis__ticks span:first-child { transform: none; }
+
+        .why {
+            margin: 22px 0 0;
+            min-height: 3em;
+            max-width: 44em;
+            font-size: 15px;
+            line-height: 1.5;
+            color: var(--ink-2);
+        }
+
+        figcaption {
+            margin: 18px 0 0;
+            max-width: 46em;
+            font-size: 13.5px;
+            line-height: 1.5;
+            color: var(--ink-3);
+        }
+
+        .is-embed, .is-embed body { background: transparent; }
+        .is-embed .kicker, .is-embed h1, .is-embed .lead { display: none; }
+        .is-embed .wrap { max-width: none; padding: 0; }
+        .is-embed .fig { margin: 0; }
+        .is-embed body { overflow: hidden; }
+
+        @media (max-width: 640px) {
+            .row, .axis { grid-template-columns: 104px minmax(0, 1fr) 36px; gap: 10px; }
+            .big { text-align: left; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .row__bar, .row__was { transition: none; }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="wrap">
+        <p class="kicker">BIM Benchmark Audit · Results</p>
+        <h1>The same answers, scored twice</h1>
+        <p class="lead">Switch the scorer. The models' answers stay as they were; only the way a deletion is judged changes.</p>
+
+        <figure class="fig" data-fig>
+            <div class="plate">
+                <div class="top">
+                    <div class="switch" role="group" aria-label="Which score to show">
+                        <button type="button" data-mode="pub" aria-pressed="true">As published</button>
+                        <button type="button" data-mode="re" aria-pressed="false">Re-scored</button>
+                    </div>
+                    <div class="big" aria-live="polite">
+                        <div class="big__n" data-big></div>
+                        <div class="big__what" data-what></div>
+                    </div>
+                </div>
+
+                <ol class="rows" data-rows></ol>
+                <div class="axis"><span></span><div class="axis__ticks" data-ticks></div><span></span></div>
+
+                <p class="why" data-why></p>
+            </div>
+            <figcaption>BIM-Edit, fully solved tasks per model. The re-scored count is an upper bound: the full check for side effects ran only on the four models whose result files are public, where the file-checked figure is 5 to 65 of 648 tasks (0.77% to 10.03%).</figcaption>
+        </figure>
+    </main>
+
+    <script>
+        (function () {
+            "use strict";
+
+            // Counts as drawn in assets-web/BMA-results.v2.svg: [model, published, re-scored].
+            const MODELS = [
+                ["claude-sonnet", 6, 59],
+                ["qwen3.6-plus", 11, 50],
+                ["deepseek-v3.2", 7, 47],
+                ["gemma4-31B", 3, 32],
+                ["gpt-5.4", 4, 28],
+                ["gemini-flash-3.0", 5, 22],
+                ["gpt-5.4-mini", 2, 19]
+            ];
+            const RECORDS = 2197;
+            const MAX = 60;
+            const TEXT = {
+                pub: "The benchmark's own scorer. Of 532 records that did delete the target, none scored above zero on meaning, while 40 of 46 records that deleted nothing scored one.",
+                re: "Deletions judged by the benchmark's own definition of a correct deletion. The models did not change; the count of fully solved tasks did."
+            };
+
+            const fig = document.querySelector("[data-fig]");
+            const rows = document.querySelector("[data-rows]");
+            const big = document.querySelector("[data-big]");
+            const what = document.querySelector("[data-what]");
+            const why = document.querySelector("[data-why]");
+            const ticks = document.querySelector("[data-ticks]");
+            const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+            for (let t = 0; t <= MAX; t += 10) {
+                const s = document.createElement("span");
+                s.textContent = String(t);
+                s.style.left = (t / MAX) * 100 + "%";
+                ticks.appendChild(s);
+            }
+
+            const parts = MODELS.map(([name, pub, re]) => {
+                const li = document.createElement("li");
+                li.className = "row";
+                li.innerHTML = `<span class="row__name"></span><div class="row__track"><div class="row__bar"></div><div class="row__was"></div></div><span class="row__n"></span>`;
+                li.querySelector(".row__name").textContent = name;
+                li.querySelector(".row__was").style.left = (pub / MAX) * 100 + "%";
+                rows.appendChild(li);
+                return { pub, re, bar: li.querySelector(".row__bar"), n: li.querySelector(".row__n"), shown: pub };
+            });
+
+            const sum = (k) => MODELS.reduce((a, m) => a + m[k], 0);
+            let shownTotal = sum(1);
+            let raf = 0;
+
+            function set(mode) {
+                const re = mode === "re";
+                fig.classList.toggle("is-re", re);
+                document.querySelectorAll("[data-mode]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.mode === mode)));
+                why.textContent = TEXT[mode];
+                parts.forEach((p) => { p.bar.style.width = ((re ? p.re : p.pub) / MAX) * 100 + "%"; });
+
+                // the numbers count up or down with the bars
+                const from = parts.map((p) => p.shown), fromTotal = shownTotal;
+                const to = parts.map((p) => (re ? p.re : p.pub)), toTotal = sum(re ? 2 : 1);
+                const t0 = performance.now(), dur = reduce ? 0 : 700;
+                cancelAnimationFrame(raf);
+                const step = (now) => {
+                    const k = dur ? Math.min(1, (now - t0) / dur) : 1;
+                    const e = 1 - Math.pow(1 - k, 3);
+                    parts.forEach((p, i) => { p.shown = from[i] + (to[i] - from[i]) * e; p.n.textContent = String(Math.round(p.shown)); });
+                    shownTotal = fromTotal + (toTotal - fromTotal) * e;
+                    big.textContent = ((shownTotal / RECORDS) * 100).toFixed(1) + "%";
+                    what.textContent = Math.round(shownTotal) + " of " + RECORDS.toLocaleString("en-US") + " records fully solved";
+                    if (k < 1) raf = requestAnimationFrame(step);
+                };
+                raf = requestAnimationFrame(step);
+                window.__audit = { mode, total: toTotal, share: ((toTotal / RECORDS) * 100).toFixed(1) };
+            }
+
+            document.querySelectorAll("[data-mode]").forEach((b) => b.addEventListener("click", () => set(b.dataset.mode)));
+            set("pub");
+        })();
+    </script>
+</body>
+
+</html>

@@ -564,6 +564,18 @@ body.is-system:not(.is-arriving) .sys__dust {
     color: var(--sys-ink);
 }
 
+/* A drawing the reader can move (live/*.html in a frame). Its height is set by its content. */
+.sys-dock__live {
+    margin: 8px 0 32px;
+}
+
+.sys-dock__live iframe {
+    display: block;
+    width: 100%;
+    height: 640px;
+    border: 0;
+}
+
 .sys-dock__figure {
     margin: 0 0 24px;
 }

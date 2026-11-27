@@ -423,6 +423,18 @@ function planetDossierHTML(project, planet, attr, idx) {
     `;
 }
 
+// A live drawing sets its own height: the frame follows its content, and follows it again when
+// the content reflows. load does not bubble, so it is caught on the way down.
+document.addEventListener("load", (e) => {
+    const frame = e.target;
+    if (!(frame instanceof HTMLIFrameElement) || !frame.hasAttribute("data-live")) return;
+    const doc = frame.contentDocument;
+    if (!doc) return;
+    const fit = () => { frame.style.height = Math.ceil(doc.body.getBoundingClientRect().height) + "px"; };
+    fit();
+    new ResizeObserver(fit).observe(doc.body);
+}, true);
+
 function blockHTML(b) {
     switch (b.kind) {
         case "heading":
@@ -447,6 +459,10 @@ function blockHTML(b) {
             </figure>`;
         case "image":
             return `<figure class="sys-dock__figure"><img src="${esc(b.url)}" alt="${esc(b.caption || "")}" loading="lazy"${b.width ? ` style="width:${esc(b.width)}"` : ""}>${b.caption ? `<figcaption>${esc(b.caption)}</figcaption>` : ""}</figure>`;
+        case "live":
+            // A drawing the reader can move, kept as its own small page under live/ and shown in a frame.
+            // The frame is sized to its content once it has loaded (see the load listener below).
+            return `<figure class="sys-dock__live"><iframe data-live src="${esc(b.src)}?embed" title="${esc(b.title || "")}" loading="lazy"></iframe></figure>`;
         case "video": {
             const id = String(b.url).match(/(?:watch\?v=|youtu\.be\/|embed\/)([\w-]{6,})/)?.[1];
             const src = id ? `https://www.youtube.com/embed/${id}?rel=0&modestbranding=1` : b.url;

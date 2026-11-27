@@ -130,6 +130,7 @@ const projectsData = {
                     lead: "Each band of the roof is generated in Grasshopper from the flow it covers, so the roof changes with the plan.",
                     blocks: [
                         { kind: "text", body: "The roof is not modelled by hand. Each of its four bands is defined only by two edge curves drawn along a flow in plan. A Grasshopper definition turns every pair into a vaulted band with ribs, so when a flow moves, its band is regenerated with it. Where the transfer and walking flows swap sides, the bands cross over each other, and the roof above shows the same crossing as the plan below." },
+                        { kind: "live", src: "live/roof.html", title: "The roof's four bands, redrawn from their flows. Drag a flow in plan to redraw its band." },
                         { kind: "image", url: "assets-web/XS-roof-persp.v2.webp", caption: "The roof as the definition draws it: four bands crossing at both ends of the station, on their columns." },
                         { kind: "image", url: "assets-web/XS-model-1.webp", caption: "Section model: a vault band on a branching column, above the walking level." }
                     ],
@@ -178,6 +179,7 @@ const projectsData = {
                             ["Event", "X-tra Space activated more strongly"]
                         ] },
                         { kind: "image", url: "assets-web/XS-monitor-states.v2.webp", caption: "Four of the ten pre-rendered states of the same interior, varying light level, colour temperature and occupancy. The monitor picks one from the live head count, sound level and current scene." },
+                        { kind: "live", src: "live/scene.html", title: "The rule file from the show, run in the browser. Change what is sensed to see which rule picks the scene." },
                         { kind: "heading", body: "A working version at the show" },
                         { kind: "text", body: "I built the system by directing coding agents: I defined the architecture, the event contract, the rules and the scenes, and tested it on site. I did not hand-write the code. The key result is that one laptop server kept a tablet page, the exhibition monitor, a camera and ESP32 NeoPixel lights in sync in real time." },
                         { kind: "image", url: "assets-web/XS-ui.webp", caption: "Monitor page, re-run on a laptop after the show with no camera attached. Mode, crowd, noise and flow status on top; the live camera view on the left; the space response render on the right." },
@@ -1107,7 +1109,7 @@ const projectsData = {
                     label: "Results",
                     lead: "A correct deletion could not pass. Re-scored by the benchmark's own definition, the fully solved share rises from 0.77% to 10.03%.",
                     blocks: [
-                        { kind: "image", url: "assets-web/BMA-results.v2.svg", caption: "BIM-Edit: fully solved tasks per model, as published and re-scored. Across seven models, 38 records (1.7%) become 257 (11.7%), an upper bound; on the four models with result files the file-checked figure is 5 to 65 of 648 (0.77% to 10.03%)." },
+                        { kind: "live", src: "live/audit.html", title: "BIM-Edit, fully solved tasks per model. Switch between the score as published and re-scored." },
                         { kind: "text", body: "The average score used for the public ranking barely reorders the models, but every model gains 6 to 10 points, and five of seven move above 50%. The error changes less who is ahead than how capable AI appears." }
                     ],
                     satellites: [

@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>Roof | Jihun Park</title>
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>if (new URLSearchParams(location.search).has("embed")) document.documentElement.classList.add("is-embed");</script>
+    <style>
+        /*
+            Roof mock for X-tra Space: the roof's four bands, redrawn in the browser from
+            the steps of the Grasshopper definition (js/projects.js, "roof-definition").
+            The reader picks a band and drags its flow in plan; the band's edges, arches
+            and ribs follow, and where two flows cross, their bands cross above.
+
+            The band width, the lanes, which band passes over the others and the flows'
+            first shapes are redrawn by eye from the roof plan, not exported from the
+            model. See MODEL below.
+        */
+        :root {
+            /* dark, like the page that embeds it: a frame whose scheme differs from its page is painted white */
+            color-scheme: dark;
+            --bg: #0a0a0a;
+            --plate: #111111;
+            --line: #e5e5e5;
+            --ink: #f5f5f5;
+            --ink-2: #b5b5b5;
+            --ink-3: #808080;
+            --hair: rgba(255, 255, 255, 0.13);
+            --sans: 'Schibsted Grotesk', 'Inter', -apple-system, "Segoe UI", sans-serif;
+            --serif: 'Newsreader', Georgia, serif;
+            --mono: 'DM Mono', Consolas, Menlo, monospace;
+        }
+
+        * { box-sizing: border-box; }
+        html { background: var(--bg); }
+
+        body {
+            margin: 0;
+            color: var(--ink);
+            font-family: var(--sans);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .wrap {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 56px 24px 96px;
+        }
+
+        .kicker {
+            margin: 0;
+            font-family: var(--mono);
+            font-size: 11.5px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--ink-3);
+        }
+
+        h1 {
+            margin: 14px 0 0;
+            font-size: 38px;
+            font-weight: 500;
+            line-height: 1.1;
+            letter-spacing: -0.015em;
+        }
+
+        .lead {
+            margin: 14px 0 0;
+            max-width: 34em;
+            font-family: var(--serif);
+            font-size: 21px;
+            line-height: 1.42;
+            color: var(--ink-2);
+        }
+
+        .fig { margin: 36px 0 0; }
+
+        .plate {
+            position: relative;
+            background: var(--plate);
+            border: 1px solid var(--hair);
+        }
+
+        .plate svg { display: block; width: 100%; height: auto; touch-action: none; }
+
+        .plate__tag {
+            position: absolute;
+            left: 16px;
+            font-family: var(--mono);
+            font-size: 10.5px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--ink-3);
+            pointer-events: none;
+        }
+
+        .plate__tag--roof { top: 14px; }
+        .plate__tag--plan { top: calc(51.2% + 12px); }
+
+        .rule { stroke: var(--hair); stroke-width: 1; }
+
+        /* the roof above */
+        .arch { fill: none; stroke: var(--line); stroke-width: 0.6; opacity: 0.6; }
+        .long { fill: none; stroke: var(--line); stroke-width: 0.8; opacity: 0.8; }
+        .edge { fill: none; stroke: var(--line); stroke-width: 1.4; }
+        .col { fill: none; stroke: var(--line); stroke-width: 0.8; opacity: 0.45; }
+        .skin { fill: var(--plate); stroke: var(--plate); stroke-width: 0.6; }
+        .band .arch, .band .long, .band .edge, .band .col { stroke-opacity: 0.55; }
+        .band.is-picked .arch, .band.is-picked .long, .band.is-picked .edge, .band.is-picked .col { stroke-opacity: 1; }
+
+        /* the plan below */
+        .p-edge { fill: none; stroke: var(--line); stroke-width: 1; }
+        .p-rib { fill: none; stroke: var(--line); stroke-width: 0.5; opacity: 0.3; }
+        .p-flow { fill: none; stroke: var(--line); stroke-width: 1.3; stroke-dasharray: 7 5; }
+        .p-hit { fill: none; stroke: transparent; stroke-width: 22; cursor: pointer; }
+        .pband { opacity: 0.4; transition: opacity 0.15s; }
+        .pband:hover { opacity: 0.7; }
+        .pband.is-picked { opacity: 1; }
+        .pband.is-picked .p-flow { stroke-width: 1.8; }
+
+        .handle { cursor: grab; }
+        .handle:active { cursor: grabbing; }
+        .handle__hit { fill: transparent; }
+        .handle__dot { fill: var(--plate); stroke: var(--line); stroke-width: 1.5; transition: fill 0.15s; }
+        .handle__ring { fill: none; stroke: var(--line); stroke-width: 1; opacity: 0; transition: opacity 0.15s; }
+        .handle:hover .handle__dot,
+        .handle.is-held .handle__dot,
+        .handle:focus-visible .handle__dot { fill: var(--line); }
+        .handle:hover .handle__ring,
+        .handle.is-held .handle__ring,
+        .handle:focus-visible .handle__ring { opacity: 0.5; }
+        .handle:focus { outline: none; }
+
+        .hint {
+            font-family: var(--mono);
+            font-size: 10.5px;
+            fill: var(--ink-3);
+            transition: opacity 0.4s;
+        }
+
+        .is-touched .hint { opacity: 0; }
+
+        /* what the drawing is set by, and what follows from it */
+        .panel { padding: 18px 0 0; }
+
+        .ctl {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 8px 40px;
+            align-items: end;
+        }
+
+        .ctl > div:first-child { min-width: 0; }
+
+        .ctl label {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            font-family: var(--mono);
+            font-size: 11.5px;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--ink-3);
+        }
+
+        .ctl output { font-size: 14px; letter-spacing: 0; text-transform: none; color: var(--ink); }
+
+        .ctl input[type="range"] {
+            width: 100%;
+            margin: 12px 0 0;
+            accent-color: #e5e5e5;
+        }
+
+        .picks {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: var(--mono);
+            font-size: 11.5px;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--ink-3);
+        }
+
+        .picks__set { display: flex; gap: 6px; }
+
+        .picks button {
+            font: inherit;
+            color: var(--ink-3);
+            background: none;
+            border: 0;
+            padding: 0;
+            cursor: pointer;
+        }
+
+        .picks__set button {
+            width: 28px;
+            height: 28px;
+            border: 1px solid var(--hair);
+            border-radius: 50%;
+            color: var(--ink-2);
+        }
+
+        .picks button:hover { color: var(--ink); }
+        .picks__set button[aria-pressed="true"],
+        .picks__set button[aria-pressed="true"]:hover { background: var(--line); border-color: var(--line); color: #0a0a0a; }
+        .picks [data-reset] { margin-left: 16px; letter-spacing: 0; text-transform: none; }
+
+        /* what follows from the flows, kept on the drawing so it is read while dragging */
+        .out {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            display: flex;
+            gap: 22px;
+            margin: 0;
+            pointer-events: none;
+        }
+
+        .out dt {
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--ink-3);
+        }
+
+        .out dd {
+            margin: 2px 0 0;
+            font-size: 17px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .out dd small { font-size: 11px; color: var(--ink-3); margin-left: 2px; }
+
+        figcaption {
+            margin: 22px 0 0;
+            max-width: 46em;
+            font-size: 13.5px;
+            line-height: 1.5;
+            color: var(--ink-3);
+        }
+
+        /* inside a project page (?embed): only the drawing, its controls and its caption */
+        .is-embed, .is-embed body { background: transparent; }
+        .is-embed .kicker, .is-embed h1, .is-embed .lead { display: none; }
+        .is-embed .wrap { max-width: none; padding: 0; }
+        .is-embed .fig { margin: 0; }
+        .is-embed body { overflow: hidden; }
+
+        @media (max-width: 640px) {
+            .out { position: static; flex-wrap: wrap; gap: 10px 20px; padding: 12px 16px 0; }
+            .plate__tag--roof { display: none; }
+            .ctl { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="wrap">
+        <p class="kicker">X-tra Space · Design</p>
+        <h1>A roof drawn by the flows</h1>
+        <p class="lead">Move a flow in plan. Its roof band follows, and where two flows cross, their bands cross above.</p>
+
+        <figure class="fig">
+            <div class="plate" data-plate>
+                <span class="plate__tag plate__tag--roof">Roof, as generated</span>
+                <span class="plate__tag plate__tag--plan">Plan · four flows</span>
+                <dl class="out">
+                    <div><dt>Roof length</dt><dd data-len></dd></div>
+                    <div><dt>Ribs at 1,000 mm</dt><dd data-ribs></dd></div>
+                    <div><dt>Arch radius</dt><dd data-rad></dd></div>
+                    <div><dt>Crossings</dt><dd data-cross></dd></div>
+                </dl>
+                <svg data-svg viewBox="0 0 1000 860" role="group" aria-label="Four roof bands generated from four flow lines. Pick a band and drag the points of its flow in plan to redraw it.">
+                    <g data-roof></g>
+                    <line class="rule" x1="0" y1="440" x2="1000" y2="440"></line>
+                    <g data-plan></g>
+                    <g data-handles></g>
+                    <text class="hint" x="984" y="464" text-anchor="end">Pick a band, then drag a point of its flow</text>
+                </svg>
+            </div>
+
+            <div class="panel">
+                <div class="ctl">
+                    <div>
+                        <label for="rise">Rise at mid-span <output data-rise-out>2,400 mm</output></label>
+                        <input id="rise" type="range" min="2000" max="3000" step="50" value="2400" data-rise>
+                    </div>
+                    <div class="picks"><span>Band</span><span class="picks__set" data-picks></span><button type="button" data-reset>Reset</button></div>
+                </div>
+            </div>
+
+            <figcaption>The roof's four bands, redrawn in the browser from the steps of the Grasshopper definition: two edges along a flow, an arch at each station through the edge points and a lifted midpoint, ribs every 1,000 mm. The band width, the four lanes and the flows' first shapes are redrawn from the roof plan, not exported from the model, and columns are simplified to one every 12 m under each band.</figcaption>
+        </figure>
+    </main>
+
+    <script>
+        (function () {
+            "use strict";
+
+            /* ------------------------------------------------------------------
+               MODEL (metres). Redrawn by eye from the roof plan. The numbers that
+               come from the project are the rise range, the rib spacing and the
+               12 m grid. The band width, the four lanes, which band passes over the
+               others and the flows' first shapes are assumptions.
+               ------------------------------------------------------------------ */
+            const FIELD = { x0: 0, x1: 132 };
+            const WIDTH = 12;          // band width, taken as one bay of the 12,000 mm grid
+            const RIB = 1;             // ribs every 1,000 mm
+            const BAY = 12;            // a column every 12 m under each band (simplified)
+            const COL_H = 9;           // drawn column height (not the full 10,767 mm)
+            const LANES = [-18, -6, 6, 18];
+            const XS = [4, 26, 46, 86, 106, 128];
+            // Each band: its lane before the first crossing, between the two, and after the second.
+            const BANDS = [
+                { name: "Band 1", lanes: [0, 1, 0], lift: 0 },
+                { name: "Band 2", lanes: [1, 0, 3], lift: 3.4 },   // the band that passes over the others
+                { name: "Band 3", lanes: [2, 2, 1], lift: 0 },
+                { name: "Band 4", lanes: [3, 3, 2], lift: 0 }
+            ];
+            const startOf = (b) => XS.map((x, i) => [x, LANES[b.lanes[Math.floor(i / 2)]]]);
+            const LIMIT_Y = 25;
+            const GAP_X = 10;
+
+            const NS = "http://www.w3.org/2000/svg";
+            const svg = document.querySelector("[data-svg]");
+            const gRoof = document.querySelector("[data-roof]");
+            const gPlan = document.querySelector("[data-plan]");
+            const gHandles = document.querySelector("[data-handles]");
+            const plate = document.querySelector("[data-plate]");
+            const riseIn = document.querySelector("[data-rise]");
+            const picks = document.querySelector("[data-picks]");
+            const out = {
+                rise: document.querySelector("[data-rise-out]"),
+                len: document.querySelector("[data-len]"),
+                ribs: document.querySelector("[data-ribs]"),
+                rad: document.querySelector("[data-rad]"),
+                cross: document.querySelector("[data-cross]")
+            };
+
+            let flows = BANDS.map(startOf);
+            let rise = 2.4;
+            let picked = 1;
+
+            const el = (name, attrs, parent) => {
+                const n = document.createElementNS(NS, name);
+                for (const k in attrs) n.setAttribute(k, attrs[k]);
+                parent.appendChild(n);
+                return n;
+            };
+
+            /* ---- a flow: a smooth curve through its points, walked at even steps ---- */
+            function flow(points) {
+                const P = [points[0]].concat(points, [points[points.length - 1]]);
+                const fine = [];
+                for (let i = 1; i < P.length - 2; i++) {
+                    for (let k = 0; k < 32; k++) {
+                        const t = k / 32, t2 = t * t, t3 = t2 * t;
+                        const q = (a) => 0.5 * ((2 * P[i][a]) + (-P[i - 1][a] + P[i + 1][a]) * t
+                            + (2 * P[i - 1][a] - 5 * P[i][a] + 4 * P[i + 1][a] - P[i + 2][a]) * t2
+                            + (-P[i - 1][a] + 3 * P[i][a] - 3 * P[i + 1][a] + P[i + 2][a]) * t3);
+                        fine.push([q(0), q(1)]);
+                    }
+                }
+                fine.push(points[points.length - 1].slice());
+                const acc = [0];
+                for (let i = 1; i < fine.length; i++) acc.push(acc[i - 1] + Math.hypot(fine[i][0] - fine[i - 1][0], fine[i][1] - fine[i - 1][1]));
+                const length = acc[acc.length - 1];
+                let j = 1;
+                const at = (s) => {
+                    while (j < acc.length - 1 && acc[j] < s) j++;
+                    while (j > 1 && acc[j - 1] > s) j--;
+                    const a = fine[j - 1], b = fine[j];
+                    const f = (s - acc[j - 1]) / Math.max(1e-9, acc[j] - acc[j - 1]);
+                    const len = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1;
+                    const tx = (b[0] - a[0]) / len, ty = (b[1] - a[1]) / len;
+                    return { x: a[0] + (b[0] - a[0]) * f, y: a[1] + (b[1] - a[1]) * f, nx: -ty, ny: tx };
+                };
+                return { length, at };
+            }
+
+            /* ---- projections: plan below, the generated roof above ---- */
+            const planScale = 1000 / (FIELD.x1 - FIELD.x0 + 8);
+            const PLAN_Y = 652;
+            const planX = (x) => (x - FIELD.x0 + 4) * planScale;
+            const planY = (y) => PLAN_Y + y * planScale;
+            const unplan = (px, py) => [px / planScale + FIELD.x0 - 4, (py - PLAN_Y) / planScale];
+
+            // Turn and tilt of the view from above. Turned this way, a point pulled down in plan
+            // moves down in the view too.
+            const TH = 0.3, EL = 0.6;
+            const cosT = Math.cos(TH), sinT = Math.sin(TH), sinE = Math.sin(EL), cosE = Math.cos(EL);
+            const roofScale = 6.6;
+            const view = (x, y, z) => {
+                const cx = x - (FIELD.x0 + FIELD.x1) / 2;
+                const xr = cx * cosT - y * sinT, yr = cx * sinT + y * cosT;
+                return [500 + xr * roofScale, 236 + (yr * sinE - z * cosE) * roofScale];
+            };
+
+            const fmt = (pairs) => pairs.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join("");
+
+            // How many times two flow lines cross, counted on their station points.
+            function crossings(a, b) {
+                let n = 0;
+                for (let i = 1; i < a.length; i++) {
+                    const p = a[i - 1], rx = a[i].x - p.x, ry = a[i].y - p.y;
+                    for (let j = 1; j < b.length; j++) {
+                        const q = b[j - 1], sx = b[j].x - q.x, sy = b[j].y - q.y;
+                        const d = rx * sy - ry * sx;
+                        if (Math.abs(d) < 1e-9) continue;
+                        const t = ((q.x - p.x) * sy - (q.y - p.y) * sx) / d;
+                        const u = ((q.x - p.x) * ry - (q.y - p.y) * rx) / d;
+                        if (t >= 0 && t < 1 && u >= 0 && u < 1) n++;
+                    }
+                }
+                return n;
+            }
+
+            function draw() {
+                const R = (WIDTH * WIDTH / 4 + rise * rise) / (2 * rise);   // circle through both edges and the lifted midpoint
+                const zAt = (u) => Math.sqrt(Math.max(0, R * R - u * u)) - (R - rise);
+                let total = 0, ribsAll = 0;
+
+                const built = flows.map((pts, bi) => {
+                    const f = flow(pts);
+                    const ribs = Math.floor(f.length / RIB) + 1;
+                    const st = [];
+                    for (let i = 0; i < ribs; i++) st.push(f.at(Math.min(f.length, i * RIB)));
+                    total += f.length;
+                    ribsAll += ribs;
+                    return { f, st, lift: BANDS[bi].lift, bi };
+                });
+
+                // ---- the roof above: bands at the lower level first, the one passing over last
+                const order = built.slice().sort((a, b) => a.lift - b.lift || a.bi - b.bi);
+                let roof = "";
+                order.forEach((b) => {
+                    const z0 = b.lift;
+                    let arches = "", longs = "", edges = "", cols = "", skin = "";
+                    const US = 10;
+                    const rows = b.st.map((s) => {
+                        const row = [];
+                        for (let k = 0; k <= US; k++) {
+                            const u = -WIDTH / 2 + (WIDTH * k) / US;
+                            row.push(view(s.x + s.nx * u, s.y + s.ny * u, z0 + zAt(u)));
+                        }
+                        return row;
+                    });
+                    rows.forEach((row, i) => {
+                        arches += fmt(row);
+                        // a skin in the ground colour, so a band hides what passes under it
+                        if (i && i % 2 === 0) {
+                            const prev = rows[i - 2];
+                            for (let k = 0; k < US; k += 5) skin += fmt([prev[k], prev[k + 5], row[k + 5], row[k]]) + "Z";
+                        }
+                    });
+                    for (let k = 0; k <= US; k += 2) {
+                        const line = fmt(rows.map((row) => row[k]));
+                        if (k === 0 || k === US) edges += line; else longs += line;
+                    }
+                    for (let d = BAY / 2; d < b.f.length; d += BAY) {
+                        const s = b.f.at(d);
+                        const foot = view(s.x, s.y, -COL_H), fork = view(s.x, s.y, z0 - COL_H * 0.42);
+                        const p = view(s.x + s.nx * WIDTH / 2, s.y + s.ny * WIDTH / 2, z0);
+                        const q = view(s.x - s.nx * WIDTH / 2, s.y - s.ny * WIDTH / 2, z0);
+                        cols += fmt([foot, fork]) + fmt([p, fork, q]);
+                    }
+                    const on = b.bi === picked ? " is-picked" : "";
+                    roof += `<g class="band${on}"><path class="col" d="${cols}"/><path class="skin" d="${skin}"/><path class="arch" d="${arches}"/><path class="long" d="${longs}"/><path class="edge" d="${edges}"/></g>`;
+                });
+                gRoof.innerHTML = roof;
+
+                // ---- the plan below
+                let plan = "";
+                built.forEach((b) => {
+                    let pRibs = "";
+                    b.st.forEach((s, i) => {
+                        if (i % 2) return;
+                        pRibs += `M${planX(s.x + s.nx * WIDTH / 2).toFixed(1)} ${planY(s.y + s.ny * WIDTH / 2).toFixed(1)}L${planX(s.x - s.nx * WIDTH / 2).toFixed(1)} ${planY(s.y - s.ny * WIDTH / 2).toFixed(1)}`;
+                    });
+                    const side = (k) => fmt(b.st.map((s) => [planX(s.x + s.nx * k * WIDTH / 2), planY(s.y + s.ny * k * WIDTH / 2)]));
+                    const mid = fmt(b.st.map((s) => [planX(s.x), planY(s.y)]));
+                    const on = b.bi === picked ? " is-picked" : "";
+                    plan += `<g class="pband${on}" data-band="${b.bi}"><path class="p-rib" d="${pRibs}"/><path class="p-edge" d="${side(1)}"/><path class="p-edge" d="${side(-1)}"/><path class="p-flow" d="${mid}"/><path class="p-hit" d="${mid}"/></g>`;
+                });
+                gPlan.innerHTML = plan;
+
+                handles.forEach((h, i) => h.setAttribute("transform", `translate(${planX(flows[picked][i][0]).toFixed(1)} ${planY(flows[picked][i][1]).toFixed(1)})`));
+
+                let cross = 0;
+                for (let i = 0; i < built.length; i++) for (let j = i + 1; j < built.length; j++) cross += crossings(built[i].st, built[j].st);
+
+                out.rise.textContent = Math.round(rise * 1000).toLocaleString("en-US") + " mm";
+                out.len.innerHTML = total.toFixed(1) + "<small>m</small>";
+                out.ribs.textContent = String(ribsAll);
+                out.rad.innerHTML = R.toFixed(2) + "<small>m</small>";
+                out.cross.textContent = String(cross);
+                [...picks.children].forEach((b, i) => b.setAttribute("aria-pressed", String(i === picked)));
+                window.__roof = { length: total, ribs: ribsAll, radius: R, crossings: cross, rise, picked };
+            }
+
+            /* ---- moving a flow ---- */
+            const clampPoint = (i, x, y) => {
+                const pts = flows[picked];
+                const ends = i === 0 || i === pts.length - 1;
+                const lo = ends ? pts[i][0] : pts[i - 1][0] + GAP_X;
+                const hi = ends ? pts[i][0] : pts[i + 1][0] - GAP_X;
+                return [Math.max(lo, Math.min(hi, x)), Math.max(-LIMIT_Y, Math.min(LIMIT_Y, y))];
+            };
+
+            let queued = false;
+            const redraw = () => { if (queued) return; queued = true; requestAnimationFrame(() => { queued = false; draw(); }); };
+
+            const handles = XS.map((_, i) => {
+                const g = el("g", { class: "handle", tabindex: "0", role: "slider", "aria-label": `Flow point ${i + 1} of ${XS.length}` }, gHandles);
+                el("circle", { class: "handle__hit", r: 16 }, g);
+                el("circle", { class: "handle__ring", r: 11 }, g);
+                el("circle", { class: "handle__dot", r: 5.5 }, g);
+                g.addEventListener("pointerdown", (e) => {
+                    g.setPointerCapture(e.pointerId);
+                    g.classList.add("is-held");
+                    plate.classList.add("is-touched");
+                    e.preventDefault();
+                });
+                g.addEventListener("pointermove", (e) => {
+                    if (!g.hasPointerCapture(e.pointerId)) return;
+                    const p = new DOMPoint(e.clientX, e.clientY).matrixTransform(svg.getScreenCTM().inverse());
+                    const w = unplan(p.x, p.y);
+                    flows[picked][i] = clampPoint(i, w[0], w[1]);
+                    redraw();
+                });
+                const drop = () => g.classList.remove("is-held");
+                g.addEventListener("pointerup", drop);
+                g.addEventListener("pointercancel", drop);
+                g.addEventListener("keydown", (e) => {
+                    const step = e.shiftKey ? 2 : 0.5;
+                    const d = { ArrowUp: [0, -step], ArrowDown: [0, step], ArrowLeft: [-step, 0], ArrowRight: [step, 0] }[e.key];
+                    if (!d) return;
+                    e.preventDefault();
+                    plate.classList.add("is-touched");
+                    flows[picked][i] = clampPoint(i, flows[picked][i][0] + d[0], flows[picked][i][1] + d[1]);
+                    redraw();
+                });
+                return g;
+            });
+
+            // Pick a band by its button, or by its flow line in plan.
+            BANDS.forEach((b, i) => {
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.textContent = String(i + 1);
+                btn.setAttribute("aria-label", b.name);
+                btn.addEventListener("click", () => { picked = i; redraw(); });
+                picks.appendChild(btn);
+            });
+            gPlan.addEventListener("pointerdown", (e) => {
+                const g = e.target.closest("[data-band]");
+                if (g) { picked = Number(g.dataset.band); redraw(); }
+            });
+
+            riseIn.addEventListener("input", () => { rise = Number(riseIn.value) / 1000; redraw(); });
+            document.querySelector("[data-reset]").addEventListener("click", () => {
+                flows = BANDS.map(startOf);
+                riseIn.value = "2400";
+                rise = 2.4;
+                redraw();
+            });
+
+            draw();
+        })();
+    </script>
+</body>
+
+</html>

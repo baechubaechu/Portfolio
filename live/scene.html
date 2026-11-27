@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>Scene rules | Jihun Park</title>
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>if (new URLSearchParams(location.search).has("embed")) document.documentElement.classList.add("is-embed");</script>
+    <style>
+        /*
+            Scene rules mock for X-tra Space: the rule file that ran at the graduation show,
+            as it is printed on the project page (config/auto_strategy.yaml), run in the
+            browser. The reader sets what the booth sensed; the rules are checked top to
+            bottom and the first match picks the scene and its light.
+
+            Only the rules printed on the page are here. The file's calm and neutral rules
+            are left out there and so are left out here.
+        */
+        :root {
+            color-scheme: dark;
+            --bg: #0a0a0a;
+            --plate: #111111;
+            --line: #e5e5e5;
+            --ink: #f5f5f5;
+            --ink-2: #b5b5b5;
+            --ink-3: #808080;
+            --hair: rgba(255, 255, 255, 0.13);
+            --sans: 'Schibsted Grotesk', 'Inter', -apple-system, "Segoe UI", sans-serif;
+            --serif: 'Newsreader', Georgia, serif;
+            --mono: 'DM Mono', Consolas, Menlo, monospace;
+            --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+            --light: rgb(255, 214, 170);
+            --fade: 900ms;
+        }
+
+        * { box-sizing: border-box; }
+        html { background: var(--bg); }
+        body { margin: 0; color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+
+        .wrap { max-width: 1000px; margin: 0 auto; padding: 56px 24px 96px; }
+
+        .kicker, .tag {
+            margin: 0;
+            font-family: var(--mono);
+            font-size: 11.5px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--ink-3);
+        }
+
+        h1 { margin: 14px 0 0; font-size: 38px; font-weight: 500; line-height: 1.1; letter-spacing: -0.015em; }
+
+        .lead {
+            margin: 14px 0 0;
+            max-width: 34em;
+            font-family: var(--serif);
+            font-size: 21px;
+            line-height: 1.42;
+            color: var(--ink-2);
+        }
+
+        .fig { margin: 36px 0 0; }
+
+        .plate {
+            display: grid;
+            grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.25fr) minmax(0, 0.95fr);
+            background: var(--plate);
+            border: 1px solid var(--hair);
+        }
+
+        .col { padding: 20px 18px 22px; min-width: 0; }
+        .col + .col { border-left: 1px solid var(--hair); }
+
+        /* 1 · what is sensed */
+        .ctl { margin-top: 20px; }
+
+        .ctl label {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            font-size: 14px;
+            color: var(--ink-2);
+        }
+
+        .ctl output { font-size: 20px; font-variant-numeric: tabular-nums; color: var(--ink); }
+        .ctl output small { font-size: 12px; color: var(--ink-3); margin-left: 3px; }
+        .ctl input[type="range"] { width: 100%; margin: 10px 0 0; accent-color: #e5e5e5; }
+
+        .seg { display: flex; gap: 6px; margin-top: 10px; }
+
+        .seg button {
+            flex: 1;
+            padding: 8px 0;
+            font-family: var(--mono);
+            font-size: 12px;
+            color: var(--ink-2);
+            background: none;
+            border: 1px solid var(--hair);
+            border-radius: 999px;
+            cursor: pointer;
+        }
+
+        .seg button:hover { color: var(--ink); }
+        .seg button[aria-pressed="true"] { background: var(--line); border-color: var(--line); color: #0a0a0a; }
+
+        /* 2 · the rules, top to bottom */
+        .rules { list-style: none; margin: 18px 0 0; padding: 0; counter-reset: rule; }
+
+        .rule {
+            counter-increment: rule;
+            position: relative;
+            padding: 10px 12px 10px 38px;
+            border: 1px solid transparent;
+            font-family: var(--mono);
+            font-size: 12.5px;
+            line-height: 1.5;
+            color: var(--ink-3);
+            transition: color 0.2s var(--ease), border-color 0.2s var(--ease), background 0.2s var(--ease);
+        }
+
+        .rule::before {
+            content: counter(rule);
+            position: absolute;
+            left: 12px;
+            top: 10px;
+            color: var(--ink-3);
+        }
+
+        .rule b { font-weight: 400; color: inherit; }
+        .rule__state { float: right; font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase; }
+
+        .rule.is-miss { color: #6a6a6a; }
+        .rule.is-miss .rule__if { text-decoration: line-through; text-decoration-color: rgba(255, 255, 255, 0.25); }
+
+        .rule.is-hit {
+            color: var(--ink);
+            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .rule.is-skip { opacity: 0.4; }
+
+        .rule--gap {
+            padding-left: 38px;
+            font-style: italic;
+            opacity: 0.45;
+        }
+
+        .rule--gap::before { content: "…"; }
+
+        /* 3 · the scene it picks */
+        .scene__name { margin: 18px 0 0; font-family: var(--mono); font-size: 20px; }
+        .scene__say { margin: 4px 0 0; font-size: 14px; color: var(--ink-2); }
+
+        .lamp {
+            height: 96px;
+            margin-top: 18px;
+            background: radial-gradient(ellipse at 50% 0%, var(--light), transparent 72%);
+            border-top: 2px solid var(--light);
+            transition: border-color var(--fade) linear;
+        }
+
+        .leds { display: flex; gap: 5px; margin-top: 14px; }
+
+        .leds i {
+            flex: 1;
+            aspect-ratio: 1;
+            max-width: 14px;
+            border-radius: 50%;
+            background: var(--light);
+            box-shadow: 0 0 10px var(--light);
+        }
+
+        /* the light changes over the scene's own transition time */
+        @property --light { syntax: "<color>"; inherits: true; initial-value: rgb(255, 214, 170); }
+        .scene { transition: --light var(--fade) linear; }
+
+        .facts { margin: 18px 0 0; }
+        .facts div { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 7px 0; border-top: 1px solid var(--hair); }
+        .facts dt { font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
+        .facts dd { margin: 0; font-size: 15px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+        figcaption {
+            margin: 18px 0 0;
+            max-width: 46em;
+            font-size: 13.5px;
+            line-height: 1.5;
+            color: var(--ink-3);
+        }
+
+        .is-embed, .is-embed body { background: transparent; }
+        .is-embed .kicker, .is-embed h1, .is-embed .lead { display: none; }
+        .is-embed .wrap { max-width: none; padding: 0; }
+        .is-embed .fig { margin: 0; }
+        .is-embed body { overflow: hidden; }
+
+        @media (max-width: 640px) {
+            .plate { grid-template-columns: 1fr; }
+            .col + .col { border-left: 0; border-top: 1px solid var(--hair); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .scene, .lamp { transition: none; }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="wrap">
+        <p class="kicker">X-tra Space · System</p>
+        <h1>What the booth sensed, and the scene it picked</h1>
+        <p class="lead">Change what is sensed. The rules are checked from the top, and the first one that matches sets the light.</p>
+
+        <figure class="fig">
+            <div class="plate">
+                <div class="col">
+                    <p class="tag">1 · Sensed</p>
+                    <div class="ctl">
+                        <label for="people">People in view <output data-people-out></output></label>
+                        <input id="people" type="range" min="0" max="10" step="1" value="2" data-people>
+                    </div>
+                    <div class="ctl">
+                        <label for="db">Sound level <output data-db-out></output></label>
+                        <input id="db" type="range" min="35" max="90" step="1" value="52" data-db>
+                    </div>
+                    <div class="ctl">
+                        <label>Emotion read</label>
+                        <div class="seg" role="group" aria-label="Emotion read">
+                            <button type="button" data-emo="" aria-pressed="true">none</button>
+                            <button type="button" data-emo="stressed" aria-pressed="false">stressed</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <p class="tag">2 · Rules, top to bottom</p>
+                    <ol class="rules" data-rules></ol>
+                </div>
+
+                <div class="col scene" data-scene>
+                    <p class="tag">3 · Scene</p>
+                    <p class="scene__name" data-name></p>
+                    <p class="scene__say" data-say></p>
+                    <div class="lamp"></div>
+                    <div class="leds" data-leds></div>
+                    <dl class="facts">
+                        <div><dt>Colour temperature</dt><dd data-k></dd></div>
+                        <div><dt>Transition</dt><dd data-ms></dd></div>
+                        <div><dt>Reason sent</dt><dd data-reason></dd></div>
+                    </dl>
+                </div>
+            </div>
+            <figcaption>The rules and scene settings are the ones printed from config/auto_strategy.yaml on this page; the thresholds were tuned for a small booth. The file's calm and neutral rules are not printed there and are left out here. The light on screen changes over each scene's own transition time.</figcaption>
+        </figure>
+    </main>
+
+    <script>
+        (function () {
+            "use strict";
+
+            // As printed on the project page (config/auto_strategy.yaml). First match wins.
+            const RULES = [
+                { id: "auto_loud", text: "decibel_min: 65", scene: "dense_flux", reason: "auto:loud", test: (s) => s.db >= 65 },
+                { id: "auto_many_people", text: "people_min: 4", scene: "dense_flux", reason: "auto:crowd", test: (s) => s.people >= 4 },
+                { id: "auto_stressed", text: "emotion_in: [stressed]", scene: "night_reflect", reason: "auto:stressed", test: (s) => s.emo === "stressed" },
+                { gap: true, text: "calm / neutral rules (not printed on the page)" },
+                { id: "auto_default", text: "match_all: true", scene: "calm_gallery", reason: "auto:default", test: () => true }
+            ];
+            const SCENES = {
+                dense_flux: { k: 5100, ms: 450, say: "Crowded, energetic." },
+                calm_gallery: { k: 4200, ms: 900, say: "Calm default." },
+                night_reflect: { k: 2900, ms: 1400, say: "Low, warm." }
+            };
+
+            // Colour of a black body at k kelvin, for the screen (Tanner Helland's fit).
+            function kelvin(k) {
+                const t = k / 100;
+                const c = (v) => Math.max(0, Math.min(255, Math.round(v)));
+                const r = t <= 66 ? 255 : 329.698727446 * Math.pow(t - 60, -0.1332047592);
+                const g = t <= 66 ? 99.4708025861 * Math.log(t) - 161.1195681661 : 288.1221695283 * Math.pow(t - 60, -0.0755148492);
+                const b = t >= 66 ? 255 : t <= 19 ? 0 : 138.5177312231 * Math.log(t - 10) - 305.0447927307;
+                return `rgb(${c(r)}, ${c(g)}, ${c(b)})`;
+            }
+
+            const state = { people: 2, db: 52, emo: "" };
+            const $ = (s) => document.querySelector(s);
+            const rulesEl = $("[data-rules]");
+            const sceneEl = $("[data-scene]");
+            const leds = $("[data-leds]");
+            for (let i = 0; i < 12; i++) leds.appendChild(document.createElement("i"));
+
+            const rows = RULES.map((r) => {
+                const li = document.createElement("li");
+                li.className = "rule" + (r.gap ? " rule--gap" : "");
+                if (r.gap) { li.textContent = r.text; }
+                else {
+                    li.innerHTML = `<span class="rule__state"></span><b></b><br><span class="rule__if"></span> → <span class="rule__to"></span>`;
+                    li.querySelector("b").textContent = r.id;
+                    li.querySelector(".rule__if").textContent = r.text;
+                    li.querySelector(".rule__to").textContent = r.scene;
+                }
+                rulesEl.appendChild(li);
+                return li;
+            });
+
+            function run() {
+                $("[data-people-out]").textContent = String(state.people);
+                $("[data-db-out]").innerHTML = state.db + "<small>dB</small>";
+                document.querySelectorAll("[data-emo]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.emo === state.emo)));
+
+                let hit = -1;
+                RULES.forEach((r, i) => {
+                    const li = rows[i];
+                    if (r.gap) return;
+                    const st = li.querySelector(".rule__state");
+                    li.classList.remove("is-hit", "is-miss", "is-skip");
+                    if (hit >= 0) { li.classList.add("is-skip"); st.textContent = "not reached"; return; }
+                    if (r.test(state)) { hit = i; li.classList.add("is-hit"); st.textContent = "match"; }
+                    else { li.classList.add("is-miss"); st.textContent = "no"; }
+                });
+
+                const rule = RULES[hit], sc = SCENES[rule.scene];
+                // the new scene's own transition time carries the change into it
+                sceneEl.style.setProperty("--fade", sc.ms + "ms");
+                sceneEl.style.setProperty("--light", kelvin(sc.k));
+                $("[data-name]").textContent = rule.scene;
+                $("[data-say]").textContent = sc.say;
+                $("[data-k]").textContent = sc.k.toLocaleString("en-US") + " K";
+                $("[data-ms]").textContent = sc.ms.toLocaleString("en-US") + " ms";
+                $("[data-reason]").textContent = rule.reason;
+                window.__scene = { rule: rule.id, scene: rule.scene, k: sc.k, ms: sc.ms };
+            }
+
+            $("[data-people]").addEventListener("input", (e) => { state.people = Number(e.target.value); run(); });
+            $("[data-db]").addEventListener("input", (e) => { state.db = Number(e.target.value); run(); });
+            document.querySelectorAll("[data-emo]").forEach((b) => b.addEventListener("click", () => { state.emo = b.dataset.emo; run(); }));
+            run();
+        })();
+    </script>
+</body>
+
+</html>
